@@ -1,7 +1,6 @@
 import sys, re
 from os import path
 import createClasses
-import createMethods
 import createProblemClass
 import constants
 from constants import *
@@ -305,6 +304,3 @@ createProblemClass.create_reset_method(out, reset_in)  # Create the Reset method
 out.write("}\n")  # End of Problem Class
 
 createClasses.create_all(out)  # Create all the classes
-createMethods.create_all(out)  # Create all the methods
-
-out.write("}\n")

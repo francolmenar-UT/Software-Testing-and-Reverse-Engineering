@@ -14,3 +14,4 @@ class MyString {
     public MyString(String v){ this.val = v; }
     public MyString(String v, boolean b){ this.val = v; this.flow = b; }
 }
+

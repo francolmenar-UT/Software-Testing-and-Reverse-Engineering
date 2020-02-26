@@ -35,13 +35,17 @@ def create_i(out):
     Writes the I class into out
     :param out: destination file in which the code is written
     """
-    out.write("class I {\n")
-    out.write("\n")
-    for i in range(1, 50):
-        out.write("public static MyInt var" + str(i) + " = new MyInt(0);\n")
-    out.write("\n")
-    for i in range(1, 50):
-        out.write("public static MyBool bool" + str(i) + " = new MyBool(false);\n")
-    for i in range(1, 50):
-        out.write("public static MyString str" + str(i) + " = new MyString(\"\");\n")
-    out.write("\n")
+    i_filename = "java_files/I.java"
+    with open(i_filename, 'r') as i_file:
+        for line in i_file:
+            if line.find("<insert_var>") != -1:
+                for i in range(1, 50):
+                    out.write("    public static MyInt var" + str(i) + " = new MyInt(0);\n")
+                out.write("\n")
+                for i in range(1, 50):
+                    out.write("    public static MyBool bool" + str(i) + " = new MyBool(false);\n")
+                for i in range(1, 50):
+                    out.write("    public static MyString str" + str(i) + " = new MyString(\"\");\n")
+                out.write("\n")
+            else:
+                out.write(line)
