@@ -336,7 +336,8 @@ def search_gos_comp(out, line, bool_count):
             bool_count += 1
         m = re.findall(r'(' + equalsRe + '|' + isisRe + '|' + leRe + '|' + geRe + '|' + leqRe + '|' + geqRe + ')',
                        line)  # find all matching sub-patterns
-        return line, bool_count
+
+    return line, bool_count
 
 
 def search_and_or_not_comp(out, line, bool_count):
@@ -382,7 +383,7 @@ def search_and_or_not_comp(out, line, bool_count):
         m = re.findall(r'(' + andRe + '|' + orRe + '|' + notRe + '|' + boolRe + ')',
                        line)  # find all matching sub-patterns
         # print(line)
-        return line, bool_count
+    return line, bool_count
 
 
 def search_print_assign_if(line):
@@ -410,7 +411,7 @@ def search_print_assign_if(line):
                 var = match[7]
                 line = line.replace(text, "if(I.myIf(" + var + "))", 1)
         m = re.findall(r'(' + assignRe + '|' + printRe + '|' + ifRe + ')', line)  # find all matching sub-patterns
-        return line
+    return line
 
 
 def search_main_problem(line):

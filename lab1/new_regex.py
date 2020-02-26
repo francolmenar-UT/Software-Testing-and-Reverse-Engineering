@@ -81,7 +81,7 @@ for line in f.readlines():
     line = createProblemClass.search_main_problem(line)
 
     # Searches for stdin.readLine
-    line = createProblemClass.search_stdin_readLine(line)
+    line = createProblemClass.search_stdin_readline(line)
     out.write(line)  # write updated code to file
 
 reset_in = open(instructed_file, 'r')
