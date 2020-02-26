@@ -1,6 +1,7 @@
 import re
 import constants
 
+
 def create_reset_method(out, reset_in):
     """
     Writes the Reset method into the file
