@@ -60,37 +60,9 @@ for line in f.readlines():
         continue
 
     var_count, bool_count, str_count = 1, 1, 1  # Reset the variables
-    createProblemClass.search_close_bracket(out, line)  # Search for close brackets
+    line = createProblemClass.search_close_bracket(out, line)  # Search for close brackets
 
-    m = re.findall(r'(' + typeIntRe + '|' + typeStringRe + '|' + typeBoolRe + ')',
-                   line)  # find all matching sub-patterns
-    if len(m) > 0:  # if any matching items
-        var, val, text = "", "", ""
-        for match in m:  # for each submatch, extract the condition, the var and the val
-            if len(match[1]) > 0:  # if first kind of condition
-                text = match[1]
-                type = match[2]
-                var = match[3]
-                val = match[4]
-                # print("type " + val + " = " + type)
-                types[val] = type
-                line = line.replace(type, "MyInt", 1)
-            if len(match[5]) > 0:  # if first kind of condition
-                text = match[5]
-                type = match[6]
-                var = match[7]
-                val = match[8]
-                # print("type " + val + " = " + type)
-                types[val] = type
-                line = line.replace(type, "MyString", 1)
-            if len(match[9]) > 0:  # if first kind of condition
-                text = match[9]
-                type = match[10]
-                var = match[11]
-                val = match[12]
-                # print("type " + val + " = " + type)
-                types[val] = type
-                line = line.replace(type, "MyBool", 1)
+    line = createProblemClass.search_int_string_bool(line, types)  # search for Int, String and Boolean
 
     m = re.findall(r'(' + booleanRe1 + '|' + booleanRe2 + '|' + stringRe + '|' + numberRe + ')',
                    line)  # find all matching sub-patterns
@@ -123,7 +95,6 @@ for line in f.readlines():
                 line = line.replace(beg + var + end, beg + "new MyInt(" + var + ")" + end, 1)
         m = re.findall(r'(' + booleanRe1 + '|' + booleanRe2 + '|' + stringRe + '|' + numberRe + ')',
                        line)  # find all matching sub-patterns
-
 
     m = re.findall(
         r'(' + addRe + '|' + delRe + '|' + mulRe + '|' + divRe + '|' + modRe + '|' + indRe + '|' + varRe + ')',
@@ -194,7 +165,6 @@ for line in f.readlines():
         m = re.findall(
             r'(' + addRe + '|' + delRe + '|' + mulRe + '|' + divRe + '|' + modRe + '|' + indRe + '|' + varRe + ')',
             line)  # find all matching
-
 
     m = re.findall(r'(' + equalsRe + '|' + isisRe + '|' + leRe + '|' + geRe + '|' + leqRe + '|' + geqRe + ')',
                    line)  # find all matching sub-patterns

@@ -1,5 +1,7 @@
 import re
 import constants
+from constants import *
+
 
 
 def create_reset_method(out, reset_in):
@@ -73,11 +75,83 @@ def search_close_bracket(out, line):
     :param out: destination file in which the code is written
     :param line: The current text line found
     """
-    m = re.findall(r'(' + constants.bracket_closeRe + ')', line)  # Search for close brackets
+    m = re.findall(r'(' + bracket_closeRe + ')', line)  # Search for close brackets
     while len(m) > 0:
         for match in m:
             if len(match[1]) > 0:  # Something more than a bracket
                 text = match[1]
                 line = line.replace(text, "", 1)  # Remove the bracket from line
                 out.write("}\n")  # Write the bracket into the file
-        m = re.findall(r'(' + constants.bracket_closeRe + ')', line)  # Search for more brackets
+        m = re.findall(r'(' + bracket_closeRe + ')', line)  # Search for more  brackets
+    return line
+
+
+def search_int_string_bool(line, types):
+    """
+    Searches for integers, string and booleans
+    :param line: The current text line found
+    :param types:
+    """
+    m = re.findall(r'(' + typeIntRe + '|' + typeStringRe + '|' + typeBoolRe + ')',
+                   line)  # find all matching sub-patterns
+
+    if len(m) > 0:  # if any matching items
+        for match in m:  # for each submatch, extract the condition, the var and the val
+            if len(match[1]) > 0:  # if first kind of condition
+                line = replace_int(line, match, types)
+            if len(match[5]) > 0:  # if second kind of condition
+                line = replace_string(line, match, types)
+            if len(match[9]) > 0:  # if third kind of condition
+                line = replace_boolean(line, match, types)
+    return line
+
+
+def replace_int(line, match, types):
+    """
+    Replaces a found Integer
+    :param line: The current text line found
+    :param match:
+    :param types:
+    """
+    var, val, text = "", "", ""
+    text = match[1]
+    type = match[2]
+    var = match[3]
+    val = match[4]
+    # print("type " + val + " = " + type)
+    types[val] = type
+    return line.replace(type, "MyInt", 1)
+
+
+def replace_string(line, match, types):
+    """
+    Replaces a found String
+    :param line: The current text line found
+    :param match:
+    :param types:
+    """
+    var, val, text = "", "", ""
+    text = match[5]
+    type = match[6]
+    var = match[7]
+    val = match[8]
+    # print("type " + val + " = " + type)
+    types[val] = type
+    return line.replace(type, "MyString", 1)
+
+
+def replace_boolean(line, match, types):
+    """
+    Replaces a found Boolean
+    :param line: The current text line found
+    :param match:
+    :param types:
+    """
+    var, val, text = "", "", ""
+    text = match[9]
+    type = match[10]
+    var = match[11]
+    val = match[12]
+    # print("type " + val + " = " + type)
+    types[val] = type
+    return line.replace(type, "MyBool", 1)
