@@ -1,13 +1,15 @@
 import sys, re
 from os import path
+import createClasses
+import createMethods
+import createProblemClass
+import constants
+from constants import *
 
 types = dict()
 
 # Global Variables
-var_count = 1
-bool_count = 1
-str_count = 1
-method_count = 1
+var_count, bool_count, str_count, method_count = 1, 1, 1, 1
 main_found = False
 
 first_bracket = False
@@ -21,8 +23,8 @@ original_file = realpath
 inst_filename = 'inst' + path.basename(realpath)
 instructed_file = path.join(path.dirname(realpath), inst_filename)
 
-f = open(original_file, 'r') # Open original file
-out = open(instructed_file, 'w') # Create instructed file to write into it
+f = open(original_file, 'r')  # Open original file
+out = open(instructed_file, 'w')  # Create instructed file to write into it
 out.write("import java.util.Random;\n")
 # method_out = open('IM.java', 'w')
 
@@ -45,42 +47,21 @@ for line in f.readlines():
     # else:
     #    first_bracket = False
 
-    # Main statement
-    if line.find("public static void main") != -1:
-        out.write(line)
+    if line.find("public static void main") != -1:  # Main statement
+        createProblemClass.create_main_method(out, line)  # Create main method
         continue
 
-    # While(true) statement
-    if line.find("while(true) {") != -1:
-        out.write(line)
-        out.write("eca.reset();") # Add a reset for the next iteration
-        out.write("MyString[] fuzzed_inputs = Fuzzer.fuzz(eca.inputs);") ## Add fuzzed values
-        out.write("for(int i = 0; i < fuzzed_inputs.length; i++){")
+    if line.find("while(true) {") != -1:  # While(true) statement
+        createProblemClass.create_while_true(out, line)  # Create the inside of while(true)
         continue
 
-    if line.find("stdin.readLine()") != -1:
-        out.write("MyString input = fuzzed_inputs[i];")
-        out.write("System.out.println(\"Fuzzing: \" + input.val);")
+    if line.find("stdin.readLine()") != -1:  # readLine() statement
+        createProblemClass.create_readline(out)  # Create the readLine() code
         continue
 
-    # Reset the variables.
-    var_count = 1;
-    bool_count = 1;
-    str_count = 1;
+    var_count, bool_count, str_count = 1, 1, 1  # Reset the variables
+    createProblemClass.search_close_bracket(out, line)  # Search for close brackets
 
-    bracket_closeRe = '(^\s*})'
-    m = re.findall(r'(' + bracket_closeRe + ')', line)
-    while len(m) > 0:
-        for match in m:
-            if len(match[1]) > 0:
-                text = match[1]
-                line = line.replace(text, "", 1)
-                out.write("}\n")
-        m = re.findall(r'(' + bracket_closeRe + ')', line)
-
-    typeIntRe = '((int)(\[?\]?)\s([\w\d]+))'
-    typeStringRe = '((String)(\[?\]?)\s([\w\d]+))'
-    typeBoolRe = '((boolean)(\[?\]?)\s([\w\d]+))'
     m = re.findall(r'(' + typeIntRe + '|' + typeStringRe + '|' + typeBoolRe + ')',
                    line)  # find all matching sub-patterns
     if len(m) > 0:  # if any matching items
@@ -111,10 +92,6 @@ for line in f.readlines():
                 types[val] = type
                 line = line.replace(type, "MyBool", 1)
 
-    booleanRe1 = '([\s\[\{\,](true)[\;\}\,])'  # for a354505667.equals("e"
-    booleanRe2 = '([\s\[\{\,](false)[\;\}\,])'  # for a354505667.equals("e"
-    stringRe = '([\s\[\{\,](\"\w*\")[\;\}\,])'  # for a354505667.equals("e"
-    numberRe = '(([\s\[\{\,])(-?\d+)([\;\}\,]))'  # for a354505667.equals("e"
     m = re.findall(r'(' + booleanRe1 + '|' + booleanRe2 + '|' + stringRe + '|' + numberRe + ')',
                    line)  # find all matching sub-patterns
 
@@ -147,13 +124,6 @@ for line in f.readlines():
         m = re.findall(r'(' + booleanRe1 + '|' + booleanRe2 + '|' + stringRe + '|' + numberRe + ')',
                        line)  # find all matching sub-patterns
 
-    addRe = '((-?[\.\w\d]+)\s*\+\s*(-?[\.\w\d]+))'
-    delRe = '((-?[\.\w\d]+)\s*\-\s*(-?[\.\w\d]+))'
-    mulRe = '((-?[\.\w\d]+)\s*\*\s*(-?[\.\w\d]+))'
-    divRe = '((-?[\.\w\d]+)\s*\/\s*(-?[\.\w\d]+))'
-    modRe = '((-?[\.\w\d]+)\s*\%\s*(-?[\.\w\d]+))'
-    indRe = '(([\.\w\d]+)\[([-*\.\w\d]+)\])'
-    varRe = '(([\[\s\(])\(([\.\w\d]+)\))'
 
     m = re.findall(
         r'(' + addRe + '|' + delRe + '|' + mulRe + '|' + divRe + '|' + modRe + '|' + indRe + '|' + varRe + ')',
@@ -225,16 +195,7 @@ for line in f.readlines():
             r'(' + addRe + '|' + delRe + '|' + mulRe + '|' + divRe + '|' + modRe + '|' + indRe + '|' + varRe + ')',
             line)  # find all matching
 
-    equalsRe = '(([\.\w\d]+)\.equals\(("?[-*\.\w\d]+"?)\))'  # for a354505667.equals("e"
-    isisRe = '(([-*\.\w\d]+)\s*==\s*([-*\.\w\d]+))'  # for a1542761177 == 2
-    leRe = '(([-*\.\w\d]+)\s*<\s*([-*\.\w\d]+))'  # for a1542761177 == 2
-    geRe = '(([-*\.\w\d]+)\s*>\s*([-*\.\w\d]+))'  # for a1542761177 == 2
-    leqRe = '(([-*\.\w\d]+)\s*<=\s*([-*\.\w\d]+))'  # for a1542761177 == 2
-    geqRe = '(([-*\.\w\d]+)\s*>=\s*([-*\.\w\d]+))'  # for a1542761177 == 2
-    andRe = '(([\.\w\d]+)\s*\&\&\s*([\.\w\d]+))'  # for a1542761177 == 2
-    orRe = '(([\.\w\d]+)\s*\|\|\s*([\.\w\d]+))'  # for a1542761177 == 2
-    notRe = '(!([\.\w\d]+))'  # for a1542761177 == 2
-    boolRe = '(([\!\[\s\(])\(([\.\w\d]+)\))'
+
     m = re.findall(r'(' + equalsRe + '|' + isisRe + '|' + leRe + '|' + geRe + '|' + leqRe + '|' + geqRe + ')',
                    line)  # find all matching sub-patterns
 
@@ -324,9 +285,7 @@ for line in f.readlines():
         m = re.findall(r'(' + andRe + '|' + orRe + '|' + notRe + '|' + boolRe + ')',
                        line)  # find all matching sub-patterns
         # print(line)
-    assignRe = '(([\.\w\d]+)\s*=\s*(\"?[-*\.\w\d]+\"?)\s*;)'  # for a354505667.equals("e"
-    printRe = '((System.out.println))'  # for a354505667.equals("e"
-    ifRe = '(if\(([\.\w\d]+)\))'  # for a354505667.equals("e"
+
     m = re.findall(r'(' + assignRe + '|' + printRe + '|' + ifRe + ')', line)  # find all matching sub-patterns
 
     while len(m) > 0:  # if any matching items
@@ -348,7 +307,6 @@ for line in f.readlines():
                 line = line.replace(text, "if(I.myIf(" + var + "))", 1)
         m = re.findall(r'(' + assignRe + '|' + printRe + '|' + ifRe + ')', line)  # find all matching sub-patterns
 
-    mainRe = '(\s(Problem[\d]+))'  # for a354505667.equals("e"
     m = re.findall(r'(' + mainRe + ')', line)  # find all matching sub-patterns
     if len(m) > 0:  # if any matching items
         # print(line)
@@ -359,7 +317,6 @@ for line in f.readlines():
                 var = match[2]
                 line = line.replace(text, " inst" + var, 1)
 
-    readRe = '((stdin.readLine\(\)))'  # for a354505667.equals("e"
     m = re.findall(r'(' + readRe + ')', line)  # find all matching sub-patterns
     if len(m) > 0:  # if any matching items
         # print(line)
@@ -374,172 +331,10 @@ for line in f.readlines():
 
 reset_in = open(instructed_file, 'r')
 
-# Write the Reset Method
-out.write("public void reset(){\n")
-out.write("System.out.println(\"reset\");")
-for line in reset_in.readlines():
-    if line.find("public MyInt") != -1:
-        if line.find("{") != -1:
-            out.write(line.split('=', 1)[0].split(' ', 2)[2])
-            out.write(" = new MyInt[] ")
-            out.write(line.split('=', 1)[1])
-        else:
-            out.write(line.split(' ', 2)[2])
-    if line.find("public MyBool") != -1:
-        if line.find("{") != -1:
-            out.write(line.split('=', 1)[0].split(' ', 2)[2])
-            out.write(" = new MyBool[] ")
-            out.write(line.split('=', 1)[1])
-        else:
-            out.write(line.split(' ', 2)[2])
-    if line.find("public MyString") != -1:
-        if line.find("{") != -1:
-            out.write(line.split('=', 1)[0].split(' ', 2)[2])
-            out.write(" = new MyString[] ")
-            out.write(line.split('=', 1)[1])
-        else:
-            out.write(line.split(' ', 2)[2])
-out.write("}\n")
-out.write("\n")
+createProblemClass.create_reset_method(out, reset_in)  # Create the Reset method
+out.write("}\n")  # End of Problem Class
 
-out.write("}\n")
-
-# Write the Fuzzer Class
-out.write("class Fuzzer {\n")
-out.write("public static MyString[] fuzz(MyString[] inputs){\n")
-out.write("Random rand = new Random();\n")
-out.write("int length = rand.nextInt(50) + 10;\n");
-out.write("MyString[] result = new MyString[length];\n");
-out.write("for(int i = 0; i < length; i++){\n");
-out.write("int index = rand.nextInt(inputs.length);\n");
-out.write("result[i] = new MyString(inputs[index].val, true);\n")
-out.write("}\n")
-out.write("return result;\n")
-out.write("}\n")
-out.write("}\n")
-
-# Write the MyInt Class
-out.write("class MyInt {\n")
-out.write("public int val = 0;\n")
-out.write("public MyInt(int v){ this.val = v; }")
-out.write("}\n")
-
-# Write the MyBool Class
-out.write("class MyBool {\n")
-out.write("public boolean val = false;\n")
-out.write("public MyBool(boolean v){ this.val = v; }")
-out.write("}\n")
-
-# Write the MyString Class
-out.write("class MyString {\n")
-out.write("public String val = \"\";")
-out.write("public boolean flow = false;")
-out.write("public MyString(String v){ this.val = v; }")
-out.write("public MyString(String v, boolean b){ this.val = v; this.flow = b; }")
-out.write("}\n")
-
-# Write the I Class
-out.write("class I {\n")
-out.write("\n")
-for i in range(1, 50):
-    out.write("public static MyInt var" + str(i) + " = new MyInt(0);\n")
-out.write("\n")
-for i in range(1, 50):
-    out.write("public static MyBool bool" + str(i) + " = new MyBool(false);\n")
-for i in range(1, 50):
-    out.write("public static MyString str" + str(i) + " = new MyString(\"\");\n")
-out.write("\n")
-
-# Mathematical methods
-out.write("public static void myAdd(MyInt a, MyInt b, MyInt c){ a.val = b.val+c.val; }\n")
-out.write("public static void myDel(MyInt a, MyInt b, MyInt c){ a.val = b.val-c.val;  }\n")
-out.write("public static void myMul(MyInt a, MyInt b, MyInt c){ a.val = b.val*c.val;  }\n")
-out.write("public static void myDiv(MyInt a, MyInt b, MyInt c){ a.val = b.val/c.val;  }\n")
-out.write("public static void myMod(MyInt a, MyInt b, MyInt c){ a.val = b.val%c.val;  }\n")
-
-out.write("public static void myInd(MyInt a, MyInt[] b, MyInt c){ a.val = b[c.val].val; }\n")
-out.write("public static void myInd(MyString a, MyString[] b, MyInt c){ a.val = b[c.val].val; }\n")
-
-# Equal comparison methods (MyBool, MyInt and MyString)
-out.write("public static void myEquals(MyBool a, MyBool b, MyBool c){ a.val = (b.val == c.val); }\n")
-out.write("public static void myEquals(MyBool a, MyInt b, MyInt c){ a.val = (b.val == c.val); }\n")
-out.write("public static void myEquals(MyBool a, MyString b, MyString c){ a.val = (b.val.equals(c.val)); }\n")
-
-# Larger or smaller comparison methods (MyInt)
-out.write("public static void myLess(MyBool a, MyInt b, MyInt c){ a.val = (b.val < c.val); }\n")
-out.write("public static void myGreater(MyBool a, MyInt b, MyInt c){ a.val = (b.val > c.val); }\n")
-out.write("public static void myLessEqual(MyBool a, MyInt b, MyInt c){ a.val = (b.val <= c.val); }\n")
-out.write("public static void myGreaterEqual(MyBool a, MyInt b, MyInt c){ a.val = (b.val >= c.val); }\n")
-
-# Assigning MyBool
-out.write("public static MyBool myAssign(MyBool b){ MyBool a = new MyBool(b.val); return a; }\n")
-out.write("public static MyInt myAssign(MyInt b){ MyInt a = new MyInt(b.val); return a; }\n")
-out.write(
-    "public static MyInt[] myAssign(MyInt[] b){ MyInt a[] = new MyInt[b.length]; for(int i = 0; i < b.length; i++) a[i] = new MyInt(b[i].val); return a; }\n")
-out.write("public static MyString myAssign(MyString b){ MyString a = new MyString(b.val); return a; }\n")
-
-# And, Or & Not Logic operations
-out.write("public static void myAnd(MyBool a, MyBool b, MyBool c){ a.val = (b.val && c.val); }\n")
-out.write("public static void myOr(MyBool a, MyBool b, MyBool c){ a.val = (b.val || c.val); }\n")
-out.write("public static void myNot(MyBool a, MyBool b){ a.val = (!b.val); }\n")
-
-# Printing methods (MyBool, MyInt and MyString)
-out.write("public static void myPrint(MyString a){ System.out.println(\"\\n\"+a.val); }\n")
-out.write("public static void myPrint(String a){ myPrint(new MyString(a)); }\n")
-out.write("public static boolean myIf(MyBool a){ System.out.print(\"b\" + a.val + \" \"); return a.val; }\n")
-
-# Mathematical methods (Creating one new MyInt)
-out.write("public static void myAdd(MyInt a, MyInt b, int c){ myAdd(a,b,new MyInt(c)); }\n")
-out.write("public static void myAdd(MyInt a, int b, MyInt c){ myAdd(a,new MyInt(b),c); }\n")
-out.write("public static void myAdd(MyInt a, int b, int c){ myAdd(a,new MyInt(b),new MyInt(c)); }\n")
-out.write("public static void myDel(MyInt a, MyInt b, int c){ myDel(a,b,new MyInt(c)); }\n")
-out.write("public static void myDel(MyInt a, int b, MyInt c){ myDel(a,new MyInt(b),c); }\n")
-out.write("public static void myDel(MyInt a, int b, int c){ myDel(a,new MyInt(b),new MyInt(c)); }\n")
-out.write("public static void myMul(MyInt a, MyInt b, int c){ myMul(a,b,new MyInt(c)); }\n")
-out.write("public static void myMul(MyInt a, int b, MyInt c){ myMul(a,new MyInt(b),c); }\n")
-out.write("public static void myMul(MyInt a, int b, int c){ myMul(a,new MyInt(b),new MyInt(c)); }\n")
-out.write("public static void myDiv(MyInt a, MyInt b, int c){ myDiv(a,b,new MyInt(c)); }\n")
-out.write("public static void myDiv(MyInt a, int b, MyInt c){ myDiv(a,new MyInt(b),c); }\n")
-out.write("public static void myDiv(MyInt a, int b, int c){ myDiv(a,new MyInt(b),new MyInt(c)); }\n")
-out.write("public static void myMod(MyInt a, MyInt b, int c){ myMod(a,b,new MyInt(c)); }\n")
-out.write("public static void myMod(MyInt a, int b, MyInt c){ myMod(a,new MyInt(b),c); }\n")
-out.write("public static void myMod(MyInt a, int b, int c){ myMod(a,new MyInt(b),new MyInt(c)); }\n")
-out.write("public static void myInd(MyInt a, MyInt[] b, int c){ myInd(a,b,new MyInt(c)); }\n")
-out.write("public static void myInd(MyInt a, int[] b, int c){ myInd(a,I.myAssign(b),new MyInt(c)); }\n")
-out.write("public static void myInd(MyString a, MyString[] b, int c){ myInd(a,b,new MyInt(c)); }\n")
-
-# Equal comparison methods (Creating new MyBool)
-out.write("public static void myEquals(MyBool a, MyBool b, boolean c){ myEquals(a, b, new MyBool(c)); }\n")
-out.write("public static void myEquals(MyBool a, MyInt b, int c){ myEquals(a, b, new MyInt(c)); }\n")
-out.write("public static void myEquals(MyBool a, MyString b, String c){ myEquals(a, b, new MyString(c)); }\n")
-out.write("public static void myEquals(MyBool a, boolean b, MyBool c){ myEquals(a, new MyBool(b), c); }\n")
-out.write("public static void myEquals(MyBool a, int b, MyInt c){ myEquals(a, new MyInt(b), c); }\n")
-out.write("public static void myEquals(MyBool a, String b, MyString c){ myEquals(a, new MyString(b), c); }\n")
-out.write("public static void myEquals(MyBool a, boolean b, boolean c){ myEquals(a, new MyBool(b), new MyBool(c)); }\n")
-out.write("public static void myEquals(MyBool a, int b, int c){ myEquals(a, new MyInt(b), new MyInt(c)); }\n")
-out.write(
-    "public static void myEquals(MyBool a, String b, String c){ myEquals(a, new MyString(b), new MyString(c)); }\n")
-
-# Larger or smaller comparison methods (Creating new MyInt)
-out.write("public static void myLess(MyBool a, MyInt b, int c){ myLess(a, b, new MyInt(c)); }\n")
-out.write("public static void myGreater(MyBool a, MyInt b, int c){ myGreater(a, b, new MyInt(c)); }\n")
-out.write("public static void myLessEqual(MyBool a, MyInt b, int c){ myLessEqual(a, b, new MyInt(c)); }\n")
-out.write("public static void myGreaterEqual(MyBool a, MyInt b, int c){ myGreaterEqual(a, b, new MyInt(c)); }\n")
-out.write("public static void myLess(MyBool a, int b, MyInt c){ myLess(a, new MyInt(b), c); }\n")
-out.write("public static void myGreater(MyBool a, int b, MyInt c){ myGreater(a, new MyInt(b), c); }\n")
-out.write("public static void myLessEqual(MyBool a, int b, MyInt c){ myLessEqual(a, new MyInt(b), c); }\n")
-out.write("public static void myGreaterEqual(MyBool a, int b, MyInt c){ myGreaterEqual(a, new MyInt(b), c); }\n")
-out.write("public static void myLess(MyBool a, int b, int c){ myLess(a, new MyInt(b), new MyInt(c)); }\n")
-out.write("public static void myGreater(MyBool a, int b, int c){ myGreater(a, new MyInt(b), new MyInt(c)); }\n")
-out.write("public static void myLessEqual(MyBool a, int b, int c){ myLessEqual(a, new MyInt(b), new MyInt(c)); }\n")
-out.write(
-    "public static void myGreaterEqual(MyBool a, int b, int c){ myGreaterEqual(a, new MyInt(b), new MyInt(c)); }\n")
-
-# Assigning MyBool (Creating new MyBool)
-out.write("public static MyBool myAssign(boolean b){ return myAssign(new MyBool(b)); }\n")
-out.write("public static MyInt myAssign(int b){ return myAssign(new MyInt(b)); }\n")
-out.write(
-    "public static MyInt[] myAssign(int[] b){ MyInt a[] = new MyInt[b.length]; for(int i = 0; i < b.length; i++) a[i] = new MyInt(b[i]); return myAssign(a); }\n")
-out.write("public static MyString myAssign(String b){ return myAssign(new MyString(b)); }\n")
+createClasses.create_all(out)  # Create all the classes
+createMethods.create_all(out)  # Create all the methods
 
 out.write("}\n")
