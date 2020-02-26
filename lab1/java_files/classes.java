@@ -1,17 +1,22 @@
-class MyInt {
-    public int val = 0;
-    public MyInt(int v){ this.val = v; }
-}
-
-class MyBool {
-    public boolean val = false;
-    public MyBool(boolean v){ this.val = v; }
-}
-
-class MyString {
-    public String val = "";
+class MyVariable <T> {
+    public T val;
     public boolean flow = false;
-    public MyString(String v){ this.val = v; }
-    public MyString(String v, boolean b){ this.val = v; this.flow = b; }
+    public MyVariable(T v) { this.val = v; }
+    public MyVariable(T v, boolean f) { this.val = v; this.flow = f; }
+}
+
+class MyInt extends MyVariable<Integer> {
+    public MyInt(int v){ super(v); }
+    public MyInt(int v, boolean b){ super(v, b); }
+}
+
+class MyBool extends MyVariable<Boolean> {
+    public MyBool(boolean v){ super(v); }
+    public MyBool(boolean v, boolean b){ super(v, b); }
+}
+
+class MyString extends MyVariable<String>{
+    public MyString(String v){ super(v); }
+    public MyString(String v, boolean b){ super(v, b); }
 }
 
