@@ -20,3 +20,24 @@ class MyString extends MyVariable<String>{
     public MyString(String v, boolean b){ super(v, b); }
 }
 
+// Maybe a struct for a String wth ids of the branches
+// We need to create a graph -> method to know which if statements have to be trigered to get to a desired branch
+// Method to calculate the branch distance
+class Input {
+    public String input = "";
+    public List<Integer> visitedBranchs = new ArrayList<Integer>();
+    public int branchDistance = -1;
+
+    public Input (String input) {
+        this.input = input;
+    }
+
+    public addBranch(int branch){
+        visitedBranchs.add(branch);
+    }
+
+    public void setBranchDistance(int branchDistance) {
+        this.branchDistance = branchDistance;
+    }
+}
+
