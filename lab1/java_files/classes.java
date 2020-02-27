@@ -28,21 +28,23 @@ class MyString extends MyVariable<String>{
 // Maybe a struct for a String wth ids of the branches
 // We need to create a graph -> method to know which if statements have to be trigered to get to a desired branch
 // Method to calculate the branch distance
-class Input {
-    public String input = "";
+// As we have to store the branch distance in the Input we have to pass the struct to the comparison methods
+class MyInput {
+    public MyString myStr;
     public List<Integer> visitedBranchs = new ArrayList<Integer>();
-    public int branchDistance = -1;
+    public float branchDistance = (float) -1.0;
 
-    public Input (String input) {
-        this.input = input;
+    public void Input (MyString myStr) {
+        this.myStr = myStr;
     }
 
     public void addBranch(int branch){
         visitedBranchs.add(branch);
     }
 
-    public void setBranchDistance(int branchDistance) {
+    public void setBranchDistance(float branchDistance) {
         this.branchDistance = branchDistance;
+        System.out.println(this.branchDistance);
     }
 }
 

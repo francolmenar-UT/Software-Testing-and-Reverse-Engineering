@@ -1,13 +1,13 @@
 class Fuzzer {
-    public static MyString[] fuzz(MyString[] inputs) {
+    public static MyInput[] fuzz(MyString[] inputs) {
         Random rand = new Random();
         int length = rand.nextInt(50) + 10;
-        MyString[] result = new MyString[length];
-
+        MyInput [] resultFuzz = new MyInput[length];
         for(int i = 0; i < length; i++) {
             int index = rand.nextInt(inputs.length);
-            result[i] = new MyString(inputs[index].val, true);
+            resultFuzz[i] = new MyInput();
+            resultFuzz[i].myStr = new MyString(inputs[index].val, true);
         }
-        return result;
+        return resultFuzz;
     }
 }

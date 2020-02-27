@@ -2,7 +2,6 @@ import re
 import constants
 from constants import *
 
-
 def create_reset_method(out, reset_in):
     """
     Writes the Reset method into the file
@@ -58,10 +57,11 @@ def create_while_true(out, line):
     :param line: The current text line found
     """
     out.write(line)  # Write while statement
-    out.write("eca.reset();")  # Add a reset for the next iteration
-    out.write("MyString[] fuzzed_inputs = Fuzzer.fuzz(eca.inputs);")  # Add fuzzed values
+    out.write("eca.reset();\n")  # Add a reset for the next iteration
+    out.write("resultFuzz = Fuzzer.fuzz(eca.inputs);\n")  # Add fuzzed values
     # Write the start of a for loop which will iterate through the fuzzed values
-    out.write("for(int i = 0; i < fuzzed_inputs.length; i++){")
+    out.write("for(MyInputIndex = 0; MyInputIndex < resultFuzz.length; MyInputIndex++){\n")
+    out.write("int i = MyInputIndex;\n")
 
 
 def create_readline(out):
@@ -69,7 +69,7 @@ def create_readline(out):
     Writes the stdin.readLine() code into the file
     :param out: destination file in which the code is written
     """
-    out.write("MyString input = fuzzed_inputs[i];")
+    out.write("MyString input = resultFuzz[i].myStr;")
     out.write("System.out.println(\"Fuzzing: \" + input.val);")
 
 
@@ -300,14 +300,15 @@ def search_gos_comp(out, line, bool_count):
                 text = match[1]
                 var = match[2]
                 val = match[3]
-                out.write("I.myEquals( I.bool" + str(bool_count) + "," + var + "," + val + ");\n")
+                #### out.write("System.out.println(" + "\"Aquí\"" + ");\n")
+                out.write("I.myEquals( I.bool" + str(bool_count) + "," + var + "," + val + ",resultFuzz[MyInputIndex]);\n")
                 line = line.replace(text, "I.bool" + str(bool_count),
                                     1)  # replace matched code with own                #print(match[2], match[3])
             elif len(match[4]) > 0:  # Equals ==
                 text = match[4]
                 var = match[5]
                 val = match[6]
-                out.write("I.myEquals( I.bool" + str(bool_count) + "," + var + "," + val + ");\n")
+                out.write("I.myEquals( I.bool" + str(bool_count) + "," + var + "," + val + ",resultFuzz[MyInputIndex]);\n")
                 line = line.replace(text, "I.bool" + str(bool_count),
                                     1)  # replace matched code with own                #print(match[2], match[3])
             elif len(match[7]) > 0:  # Less
@@ -433,6 +434,8 @@ def search_main_problem(line):
                 text = match[1]
                 var = match[2]
                 line = line.replace(text, " inst" + var, 1)
+                if "class" in line:
+                    line = line + "static int MyInputIndex;\n" + "static int lengthArr;\n" + "static MyInput[] resultFuzz;\n"
     return line
 
 

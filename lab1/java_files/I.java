@@ -31,41 +31,41 @@ class I {
     }
 
     /****************************               ****************************/
-    public static void myEquals(MyBool a, MyBool b, MyBool c) {
+    public static void myEquals(MyBool a, MyBool b, MyBool c, MyInput input) {
         a.val = (b.val == c.val);
-        branch_distance_eq(a.val);
-    } // TODO get returning value
+        input.setBranchDistance(branch_distance_eq(a.val));
+    }
 
-    public static void myEquals(MyBool a, MyInt b, MyInt c) {
+    public static void myEquals(MyBool a, MyInt b, MyInt c, MyInput input) {
         a.val = (b.val == c.val);
-        branch_distance_eq(a.val);
-    } // TODO get returning value
+        input.setBranchDistance(branch_distance_eq(a.val));
+    }
 
-    public static void myEquals(MyBool a, MyString b, MyString c) {
+    public static void myEquals(MyBool a, MyString b, MyString c, MyInput input) {
         a.val = (b.val.equals(c.val));
-        editDistDP(b.val, c.val, b.val.length(), c.val.length());
-    } // TODO get returning value
+        input.setBranchDistance(editDistDP(b.val, c.val, b.val.length(), c.val.length()));
+    }
 
     /****************************               ****************************/
-    public static void myLess(MyBool a, MyInt b, MyInt c) {
+    public static void myLess(MyBool a, MyInt b, MyInt c, MyInput input) {
         a.val = (b.val < c.val);
-        branch_distance_less_eq(b.val, c.val, a.val);
-    } // TODO get returning value
+        input.setBranchDistance(branch_distance_less_eq(b.val, c.val, a.val));
+    }
 
-    public static void myGreater(MyBool a, MyInt b, MyInt c) {
+    public static void myGreater(MyBool a, MyInt b, MyInt c, MyInput input) {
         a.val = (b.val > c.val);
-        branch_distance_greater_eq(b.val, c.val, a.val);
-    } // TODO get returning value
+        input.setBranchDistance(branch_distance_greater_eq(b.val, c.val, a.val));
+    }
 
-    public static void myLessEqual(MyBool a, MyInt b, MyInt c) {
+    public static void myLessEqual(MyBool a, MyInt b, MyInt c, MyInput input) {
         a.val = (b.val <= c.val);
-        branch_distance_less_eq(b.val, c.val, a.val);
-    } // TODO get returning value
+        input.setBranchDistance(branch_distance_less_eq(b.val, c.val, a.val));
+    }
 
-    public static void myGreaterEqual(MyBool a, MyInt b, MyInt c) {
+    public static void myGreaterEqual(MyBool a, MyInt b, MyInt c, MyInput input) {
         a.val = (b.val >= c.val);
-        branch_distance_greater_eq(b.val, c.val, a.val);
-    } // TODO get returning value
+        input.setBranchDistance(branch_distance_greater_eq(b.val, c.val, a.val));
+    }
 
     /****************************               ****************************/
     public static MyBool myAssign(MyBool b) {
@@ -195,89 +195,89 @@ class I {
     }
 
     /****************************               ****************************/
-    public static void myEquals(MyBool a, MyBool b, boolean c) {
-        myEquals(a, b, new MyBool(c));
+    public static void myEquals(MyBool a, MyBool b, boolean c, MyInput input) {
+        myEquals(a, b, new MyBool(c), input);
     }
 
-    public static void myEquals(MyBool a, MyInt b, int c) {
-        myEquals(a, b, new MyInt(c));
+    public static void myEquals(MyBool a, MyInt b, int c, MyInput input) {
+        myEquals(a, b, new MyInt(c), input);
     }
 
-    public static void myEquals(MyBool a, MyString b, String c) {
-        myEquals(a, b, new MyString(c));
+    public static void myEquals(MyBool a, MyString b, String c, MyInput input) {
+        myEquals(a, b, new MyString(c), input);
     }
 
-    public static void myEquals(MyBool a, boolean b, MyBool c) {
-        myEquals(a, new MyBool(b), c);
+    public static void myEquals(MyBool a, boolean b, MyBool c, MyInput input) {
+        myEquals(a, new MyBool(b), c, input);
     }
 
-    public static void myEquals(MyBool a, int b, MyInt c) {
-        myEquals(a, new MyInt(b), c);
+    public static void myEquals(MyBool a, int b, MyInt c, MyInput input) {
+        myEquals(a, new MyInt(b), c, input);
     }
 
-    public static void myEquals(MyBool a, String b, MyString c) {
-        myEquals(a, new MyString(b), c);
+    public static void myEquals(MyBool a, String b, MyString c, MyInput input) {
+        myEquals(a, new MyString(b), c, input);
     }
 
-    public static void myEquals(MyBool a, boolean b, boolean c) {
-        myEquals(a, new MyBool(b), new MyBool(c));
+    public static void myEquals(MyBool a, boolean b, boolean c, MyInput input) {
+        myEquals(a, new MyBool(b), new MyBool(c), input);
     }
 
-    public static void myEquals(MyBool a, int b, int c) {
-        myEquals(a, new MyInt(b), new MyInt(c));
+    public static void myEquals(MyBool a, int b, int c, MyInput input) {
+        myEquals(a, new MyInt(b), new MyInt(c), input);
     }
 
-    public static void myEquals(MyBool a, String b, String c) {
-        myEquals(a, new MyString(b), new MyString(c));
+    public static void myEquals(MyBool a, String b, String c, MyInput input) {
+        myEquals(a, new MyString(b), new MyString(c), input);
     }
 
     /****************************               ****************************/
-    public static void myLess(MyBool a, MyInt b, int c) {
-        myLess(a, b, new MyInt(c));
+    public static void myLess(MyBool a, MyInt b, int c, MyInput input) {
+        myLess(a, b, new MyInt(c), input);
     }
 
-    public static void myGreater(MyBool a, MyInt b, int c) {
-        myGreater(a, b, new MyInt(c));
+    public static void myGreater(MyBool a, MyInt b, int c, MyInput input) {
+        myGreater(a, b, new MyInt(c), input);
     }
 
-    public static void myLessEqual(MyBool a, MyInt b, int c) {
-        myLessEqual(a, b, new MyInt(c));
+    public static void myLessEqual(MyBool a, MyInt b, int c, MyInput input) {
+        myLessEqual(a, b, new MyInt(c), input);
     }
 
-    public static void myGreaterEqual(MyBool a, MyInt b, int c) {
-        myGreaterEqual(a, b, new MyInt(c));
+    public static void myGreaterEqual(MyBool a, MyInt b, int c, MyInput input) {
+        myGreaterEqual(a, b, new MyInt(c), input);
     }
 
-    public static void myLess(MyBool a, int b, MyInt c) {
-        myLess(a, new MyInt(b), c);
+    public static void myLess(MyBool a, int b, MyInt c, MyInput input) {
+        myLess(a, new MyInt(b), c, input);
     }
 
-    public static void myGreater(MyBool a, int b, MyInt c) {
-        myGreater(a, new MyInt(b), c);
+    public static void myGreater(MyBool a, int b, MyInt c, MyInput input) {
+        myGreater(a, new MyInt(b), c, input);
     }
 
-    public static void myLessEqual(MyBool a, int b, MyInt c) {
-        myLessEqual(a, new MyInt(b), c);
+    public static void myLessEqual(MyBool a, int b, MyInt c, MyInput input) {
+        myLessEqual(a, new MyInt(b), c, input);
     }
 
-    public static void myGreaterEqual(MyBool a, int b, MyInt c) {
-        myGreaterEqual(a, new MyInt(b), c);
+    public static void myGreaterEqual(MyBool a, int b, MyInt c, MyInput input) {
+        myGreaterEqual(a, new MyInt(b), c, input);
     }
 
-    public static void myLess(MyBool a, int b, int c) {
-        myLess(a, new MyInt(b), new MyInt(c));
+    public static void myLess(MyBool a, int b, int c, MyInput input) {
+        myLess(a, new MyInt(b), new MyInt(c), input);
     }
 
-    public static void myGreater(MyBool a, int b, int c) {
-        myGreater(a, new MyInt(b), new MyInt(c));
+    public static void myGreater(MyBool a, int b, int c, MyInput input) {
+        myGreater(a, new MyInt(b), new MyInt(c), input);
     }
 
-    public static void myLessEqual(MyBool a, int b, int c) {
-        myLessEqual(a, new MyInt(b), new MyInt(c));
+    public static void myLessEqual(MyBool a, int b, int c, MyInput input) {
+        myLessEqual(a, new MyInt(b), new MyInt(c), input);
     } // .-
 
-    public static void myGreaterEqual(MyBool a, int b, int c) {
-        myGreaterEqual(a, new MyInt(b), new MyInt(c));
+    public static void myGreaterEqual(MyBool a, int b, int c, MyInput input) {
+        myGreaterEqual(a, new MyInt(b), new MyInt(c), input);
     }
 
     /****************************               ****************************/
@@ -306,7 +306,7 @@ class I {
      * @return float normalized value
      */
     public static float normalize_int(int distance) {
-        return distance / (distance + 1);
+        return (float) distance / (distance + 1);
     }
 
     /**
@@ -316,7 +316,7 @@ class I {
      * @return float normalized value
      */
     public static float normalize_float(float distance) {
-        return distance / (distance + 1);
+        return (float) distance / (distance + 1);
     }
 
     /**
@@ -450,7 +450,7 @@ class I {
             MyVariable _b = (MyVariable) b;
             b_flow = _b.flow;
 
-            System.out.print(" t: " + (b instanceof MyBool ? "b" : b instanceof MyInt ? "i" : b instanceof MyString? "s": " "));
+            System.out.print(" t: " + (b instanceof MyBool ? "b" : b instanceof MyInt ? "i" : b instanceof MyString ? "s" : " "));
             System.out.print(_b.id);
             System.out.println(" v: " + b_flow);
         }
@@ -460,7 +460,7 @@ class I {
             MyVariable _c = (MyVariable) c;
             c_flow = _c.flow;
 
-            System.out.print(" t: " + (c instanceof MyBool ? "b" : c instanceof MyInt ? "i" : c instanceof MyString? "s": " "));
+            System.out.print(" t: " + (c instanceof MyBool ? "b" : c instanceof MyInt ? "i" : c instanceof MyString ? "s" : " "));
             System.out.print(_c.id);
             System.out.println(" v: " + c_flow);
         }
@@ -471,7 +471,7 @@ class I {
         }
 
         System.out.print("A  ");
-        System.out.print(" t: " + (a instanceof MyBool ? "b" : a instanceof MyInt ? "i" : a instanceof MyString? "s": " "));
+        System.out.print(" t: " + (a instanceof MyBool ? "b" : a instanceof MyInt ? "i" : a instanceof MyString ? "s" : " "));
         System.out.print(a.id);
         System.out.println(" v: " + a.flow);
         System.out.println();
