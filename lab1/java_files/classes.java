@@ -1,23 +1,28 @@
 class MyVariable <T> {
     public T val;
     public boolean flow = false;
+    public int id = -1;
     public MyVariable(T v) { this.val = v; }
     public MyVariable(T v, boolean f) { this.val = v; this.flow = f; }
+    public MyVariable(T v, boolean f, int id) { this.val = v; this.flow = f; this.id = id; }
 }
 
 class MyInt extends MyVariable<Integer> {
     public MyInt(int v){ super(v); }
     public MyInt(int v, boolean b){ super(v, b); }
+    public MyInt(int v, boolean b, int id){ super(v, b, id); }
 }
 
 class MyBool extends MyVariable<Boolean> {
     public MyBool(boolean v){ super(v); }
     public MyBool(boolean v, boolean b){ super(v, b); }
+    public MyBool(boolean v, boolean b, int id){ super(v, b, id); }
 }
 
 class MyString extends MyVariable<String>{
     public MyString(String v){ super(v); }
     public MyString(String v, boolean b){ super(v, b); }
+    public MyString(String v, boolean b, int id){ super(v, b, id); }
 }
 
 // Maybe a struct for a String wth ids of the branches
@@ -32,7 +37,7 @@ class Input {
         this.input = input;
     }
 
-    public addBranch(int branch){
+    public void addBranch(int branch){
         visitedBranchs.add(branch);
     }
 

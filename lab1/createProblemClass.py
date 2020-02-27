@@ -10,29 +10,34 @@ def create_reset_method(out, reset_in):
     :param reset_in:
     """
     out.write("public void reset(){\n")
+    out.write('\
+        System.err.print("\\n\\nNumber of traits: ");\
+        System.err.println(I.trait_counter);\
+        I.trait_counter = 0;')
     out.write("System.out.println(\"reset\");")
     for line in reset_in.readlines():
+        line = line.replace(', I.stack.empty() ? false : I.stack.peek()', '')
         if line.find("public MyInt") != -1:
             if line.find("{") != -1:
                 out.write(line.split('=', 1)[0].split(' ', 2)[2])
                 out.write(" = new MyInt[] ")
                 out.write(line.split('=', 1)[1])
             else:
-                out.write(line.split(' ', 2)[2])
+                out.write(line.strip().split(' ', 2)[2])
         if line.find("public MyBool") != -1:
             if line.find("{") != -1:
                 out.write(line.split('=', 1)[0].split(' ', 2)[2])
                 out.write(" = new MyBool[] ")
                 out.write(line.split('=', 1)[1])
             else:
-                out.write(line.split(' ', 2)[2])
+                out.write(line.strip().split(' ', 2)[2])
         if line.find("public MyString") != -1:
             if line.find("{") != -1:
                 out.write(line.split('=', 1)[0].split(' ', 2)[2])
                 out.write(" = new MyString[] ")
                 out.write(line.split('=', 1)[1])
             else:
-                out.write(line.split(' ', 2)[2])
+                out.write(line.strip().split(' ', 2)[2])
     out.write("}\n")
     out.write("\n")
 
@@ -171,16 +176,16 @@ def search_new_string_bool(line):
             if len(match[1]) > 0:  # First Boolean creation
                 text = match[1]
                 var = match[2]
-                line = line.replace(var, "new MyBool(" + var + ")", 1)
+                line = line.replace(var, "new MyBool(" + var + ", I.stack.empty() ? false : I.stack.peek())", 1)
             if len(match[3]) > 0:  # Second Boolean creation
                 text = match[3]
                 var = match[4]
-                line = line.replace(var, "new MyBool(" + var + ")", 1)
+                line = line.replace(var, "new MyBool(" + var + ", I.stack.empty() ? false : I.stack.peek())", 1)
             if len(match[5]) > 0:  # First String creation
                 text = match[5]
                 var = match[6]
                 # print(text)
-                line = line.replace(var, "new MyString(" + var + ")", 1)
+                line = line.replace(var, "new MyString(" + var + ", I.stack.empty() ? false : I.stack.peek())", 1)
             if len(match[7]) > 0:  # Second String creation
                 text = match[7]
                 beg = match[8]
@@ -189,7 +194,7 @@ def search_new_string_bool(line):
                 # print(beg)
                 # print(var)
                 # print(end)
-                line = line.replace(beg + var + end, beg + "new MyInt(" + var + ")" + end, 1)
+                line = line.replace(beg + var + end, beg + "new MyInt(" + var + ", I.stack.empty() ? false : I.stack.peek())" + end, 1)
         m = re.findall(r'(' + booleanRe1 + '|' + booleanRe2 + '|' + stringRe + '|' + numberRe + ')',
                        line)  # find all matching sub-patterns
     return line

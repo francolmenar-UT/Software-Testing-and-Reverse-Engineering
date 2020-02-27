@@ -1,5 +1,3 @@
-import java.lang.Math;
-
 class I {
 <insert_var>
 
@@ -35,7 +33,7 @@ class I {
     /****************************               ****************************/
     public static void myEquals(MyBool a, MyBool b, MyBool c) {
         a.val = (b.val == c.val);
-        branch_distance_eq(b.val, c.val);
+        branch_distance_eq(a.val);
     } // TODO get returning value
 
     public static void myEquals(MyBool a, MyInt b, MyInt c) {
@@ -117,6 +115,8 @@ class I {
     }
 
     public static boolean myIf(MyBool a) {
+        if (a.val)
+            I.stack.push(a.flow || (stack.empty() ? false : stack.peek()));
         System.out.print("b" + a.val + " ");
         return a.val;
     }
@@ -305,7 +305,7 @@ class I {
      * @param distance: input Int to be normalized
      * @return float normalized value
      */
-    public float normalize_int(int distance) {
+    public static float normalize_int(int distance) {
         return distance / (distance + 1);
     }
 
@@ -315,7 +315,7 @@ class I {
      * @param distance: input Float to be normalized
      * @return float normalized value
      */
-    public float normalize_float(float distance) {
+    public static float normalize_float(float distance) {
         return distance / (distance + 1);
     }
 
@@ -326,7 +326,7 @@ class I {
      * @param c: Second parameter in the comparison
      * @return float representing the branch distance
      */
-    public float branch_distance_eq(int b, int c) {
+    public static float branch_distance_eq(int b, int c) {
         return normalize_int(b - c);
     }
 
@@ -336,11 +336,11 @@ class I {
      * @param equal: Result of the comparison
      * @return float representing the branch distance
      */
-    public float branch_distance_eq(boolean equal) {
+    public static float branch_distance_eq(boolean equal) {
         if (equal) {
-            return 0.0;
+            return (float) 0.0;
         }
-        return 1.0;
+        return (float) 1.0;
     }
 
     /**
@@ -350,11 +350,11 @@ class I {
      * @param c: Second parameter in the comparison
      * @return float representing the branch distance
      */
-    public float branch_distance_less_eq(int b, int c, boolean less) {
+    public static float branch_distance_less_eq(int b, int c, boolean less) {
         if (less) {
-            return 0.0;
+            return (float) 0.0;
         }
-        return normalize_int(b - c);
+        return (float) normalize_int(b - c);
     }
 
     /**
@@ -364,11 +364,11 @@ class I {
      * @param c: Second parameter in the comparison
      * @return float representing the branch distance
      */
-    public float branch_distance_greater_eq(int b, int c, boolean greater) {
+    public static float branch_distance_greater_eq(int b, int c, boolean greater) {
         if (greater) {
-            return 0.0;
+            return (float) 0.0;
         }
-        return normalize_int(b - c);
+        return (float) normalize_int(b - c);
     }
 
     /**
@@ -378,7 +378,7 @@ class I {
      * @param c: Branch distance of the second parameter in the comparison
      * @return float representing the branch distance
      */
-    public float branch_distance_and(float b, float c) {
+    public static float branch_distance_and(float b, float c) {
         return normalize_float(b + c);
     }
 
@@ -389,7 +389,7 @@ class I {
      * @param c: Branch distance of the second parameter in the comparison
      * @return float representing the branch distance
      */
-    public float branch_distance_or(float b, float c) {
+    public static float branch_distance_or(float b, float c) {
         return Math.min(b, c);
     }
 
@@ -399,8 +399,8 @@ class I {
      * @param b: Branch distance of the first parameter in the comparison
      * @return float representing the branch distance
      */
-    public float branch_distance_not(float b) {
-        return 1.0 - b;
+    public static float branch_distance_not(float b) {
+        return (float) 1.0 - b;
     }
 
     /**
@@ -426,10 +426,68 @@ class I {
                 else if (str1.charAt(i - 1) == str2.charAt(j - 1)) table[i][j] = table[i - 1][j - 1];
                     // If the last character is different
                 else {
-                    table[i][j] = 1 + min(table[i][j - 1], table[i - 1][j], table[i - 1][j - 1]);
+                    table[i][j] = 1 + Math.min(Math.min(table[i][j - 1], table[i - 1][j]), table[i - 1][j - 1]);
                 }
             }
         }
-        return normalize_int(nortable[m][n]);
+        return normalize_int(table[m][n]);
+    }
+
+
+    public static Stack<Boolean> stack = new Stack<>();
+
+    public static int trait_counter = 0;
+
+    public static void check_trait(MyVariable a, Object b, Object c) {
+        boolean stack_val = stack.empty() ? false : stack.peek();
+        System.out.println("S: " + stack_val);
+
+        boolean b_flow = false;
+        boolean c_flow = false;
+
+        System.out.print("B  ");
+        if (b instanceof MyVariable) {
+            MyVariable _b = (MyVariable) b;
+            b_flow = _b.flow;
+
+            System.out.print(" t: " + (b instanceof MyBool ? "b" : b instanceof MyInt ? "i" : b instanceof MyString? "s": " "));
+            System.out.print(_b.id);
+            System.out.println(" v: " + b_flow);
+        }
+
+        System.out.print("C  ");
+        if (c instanceof MyVariable) {
+            MyVariable _c = (MyVariable) c;
+            c_flow = _c.flow;
+
+            System.out.print(" t: " + (c instanceof MyBool ? "b" : c instanceof MyInt ? "i" : c instanceof MyString? "s": " "));
+            System.out.print(_c.id);
+            System.out.println(" v: " + c_flow);
+        }
+
+        if ((b_flow || c_flow || stack_val) && a.flow == false) {
+            a.flow = true;
+            trait_counter++;
+        }
+
+        System.out.print("A  ");
+        System.out.print(" t: " + (a instanceof MyBool ? "b" : a instanceof MyInt ? "i" : a instanceof MyString? "s": " "));
+        System.out.print(a.id);
+        System.out.println(" v: " + a.flow);
+        System.out.println();
+    }
+
+    public static void check_trait(MyVariable a, Object b) {
+        boolean b_flow = false;
+
+        if (b instanceof MyVariable) {
+            MyVariable _b = (MyVariable) b;
+            b_flow = _b.flow;
+        }
+
+        if (b_flow == true && a.flow == false) {
+            a.flow = true;
+            trait_counter++;
+        }
     }
 }

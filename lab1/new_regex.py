@@ -5,6 +5,8 @@ import createProblemClass
 import constants
 from constants import *
 
+import functions
+
 types = dict()
 
 # Global Variables
@@ -19,16 +21,18 @@ realpath = path.realpath(file_path)
 assert (path.isfile(realpath))
 
 original_file = realpath
-inst_filename = 'inst' + path.basename(realpath)
+inst_filename = 'temp' + path.basename(realpath)
 instructed_file = path.join(path.dirname(realpath), inst_filename)
 
 f = open(original_file, 'r')  # Open original file
 out = open(instructed_file, 'w')  # Create instructed file to write into it
-out.write("import java.util.Random;\n")
+out.write("import java.util.*;\n")
+out.write("import java.lang.Math;\n")
 # method_out = open('IM.java', 'w')
 
 # method_out.write("public void sub_method0(MyString input){\n")
 
+var_count, bool_count, str_count = 1, 1, 1  # Reset the variables
 
 for line in f.readlines():
     outline = line
@@ -58,7 +62,6 @@ for line in f.readlines():
         createProblemClass.create_readline(out)  # Create the readLine() code
         continue
 
-    var_count, bool_count, str_count = 1, 1, 1  # Reset the variables
     line = createProblemClass.search_close_bracket(out, line)  # Search for close brackets
 
     line = createProblemClass.search_int_string_bool(line, types)  # Search for Int, String and Boolean
@@ -90,3 +93,13 @@ createProblemClass.create_reset_method(out, reset_in)  # Create the Reset method
 out.write("}\n")  # End of Problem Class
 
 createClasses.create_all(out)  # Create all the classes
+
+# instruct if
+out.close()
+re_in = open(instructed_file, 'r')
+
+if_filename = 'inst' + path.basename(realpath)
+if_file = path.join(path.dirname(realpath), if_filename)
+out2 = open(if_file, 'w')
+
+functions.if_stack_pop(re_in, out2)
