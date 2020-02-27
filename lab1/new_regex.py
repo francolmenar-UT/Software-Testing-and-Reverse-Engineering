@@ -92,8 +92,6 @@ reset_in = open(instructed_file, 'r')
 createProblemClass.create_reset_method(out, reset_in)  # Create the Reset method
 out.write("}\n")  # End of Problem Class
 
-createClasses.create_all(out)  # Create all the classes
-
 # instruct if
 out.close()
 re_in = open(instructed_file, 'r')
@@ -103,3 +101,6 @@ if_file = path.join(path.dirname(realpath), if_filename)
 out2 = open(if_file, 'w')
 
 functions.if_stack_pop(re_in, out2)
+
+
+createClasses.create_all(out2)  # Create all the classes

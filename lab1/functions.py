@@ -1,8 +1,6 @@
-
 def if_stack_pop(input_file, out):
     stack = []
-    
-    add = True
+
     skip_next = False
     stack_pop_string = 'I.stack.pop();\n'
     
@@ -13,13 +11,6 @@ def if_stack_pop(input_file, out):
             fi = True
         else:
             fi = False
-
-        # After this the code is added by the python, so do not modify it
-        if 'class MyVariable' in line:
-            add = False
-        if not add:
-            out.write(line)
-            continue
     
         # write before throwing the exception
         if 'throw new' in line or 'return' in line:
