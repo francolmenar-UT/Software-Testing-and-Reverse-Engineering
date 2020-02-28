@@ -47,6 +47,8 @@ for line in f.readlines():
 
     line = line.split("//", 1)[0]
 
+    line = line.replace('System.err', 'System.out')
+
     # if line.startswith("}") and first_bracket == True:
     # method_out.close()
     #    f2 = open('IM.java', 'r')
