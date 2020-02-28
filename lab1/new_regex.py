@@ -4,6 +4,7 @@ import createClasses
 import createProblemClass
 import constants
 from constants import *
+from branch import analyze_branches, write_graph
 
 import functions
 
@@ -20,18 +21,25 @@ file_path = sys.argv[1]
 realpath = path.realpath(file_path)
 assert (path.isfile(realpath))
 
+# Open original file
 original_file = realpath
-inst_filename = 'temp' + path.basename(realpath)
-instructed_file = path.join(path.dirname(realpath), inst_filename)
+f = open(original_file, 'r')
 
-f = open(original_file, 'r')  # Open original file
+temp_filename = 'temp' + path.basename(realpath)
+temp_file = path.join(path.dirname(realpath), temp_filename)
+out = open(temp_file, 'w')
+
+graph = analyze_branches(f, out)
+out.close()
+f.close()
+
+f = open(temp_file, 'r')
+
+inst_filename = 'temp2' + path.basename(realpath)
+instructed_file = path.join(path.dirname(realpath), inst_filename)
 out = open(instructed_file, 'w')  # Create instructed file to write into it
 out.write("import java.util.*;\n")
 out.write("import java.lang.Math;\n")
-# method_out = open('IM.java', 'w')
-
-# method_out.write("public void sub_method0(MyString input){\n")
-
 var_count, bool_count, str_count = 1, 1, 1  # Reset the variables
 
 for line in f.readlines():
@@ -52,6 +60,8 @@ for line in f.readlines():
 
     if line.find("public static void main") != -1:  # Main statement
         createProblemClass.create_main_method(out, line)  # Create main method
+        # Write graph
+        write_graph(out, graph)
         continue
 
     if line.find("while(true) {") != -1:  # While(true) statement

@@ -35,3 +35,7 @@ ifRe = '(if\(([\.\w\d]+)\))'  # for a354505667.equals("e"
 mainRe = '(\s(Problem[\d]+))'  # for a354505667.equals("e"
 
 readRe = '((stdin.readLine\(\)))'  # for a354505667.equals("e"
+
+function_declarationRe = '^((\w+)(\s+)?){3,4}\([^!@#$+%^]+?\)\s+?{'
+function_callRe = '((\w)+)(\s+)?\((\w+)?(\s*,\s*\w+)*\s*\);'
+array_initializationRe = '{\s*("?\w+"?)\s*((,\s*("?\w+"?))+)?\s*}'
