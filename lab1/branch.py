@@ -81,6 +81,11 @@ def analyze_branches(input_file, out):
             out.write(line)
             continue
 
+        if 'main' in line:
+            out.write(line)
+            stack.append(0)
+            continue
+
         for c in line:
             out.write(c)
 

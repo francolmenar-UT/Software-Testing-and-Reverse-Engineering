@@ -2,6 +2,7 @@ import re
 import constants
 from constants import *
 
+
 def create_reset_method(out, reset_in):
     """
     Writes the Reset method into the file
@@ -58,7 +59,6 @@ def create_while_true(out, line):
     """
     out.write(line)  # Write while statement
     out.write("eca.reset();\n")  # Add a reset for the next iteration
-    out.write("resultFuzz = Fuzzer.fuzz(eca.inputs);\n")  # Add fuzzed values
     # Write the start of a for loop which will iterate through the fuzzed values
     out.write("for(MyInputIndex = 0; MyInputIndex < resultFuzz.length; MyInputIndex++){\n")
     out.write("int i = MyInputIndex;\n")
@@ -436,6 +436,8 @@ def search_main_problem(line):
                 line = line.replace(text, " inst" + var, 1)
                 if "class" in line:
                     line = line + "static int MyInputIndex;\n" + "static int lengthArr;\n" + "static MyInput[] resultFuzz;\n"
+        if 'class' not in line:
+            line += 'resultFuzz = Fuzzer.fuzz(eca.inputs);\n'
     return line
 
 
