@@ -1,6 +1,7 @@
 class I {
 <insert_var>
 
+
     public static void myAdd(MyInt a, MyInt b, MyInt c) {
         a.val = b.val + c.val;
     }
@@ -34,14 +35,14 @@ class I {
     public static void myEquals(MyBool a, MyBool b, MyBool c, MyInput input) {
         a.val = (b.val == c.val);
         float b_distance = branch_distance_eq(a.val);
-        input.setBranchDistance(b_distance);
+        input.setBranchDistance(this_branch_id, b_distance);
         a.setBranchDistance(b_distance); // Set Branch distance to the resulting boolean
     }
 
     public static void myEquals(MyBool a, MyInt b, MyInt c, MyInput input) {
         a.val = (b.val == c.val);
         float b_distance = branch_distance_eq(a.val);
-        input.setBranchDistance(b_distance);
+        input.setBranchDistance(this_branch_id, b_distance);
         a.setBranchDistance(b_distance); // Set Branch distance to the resulting boolean
 
     }
@@ -49,7 +50,7 @@ class I {
     public static void myEquals(MyBool a, MyString b, MyString c, MyInput input) {
         a.val = (b.val.equals(c.val));
         float b_distance = editDistDP(b.val, c.val, b.val.length(), c.val.length());
-        input.setBranchDistance(b_distance);
+        input.setBranchDistance(this_branch_id, b_distance);
         a.setBranchDistance(b_distance); // Set Branch distance to the resulting boolean
     }
 
@@ -57,28 +58,28 @@ class I {
     public static void myLess(MyBool a, MyInt b, MyInt c, MyInput input) {
         a.val = (b.val < c.val);
         float b_distance = branch_distance_less_eq(b.val, c.val, a.val);
-        input.setBranchDistance(b_distance);
+        input.setBranchDistance(this_branch_id, b_distance);
         a.setBranchDistance(b_distance); // Set Branch distance to the resulting boolean
     }
 
     public static void myGreater(MyBool a, MyInt b, MyInt c, MyInput input) {
         a.val = (b.val > c.val);
         float b_distance = branch_distance_greater_eq(b.val, c.val, a.val);
-        input.setBranchDistance(b_distance);
+        input.setBranchDistance(this_branch_id, b_distance);
         a.setBranchDistance(b_distance); // Set Branch distance to the resulting boolean
     }
 
     public static void myLessEqual(MyBool a, MyInt b, MyInt c, MyInput input) {
         a.val = (b.val <= c.val);
         float b_distance = branch_distance_less_eq(b.val, c.val, a.val);
-        input.setBranchDistance(b_distance);
+        input.setBranchDistance(this_branch_id, b_distance);
         a.setBranchDistance(b_distance); // Set Branch distance to the resulting boolean
     }
 
     public static void myGreaterEqual(MyBool a, MyInt b, MyInt c, MyInput input) {
         a.val = (b.val >= c.val);
         float b_distance = branch_distance_greater_eq(b.val, c.val, a.val);
-        input.setBranchDistance(b_distance);
+        input.setBranchDistance(this_branch_id, b_distance);
         a.setBranchDistance(b_distance); // Set Branch distance to the resulting boolean
     }
 
@@ -108,21 +109,21 @@ class I {
     public static void myAnd(MyBool a, MyBool b, MyBool c, MyInput input) {
         a.val = (b.val && c.val);
         float b_distance = branch_distance_and(b.branchDistance, c.branchDistance);
-        input.setBranchDistance(b_distance);
+        input.setBranchDistance(this_branch_id, b_distance);
         a.setBranchDistance(b_distance); // Set Branch distance to the resulting boolean
     }
 
     public static void myOr(MyBool a, MyBool b, MyBool c, MyInput input) {
         a.val = (b.val || c.val);
         float b_distance = branch_distance_or(b.branchDistance, c.branchDistance);
-        input.setBranchDistance(b_distance);
+        input.setBranchDistance(this_branch_id, b_distance);
         a.setBranchDistance(b_distance); // Set Branch distance to the resulting boolean
     }
 
     public static void myNot(MyBool a, MyBool b, MyInput input) {
         a.val = (!b.val);
         float b_distance = branch_distance_not(b.branchDistance);
-        input.setBranchDistance(b_distance);
+        input.setBranchDistance(this_branch_id, b_distance);
         a.setBranchDistance(b_distance); // Set Branch distance to the resulting boolean
     }
 
@@ -400,6 +401,8 @@ class I {
      * @return float representing the branch distance
      */
     public static float branch_distance_and(float b, float c) {
+        if (b == -1.0) b = (float) 0.0;
+        if (c == -1.0) c = (float) 0.0;
         return normalize_float(b + c);
     }
 
@@ -411,6 +414,8 @@ class I {
      * @return float representing the branch distance
      */
     public static float branch_distance_or(float b, float c) {
+        if (b == -1.0) b = (float) 0.0;
+        if (c == -1.0) c = (float) 0.0;
         return Math.min(b, c);
     }
 
@@ -421,6 +426,7 @@ class I {
      * @return float representing the branch distance
      */
     public static float branch_distance_not(float b) {
+        if (b == -1.0) b = (float) 0.0;
         return (float) 1.0 - b;
     }
 

@@ -38,8 +38,7 @@ class MyString extends MyVariable<String>{
 class MyInput {
     public MyString [] myStr;
     public List<Integer> visitedBranchs = new ArrayList<Integer>();
-    public float branchDistance = (float) -1.0; // DELETE
-    HashMap<Integer, Integer> branch_distance = new HashMap<Integer, Integer>();
+    HashMap<Integer, Float> branch_distance = new HashMap<Integer, Float>();
 
 
     public MyInput (MyString[] myStr) {
@@ -50,8 +49,8 @@ class MyInput {
         visitedBranchs.add(branch);
     }
 
-    public void setBranchDistance(float branchDistance) {
-        this.branchDistance = branchDistance;
+    public void setBranchDistance(int branch_id, float branchDistance) {
+        this.branch_distance.put(branch_id, branchDistance);
     }
 }
 
