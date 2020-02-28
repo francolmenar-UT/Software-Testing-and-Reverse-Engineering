@@ -464,7 +464,7 @@ class I {
 
     public static Stack<Boolean> stack = new Stack<>();
 
-    public static int trait_counter = 0; 
+    public static int trait_counter = 0;
 
     public static void check_trait(MyVariable a, Object b, Object c) {
         boolean stack_val = stack.empty() ? false : stack.peek();

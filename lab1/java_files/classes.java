@@ -89,3 +89,10 @@ class MyInput {
         this.branch_distance.put(branch_id, branchDistance);
     }
 }
+
+class Errors {
+    public static void __VERIFIER_error(int i) {
+        Fuzzer.errors_reached.add(i);
+        throw new IllegalArgumentException( "error_" + i );
+    }
+}
