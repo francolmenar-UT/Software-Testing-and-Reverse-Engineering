@@ -27,6 +27,9 @@ def get_id(block_id):
 
 def write_instruction(out, block_id):
     out.write('\n/* Block: ' + str(block_id) + ' */\n')
+    out.write('if (!resultFuzz[MyInputIndex].visitedBranchs.contains(' + str(block_id) + '))\n'
+              '\tresultFuzz[MyInputIndex].visitedBranchs.add(' + str(block_id) + ');\n'
+              )
 
 
 def get_func_name(line):
@@ -70,6 +73,11 @@ def analyze_branches(input_file, out):
 
         # If there is an array (like {1, 2, 3}) skip the line and don't check for blocks
         if is_array_initialization(line):
+            out.write(line)
+            continue
+
+        # If there is a class declaration skip the line and don't check for blocks
+        if 'class' in line:
             out.write(line)
             continue
 

@@ -72,6 +72,11 @@ for line in f.readlines():
         createProblemClass.create_readline(out)  # Create the readLine() code
         continue
 
+    # if the line contains `resultFuzz` it is an instrumented line and we can just copy it without doing anything
+    if 'resultFuzz' in line:
+        out.write(line)
+        continue
+
     line = createProblemClass.search_close_bracket(out, line)  # Search for close brackets
 
     line = createProblemClass.search_int_string_bool(line, types)  # Search for Int, String and Boolean
