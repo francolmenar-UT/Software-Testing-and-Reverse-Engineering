@@ -318,28 +318,28 @@ def search_gos_comp(out, line, bool_count):
                 text = match[7]
                 var = match[8]
                 val = match[9]
-                out.write("I.myLess( I.bool" + str(bool_count) + "," + var + "," + val + ");\n")
+                out.write("I.myLess( I.bool" + str(bool_count) + "," + var + "," + val + ",resultFuzz);\n")
                 line = line.replace(text, "I.bool" + str(bool_count),
                                     1)  # replace matched code with own                #print(match[2], match[3])
             elif len(match[10]) > 0:  # Greater
                 text = match[10]
                 var = match[11]
                 val = match[12]
-                out.write("I.myGreater( I.bool" + str(bool_count) + "," + var + "," + val + ");\n")
+                out.write("I.myGreater( I.bool" + str(bool_count) + "," + var + "," + val + ",resultFuzz);\n")
                 line = line.replace(text, "I.bool" + str(bool_count),
                                     1)  # replace matched code with own                #print(match[2], match[3])
             elif len(match[13]) > 0:  # Less Equal
                 text = match[13]
                 var = match[14]
                 val = match[15]
-                out.write("I.myLessEqual( I.bool" + str(bool_count) + "," + var + "," + val + ");\n")
+                out.write("I.myLessEqual( I.bool" + str(bool_count) + "," + var + "," + val + ",resultFuzz);\n")
                 line = line.replace(text, "I.bool" + str(bool_count),
                                     1)  # replace matched code with own                #print(match[2], match[3])
             elif len(match[16]) > 0:  # Greater equal
                 text = match[16]
                 var = match[17]
                 val = match[18]
-                out.write("I.myGreaterEqual( I.bool" + str(bool_count) + "," + var + "," + val + ");\n")
+                out.write("I.myGreaterEqual( I.bool" + str(bool_count) + "," + var + "," + val + ",resultFuzz);\n")
                 line = line.replace(text, "I.bool" + str(bool_count),
                                     1)  # replace matched code with own                #print(match[2], match[3])
             bool_count += 1
