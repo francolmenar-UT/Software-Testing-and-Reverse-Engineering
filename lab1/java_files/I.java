@@ -117,7 +117,7 @@ class I {
     public static boolean myIf(MyBool a) {
         if (a.val)
             I.stack.push(a.flow || (stack.empty() ? false : stack.peek()));
-        System.out.print("b" + a.val + " ");
+        // System.out.print("b" + a.val + " ");
         return a.val;
     }
 

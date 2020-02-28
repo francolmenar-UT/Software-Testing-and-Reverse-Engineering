@@ -27,8 +27,8 @@ def get_id(block_id):
 
 def write_instruction(out, block_id):
     out.write('\n/* Block: ' + str(block_id) + ' */\n')
-    out.write('if (!resultFuzz[MyInputIndex].visitedBranchs.contains(' + str(block_id) + '))\n'
-              '\tresultFuzz[MyInputIndex].visitedBranchs.add(' + str(block_id) + ');\n'
+    out.write('if (!resultFuzz.visitedBranchs.contains(' + str(block_id) + '))\n'
+              '\tresultFuzz.visitedBranchs.add(' + str(block_id) + ');\n'
               )
 
 

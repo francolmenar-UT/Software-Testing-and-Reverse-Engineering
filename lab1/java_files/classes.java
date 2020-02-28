@@ -30,11 +30,11 @@ class MyString extends MyVariable<String>{
 // Method to calculate the branch distance
 // As we have to store the branch distance in the Input we have to pass the struct to the comparison methods
 class MyInput {
-    public MyString myStr;
+    public MyString [] myStr;
     public List<Integer> visitedBranchs = new ArrayList<Integer>();
     public float branchDistance = (float) -1.0;
 
-    public void Input (MyString myStr) {
+    public MyInput (MyString[] myStr) {
         this.myStr = myStr;
     }
 
@@ -44,7 +44,6 @@ class MyInput {
 
     public void setBranchDistance(float branchDistance) {
         this.branchDistance = branchDistance;
-        System.out.println(this.branchDistance);
     }
 }
 
