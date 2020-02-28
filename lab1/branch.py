@@ -114,16 +114,12 @@ def analyze_branches(input_file, out):
 
 
 def write_graph(out, graph):
-    out.write('HashMap<Integer, Integer> branch_graph = new HashMap<Integer, Integer>();\n')
     for n in graph[0]:
-        out.write('branch_graph.put(' + str(n) + ', ' + str(graph[0][n]) + ');\n')
+        out.write('fuzzer.graph.put(' + str(n) + ', ' + str(graph[0][n]) + ');\n')
+        print(str(n) + ' -> ' + str(graph[0][n]))
 
-    out.write('HashMap<Integer, Boolean> branch_is_if = new HashMap<Integer, Boolean>();\n')
     for n in graph[1]:
-        out.write('branch_is_if.put(' + str(n) + ', ' + ('true' if graph[1][n] else 'false') + ');\n')
+        out.write('fuzzer.if_branch.put(' + str(n) + ', ' + ('true' if graph[1][n] else 'false') + ');\n')
 
-
-def initialize_visited_map(out, parents):
-    out.write('HashMap<Integer, Boolean> visited_branches = new HashMap<Integer, Integer>();\n')
-    for n in parents:
-        out.write('visited_branches.put(' + str(n) + ', false);\n')
+    for n in graph[0]:
+        out.write('fuzzer.visited_branches.put(' + str(n) + ', false);\n')

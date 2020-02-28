@@ -1,11 +1,11 @@
-def create_all(out):
+def create_all(out, var_count, bool_count, str_count):
     """
     Calls all the create_X methods
     :param out: destination file in which the code is written
     """
     create_fuzzer(out)
     create_myclasses(out)
-    create_i(out)
+    create_i(out, var_count, bool_count, str_count)
 
 
 def create_fuzzer(out):
@@ -30,7 +30,7 @@ def create_myclasses(out):
             out.write(line)
 
 
-def create_i(out):
+def create_i(out, var_count, bool_count, str_count):
     """
     Writes the I class into out
     :param out: destination file in which the code is written
@@ -39,12 +39,12 @@ def create_i(out):
     with open(i_filename, 'r') as i_file:
         for line in i_file:
             if line.find("<insert_var>") != -1:
-                for i in range(1, 350):
+                for i in range(1, var_count+1):
                     out.write("    public static MyInt var" + str(i) + " = new MyInt(0, false, " + str(i) + ");\n")
                 out.write("\n")
-                for i in range(1, 350):
+                for i in range(1, bool_count + 1):
                     out.write("    public static MyBool bool" + str(i) + " = new MyBool(false, false, " + str(i) + ");\n")
-                for i in range(1, 350):
+                for i in range(1, str_count + 1):
                     out.write("    public static MyString str" + str(i) + " = new MyString(\"\", false, " + str(i) + ");\n")
                 out.write("\n")
             else:

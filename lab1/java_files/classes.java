@@ -53,4 +53,3 @@ class MyInput {
         this.branch_distance.put(branch_id, branchDistance);
     }
 }
-

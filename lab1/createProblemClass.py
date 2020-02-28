@@ -49,6 +49,7 @@ def create_main_method(out, line):
     :param line: The current text line found
     """
     out.write(line)  # Write main statement
+    out.write('Fuzzer fuzzer = new Fuzzer();\n')
 
 
 def create_while_true(out, line):
@@ -58,8 +59,10 @@ def create_while_true(out, line):
     :param line: The current text line found
     """
     out.write(line)  # Write while statement
+    out.write('if (resultFuzz != null)\n')
+    out.write('\tfuzzer.after_execution(resultFuzz);\n')
     out.write("eca.reset();\n")  # Add a reset for the next iteration
-    out.write('resultFuzz = Fuzzer.fuzz(eca.inputs);\n')
+    out.write('resultFuzz = fuzzer.fuzz(eca.inputs);\n')
     # Write the start of a for loop which will iterate through the fuzzed values
     out.write("for(MyInputIndex = 0; MyInputIndex < resultFuzz.myStr.length; MyInputIndex++){\n")
     out.write("int i = MyInputIndex;\n")
@@ -71,7 +74,7 @@ def create_readline(out):
     :param out: destination file in which the code is written
     """
     out.write("MyString input = resultFuzz.myStr[i];")
-    out.write("System.out.println(\"Fuzzing: \" + input.val);")
+    #out.write("System.out.println(\"Fuzzing: \" + input.val);")
 
 
 def search_close_bracket(out, line):
