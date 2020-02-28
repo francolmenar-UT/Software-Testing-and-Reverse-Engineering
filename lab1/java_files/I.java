@@ -35,7 +35,7 @@ class I {
     public static void myEquals(MyBool a, MyBool b, MyBool c, MyInput input) {
         a.val = (b.val == c.val);
         float b_distance = branch_distance_eq(a.val);
-        input.setBranchDistance(this_branch_id, b_distance);
+        input.setBranchDistance(this_branch_id, b_distance); // Set Branch distance to the MyInput
         a.setBranchDistance(b_distance); // Set Branch distance to the resulting boolean
     }
 
@@ -460,11 +460,11 @@ class I {
         return normalize_int(table[m][n]);
     }
 
-    public static int this_branch_id;
+    public static int this_branch_id; // ID used for storing the branch distance in the Hash Map
 
     public static Stack<Boolean> stack = new Stack<>();
 
-    public static int trait_counter = 0;
+    public static int trait_counter = 0; 
 
     public static void check_trait(MyVariable a, Object b, Object c) {
         boolean stack_val = stack.empty() ? false : stack.peek();

@@ -1,51 +1,87 @@
-class MyVariable <T> {
+// General class
+class MyVariable<T> {
     public T val;
-    public boolean flow = false;
+    public boolean flow = false; // Used for tainting
     public int id = -1;
-    public MyVariable(T v) { this.val = v; }
-    public MyVariable(T v, boolean f) { this.val = v; this.flow = f; }
-    public MyVariable(T v, boolean f, int id) { this.val = v; this.flow = f; this.id = id; }
+
+    public MyVariable(T v) {
+        this.val = v;
+    }
+
+    public MyVariable(T v, boolean f) {
+        this.val = v;
+        this.flow = f;
+    }
+
+    public MyVariable(T v, boolean f, int id) {
+        this.val = v;
+        this.flow = f;
+        this.id = id;
+    }
 }
 
+//MyInt
 class MyInt extends MyVariable<Integer> {
-    public MyInt(int v){ super(v); }
-    public MyInt(int v, boolean b){ super(v, b); }
-    public MyInt(int v, boolean b, int id){ super(v, b, id); }
+    public MyInt(int v) {
+        super(v);
+    }
+
+    public MyInt(int v, boolean b) {
+        super(v, b);
+    }
+
+    public MyInt(int v, boolean b, int id) {
+        super(v, b, id);
+    }
 }
 
+//MyBool
 class MyBool extends MyVariable<Boolean> {
-    public float branchDistance = (float) -1.0;
+    public float branchDistance = (float) -1.0; // Used for the branch distance calculation
 
-    public MyBool(boolean v){ super(v); }
-    public MyBool(boolean v, boolean b){ super(v, b); }
-    public MyBool(boolean v, boolean b, int id){ super(v, b, id); }
+    public MyBool(boolean v) {
+        super(v);
+    }
+
+    public MyBool(boolean v, boolean b) {
+        super(v, b);
+    }
+
+    public MyBool(boolean v, boolean b, int id) {
+        super(v, b, id);
+    }
 
     public void setBranchDistance(float branchDistance) {
         this.branchDistance = branchDistance;
     }
 }
 
-class MyString extends MyVariable<String>{
-    public MyString(String v){ super(v); }
-    public MyString(String v, boolean b){ super(v, b); }
-    public MyString(String v, boolean b, int id){ super(v, b, id); }
+//MyString
+class MyString extends MyVariable<String> {
+    public MyString(String v) {
+        super(v);
+    }
+
+    public MyString(String v, boolean b) {
+        super(v, b);
+    }
+
+    public MyString(String v, boolean b, int id) {
+        super(v, b, id);
+    }
 }
 
-// Maybe a struct for a String wth ids of the branches
-// We need to create a graph -> method to know which if statements have to be trigered to get to a desired branch
-// Method to calculate the branch distance
-// As we have to store the branch distance in the Input we have to pass the struct to the comparison methods
+//MyInput
 class MyInput {
-    public MyString [] myStr;
-    public List<Integer> visitedBranchs = new ArrayList<Integer>();
-    HashMap<Integer, Float> branch_distance = new HashMap<Integer, Float>();
+    public MyString[] myStr; // Array of Strings-char fuzzed
+    public List<Integer> visitedBranchs = new ArrayList<Integer>(); // All the visited branches by a fuzzed input
+    HashMap<Integer, Float> branch_distance = new HashMap<Integer, Float>();  // Hash map with the id of the visited branches and its branch distance
 
-
-    public MyInput (MyString[] myStr) {
+    public MyInput(MyString[] myStr) {
         this.myStr = myStr;
     }
 
-    public void addBranch(int branch){
+    public void addBranch(int branch) {
         visitedBranchs.add(branch);
     }
 

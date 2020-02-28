@@ -1,3 +1,7 @@
+fuzzer_filename = "java_files/fuzzer.java"
+classes_filename = "java_files/classes.java"
+i_filename = "java_files/I.java"
+
 bracket_closeRe = '(^\s*})'  # Regex for close bracket
 
 typeIntRe = '((int)(\[?\]?)\s([\w\d]+))'

@@ -121,5 +121,4 @@ out2 = open(if_file, 'w')
 
 functions.if_stack_pop(re_in, out2)
 
-
 createClasses.create_all(out2, var_count, bool_count, str_count)  # Create all the classes
