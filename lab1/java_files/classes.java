@@ -56,6 +56,7 @@ class MyInput {
 
 class Errors {
     public static void __VERIFIER_error(int i) {
+        Fuzzer.errors_reached.add(i);
         throw new IllegalStateException( "error_" + i );
     }
 }

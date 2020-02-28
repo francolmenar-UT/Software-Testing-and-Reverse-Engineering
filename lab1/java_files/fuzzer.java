@@ -19,6 +19,9 @@ class Fuzzer {
     public static int max_branches_visited = 0;
     public static int iteration_number = 0;
 
+    // Errors
+    public static HashSet<Integer> errors_reached = new HashSet<>();
+
     public List<MyInput> created_inputs = new ArrayList<MyInput>();
 
     public void Fuzzer() { }
@@ -62,6 +65,7 @@ class Fuzzer {
         if (visited_stats > max_branches_visited) {
             max_branches_visited = visited_stats;
             System.err.println("Iteration: " + iteration_number+ " visited " + visited_stats + " branches out of" + visited_branches.size());
+            System.err.println("Errors reached:" + errors_reached.size());
             for (MyString s : created_inputs.get(created_inputs.size()-1).myStr) {
                 System.err.print(s.val);
             }
