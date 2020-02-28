@@ -17,7 +17,10 @@ class Fuzzer {
     public static int mutationRate = 3;
 
     public static int max_branches_visited = 0;
+    public static int max_trait = 0;
     public static int iteration_number = 0;
+
+    public static boolean USE_TAINT = false;
 
     // Errors
     public static HashSet<Integer> errors_reached = new HashSet<>();
@@ -66,6 +69,9 @@ class Fuzzer {
             max_branches_visited = visited_stats;
             System.err.println("Iteration: " + iteration_number+ " visited " + visited_stats + " branches out of" + visited_branches.size());
             System.err.println("Errors reached:" + errors_reached.size());
+            System.err.println("Traits with this input: " + created_inputs.get(created_inputs.size()-1).trait_count);
+            System.err.println("Max traits: " + max_trait);
+
             for (MyString s : created_inputs.get(created_inputs.size()-1).myStr) {
                 System.err.print(s.val);
             }
@@ -79,55 +85,68 @@ class Fuzzer {
             return result;
         }
 
-        int target_branch = -1;
-
-        int minAL = -1;
-        float minDistance = -1;
-        int branch_id = -1;
+        // The input to mutate
         MyInput best_input = created_inputs.get(0);
 
-        // Select a branch not visited
-        for (Map.Entry<Integer, Boolean> entry : visited_branches.entrySet()) {
-            Integer branch = entry.getKey();
-            Boolean visited = entry.getValue();
+        // Every 10 iterations create new input by mutating the one with more taints
+        if (iteration_number % 10 == 0 && USE_TAINT) {
+            // find input with more traits
+            for (MyInput input : created_inputs) {
+                if (input.trait_count > best_input.trait_count) {
+                    best_input = input;
+                }
+            }
 
-            if (!visited) {
-                target_branch = branch;
+        }
+        else { // use AF and branch distance
+            int target_branch = -1;
 
-                // Find the best closest input to it
-                minAL = -1;
-                minDistance = -1;
-                branch_id = -1;
-                best_input = created_inputs.get(0);
-                for (MyInput input : created_inputs) {
-                    Pair<Integer, Integer> res = approachLevel(target_branch, input);
-                    if (res.first <0) continue; //there was an error
+            int minAL = -1;
+            float minDistance = -1;
+            int branch_id = -1;
 
-                    if(minAL == -1 || res.first < minAL) {
-                        minAL = res.first;
-                        branch_id = res.second;
-                        minDistance = input.branch_distance.get(branch_id);
-                        best_input = input;
-                    }
-                    else if (res.first == minAL) {
-                        float distance = input.branch_distance.get(branch_id);
-                        if (distance < minDistance && distance >= 0) {
+            // Select a branch not visited
+            for (Map.Entry<Integer, Boolean> entry : visited_branches.entrySet()) {
+                Integer branch = entry.getKey();
+                Boolean visited = entry.getValue();
+
+                if (!visited) {
+                    target_branch = branch;
+
+                    // Find the best closest input to it
+                    minAL = -1;
+                    minDistance = -1;
+                    branch_id = -1;
+                    best_input = created_inputs.get(0);
+                    for (MyInput input : created_inputs) {
+                        Pair<Integer, Integer> res = approachLevel(target_branch, input);
+                        if (res.first <0) continue; //there was an error
+
+                        if(minAL == -1 || res.first < minAL) {
                             minAL = res.first;
                             branch_id = res.second;
-                            minDistance = distance;
+                            minDistance = input.branch_distance.get(branch_id);
                             best_input = input;
                         }
+                        else if (res.first == minAL) {
+                            float distance = input.branch_distance.get(branch_id);
+                            if (distance < minDistance && distance >= 0) {
+                                minAL = res.first;
+                                branch_id = res.second;
+                                minDistance = distance;
+                                best_input = input;
+                            }
+                        }
                     }
-                }
 
-                if (minDistance >= 0)
-                    break;
+                    if (minDistance >= 0)
+                        break;
+                }
             }
         }
 
 
-
-        // Mutate it
+        // Mutate input
         MyString[] fuzzStr = new MyString[best_input.myStr.length];
         System.arraycopy(best_input.myStr, 0, fuzzStr, 0, best_input.myStr.length);
 
@@ -146,10 +165,13 @@ class Fuzzer {
     /*
     After an execution update the visited_branches with the data computed during the execution
     */
-    public void after_execution (MyInput input) {
+    public void after_execution (MyInput input, int trait_count) {
+        input.trait_count = trait_count;
         for (int branch : input.visitedBranchs) {
             visited_branches.put(branch, true);
         }
+        if (input.trait_count > max_trait)
+            max_trait = input.trait_count;
     }
 
 }

@@ -39,7 +39,7 @@ class MyInput {
     public MyString [] myStr;
     public List<Integer> visitedBranchs = new ArrayList<Integer>();
     HashMap<Integer, Float> branch_distance = new HashMap<Integer, Float>();
-
+    public int trait_count = 0;
 
     public MyInput (MyString[] myStr) {
         this.myStr = myStr;

@@ -60,7 +60,7 @@ def create_while_true(out, line):
     """
     out.write(line)  # Write while statement
     out.write('if (resultFuzz != null)\n')
-    out.write('\tfuzzer.after_execution(resultFuzz);\n')
+    out.write('\tfuzzer.after_execution(resultFuzz, I.trait_counter);\n')
     out.write("eca.reset();\n")  # Add a reset for the next iteration
     out.write('resultFuzz = fuzzer.fuzz(eca.inputs);\n')
     # Write the start of a for loop which will iterate through the fuzzed values
