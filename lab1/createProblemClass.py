@@ -363,20 +363,20 @@ def search_and_or_not_comp(out, line, bool_count):
                 text = match[1]
                 var = match[2]
                 val = match[3]
-                out.write("I.myAnd( I.bool" + str(bool_count) + "," + var + "," + val + ");\n")
+                out.write("I.myAnd( I.bool" + str(bool_count) + "," + var + "," + val + ",resultFuzz);\n")
                 line = line.replace(text, "I.bool" + str(bool_count),
                                     1)  # replace matched code with own                #print(match[2], match[3])
             elif len(match[4]) > 0:  # OR
                 text = match[4]
                 var = match[5]
                 val = match[6]
-                out.write("I.myOr( I.bool" + str(bool_count) + "," + var + "," + val + ");\n")
+                out.write("I.myOr( I.bool" + str(bool_count) + "," + var + "," + val + ",resultFuzz);\n")
                 line = line.replace(text, "I.bool" + str(bool_count),
                                     1)  # replace matched code with own                #print(match[2], match[3])
             elif len(match[7]) > 0:  # NOT
                 text = match[7]
                 var = match[8]
-                out.write("I.myNot( I.bool" + str(bool_count) + "," + var + ");\n")
+                out.write("I.myNot( I.bool" + str(bool_count) + "," + var + ",resultFuzz);\n")
                 line = line.replace(text, "I.bool" + str(bool_count),
                                     1)  # replace matched code with own                #print(match[2], match[3])
             elif len(match[9]) > 0:  # No idea??

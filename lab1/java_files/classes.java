@@ -14,9 +14,15 @@ class MyInt extends MyVariable<Integer> {
 }
 
 class MyBool extends MyVariable<Boolean> {
+    public float branchDistance = (float) -1.0;
+
     public MyBool(boolean v){ super(v); }
     public MyBool(boolean v, boolean b){ super(v, b); }
     public MyBool(boolean v, boolean b, int id){ super(v, b, id); }
+
+    public void setBranchDistance(float branchDistance) {
+        this.branchDistance = branchDistance;
+    }
 }
 
 class MyString extends MyVariable<String>{
@@ -32,7 +38,9 @@ class MyString extends MyVariable<String>{
 class MyInput {
     public MyString [] myStr;
     public List<Integer> visitedBranchs = new ArrayList<Integer>();
-    public float branchDistance = (float) -1.0;
+    public float branchDistance = (float) -1.0; // DELETE
+    HashMap<Integer, Integer> branch_distance = new HashMap<Integer, Integer>();
+
 
     public MyInput (MyString[] myStr) {
         this.myStr = myStr;
