@@ -11,10 +11,10 @@ def create_reset_method(out, reset_in):
     """
     out.write("public void reset(){\n")
     out.write('\
-        System.err.print("\\n\\nNumber of traits: ");\
-        System.err.println(I.trait_counter);\
-        I.trait_counter = 0;')
-    out.write("System.out.println(\"reset\");")
+        //System.err.print("\\n\\nNumber of traits: ");\n\
+        //System.err.println(I.trait_counter);\n\
+        I.trait_counter = 0;\n')
+    out.write("System.out.println(\"reset\");\n")
     for line in reset_in.readlines():
         line = line.replace(', I.stack.empty() ? false : I.stack.peek()', '')
         if line.find("public MyInt") != -1:
