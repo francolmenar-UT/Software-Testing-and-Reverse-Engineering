@@ -1,3 +1,4 @@
+// Pair of elements
 class Pair<A, B> {
     public A first;
     public B second;
@@ -8,8 +9,9 @@ class Pair<A, B> {
     }
 }
 
+// Fuzzer
 class Fuzzer {
-    public HashMap<Integer, Integer> graph = new HashMap<>();
+    public HashMap<Integer, Integer> graph = new HashMap<>(); // Graph created of the program
     public HashMap<Integer, Boolean> if_branch = new HashMap<>();
     public HashMap<Integer, Boolean> visited_branches = new HashMap<Integer, Boolean>();
     public static int inputCreated = 0;
@@ -27,13 +29,15 @@ class Fuzzer {
 
     public List<MyInput> created_inputs = new ArrayList<MyInput>();
 
-    public void Fuzzer() { }
+    public void Fuzzer() {
+    }
 
+    // Random Fuzz
     public static MyInput random_fuzz(MyString[] inputs) {
         Random rand = new Random();
         int length = rand.nextInt(iteration_number) + 10;
         MyString[] fuzzStr = new MyString[length];
-        for(int i = 0; i < length; i++) {
+        for (int i = 0; i < length; i++) {
             int index = rand.nextInt(inputs.length);
             fuzzStr[i] = new MyString(inputs[index].val, true);
         }
@@ -46,7 +50,7 @@ class Fuzzer {
 
         String trace = new String("");
 
-        while (!(input.visitedBranchs.contains(node) && this.if_branch.get(node)) || node ==0) {
+        while (!(input.visitedBranchs.contains(node) && this.if_branch.get(node)) || node == 0) {
             distance++;
             node = this.graph.get(node);
 
@@ -57,6 +61,7 @@ class Fuzzer {
         return new Pair(distance, node);
     }
 
+    // Normal Fuzz
     public MyInput fuzz(MyString[] inputs) {
         iteration_number++;
         // stats
@@ -138,20 +143,16 @@ class Fuzzer {
                             }
                         }
                     }
-
                     if (minDistance >= 0)
                         break;
                 }
             }
         }
-
-
-        // Mutate input
         MyString[] fuzzStr = new MyString[best_input.myStr.length];
         System.arraycopy(best_input.myStr, 0, fuzzStr, 0, best_input.myStr.length);
 
         Random rand = new Random();
-        for(int i = 0; i < fuzzStr.length; i++) {
+        for (int i = 0; i < fuzzStr.length; i++) {
             if (rand.nextInt(100) < mutationRate) {
                 int index = rand.nextInt(inputs.length);
                 fuzzStr[i] = new MyString(inputs[index].val, true);
@@ -170,8 +171,7 @@ class Fuzzer {
         for (int branch : input.visitedBranchs) {
             visited_branches.put(branch, true);
         }
-        if (input.trait_count > max_trait)
+        if (trait_count > max_trait)
             max_trait = input.trait_count;
     }
-
 }

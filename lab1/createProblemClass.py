@@ -17,21 +17,21 @@ def create_reset_method(out, reset_in):
     out.write("System.out.println(\"reset\");\n")
     for line in reset_in.readlines():
         line = line.replace(', I.stack.empty() ? false : I.stack.peek()', '')
-        if line.find("public MyInt") != -1:
+        if line.find("public MyInt") != -1:  # MyInt  Array
             if line.find("{") != -1:
                 out.write(line.split('=', 1)[0].split(' ', 2)[2])
                 out.write(" = new MyInt[] ")
                 out.write(line.split('=', 1)[1])
             else:
                 out.write(line.strip().split(' ', 2)[2])
-        if line.find("public MyBool") != -1:
+        if line.find("public MyBool") != -1:  # MyBool Array
             if line.find("{") != -1:
                 out.write(line.split('=', 1)[0].split(' ', 2)[2])
                 out.write(" = new MyBool[] ")
                 out.write(line.split('=', 1)[1])
             else:
                 out.write(line.strip().split(' ', 2)[2])
-        if line.find("public MyString") != -1:
+        if line.find("public MyString") != -1:  # MyString Array
             if line.find("{") != -1:
                 out.write(line.split('=', 1)[0].split(' ', 2)[2])
                 out.write(" = new MyString[] ")
@@ -49,7 +49,7 @@ def create_main_method(out, line):
     :param line: The current text line found
     """
     out.write(line)  # Write main statement
-    out.write('Fuzzer fuzzer = new Fuzzer();\n')
+    out.write('Fuzzer fuzzer = new Fuzzer();\n')  # Create the fuzzer
 
 
 def create_while_true(out, line):
@@ -62,10 +62,10 @@ def create_while_true(out, line):
     out.write('if (resultFuzz != null)\n')
     out.write('\tfuzzer.after_execution(resultFuzz, I.trait_counter);\n')
     out.write("eca.reset();\n")  # Add a reset for the next iteration
-    out.write('resultFuzz = fuzzer.fuzz(eca.inputs);\n')
+    out.write('resultFuzz = fuzzer.fuzz(eca.inputs);\n')  # Run the fuzzer
     # Write the start of a for loop which will iterate through the fuzzed values
     out.write("for(MyInputIndex = 0; MyInputIndex < resultFuzz.myStr.length; MyInputIndex++){\n")
-    out.write("int i = MyInputIndex;\n")
+    out.write("int i = MyInputIndex;\n")  # Global auxiliary counter
 
 
 def create_readline(out):
@@ -74,7 +74,6 @@ def create_readline(out):
     :param out: destination file in which the code is written
     """
     out.write("MyString input = resultFuzz.myStr[i];")
-    #out.write("System.out.println(\"Fuzzing: \" + input.val);")
 
 
 def search_close_bracket(out, line):
@@ -129,7 +128,6 @@ def replace_int(line, match, types):
     type = match[2]
     var = match[3]
     val = match[4]
-    # print("type " + val + " = " + type)
     types[val] = type
     return line.replace(type, "MyInt", 1)
 
@@ -146,7 +144,6 @@ def replace_string(line, match, types):
     type = match[6]
     var = match[7]
     val = match[8]
-    # print("type " + val + " = " + type)
     types[val] = type
     return line.replace(type, "MyString", 1)
 
@@ -163,7 +160,6 @@ def replace_boolean(line, match, types):
     type = match[10]
     var = match[11]
     val = match[12]
-    # print("type " + val + " = " + type)
     types[val] = type
     return line.replace(type, "MyBool", 1)
 
@@ -177,7 +173,6 @@ def search_new_string_bool(line):
                    line)  # find all matching sub-patterns
 
     while len(m) > 0:  # if any matching items
-        # print(line)
         var, val, text = "", "", ""
         for match in m:  # for each submatch, extract the condition, the var and the val
             if len(match[1]) > 0:  # First Boolean creation
@@ -191,14 +186,14 @@ def search_new_string_bool(line):
             if len(match[5]) > 0:  # First String creation
                 text = match[5]
                 var = match[6]
-                # print(text)
                 line = line.replace(var, "new MyString(" + var + ", I.stack.empty() ? false : I.stack.peek())", 1)
             if len(match[7]) > 0:  # Second String creation
                 text = match[7]
                 beg = match[8]
                 var = match[9]
                 end = match[10]
-                line = line.replace(beg + var + end, beg + "new MyInt(" + var + ", I.stack.empty() ? false : I.stack.peek())" + end, 1)
+                line = line.replace(beg + var + end,
+                                    beg + "new MyInt(" + var + ", I.stack.empty() ? false : I.stack.peek())" + end, 1)
         m = re.findall(r'(' + booleanRe1 + '|' + booleanRe2 + '|' + stringRe + '|' + numberRe + ')',
                        line)  # find all matching sub-patterns
     return line
@@ -219,7 +214,6 @@ def search_math_operations(out, line, types, var_count, str_count, bool_count):
         line)  # find all matching sub-patterns
 
     while len(m) > 0:  # if any matching items
-        # print(line)
         var, val, text = "", "", ""
         for match in m:  # for each submatch, extract the condition, the var and the val
             if len(match[1]) > 0:  # Addition
@@ -257,11 +251,10 @@ def search_math_operations(out, line, types, var_count, str_count, bool_count):
                 out.write("I.myMod( I.var" + str(var_count) + "," + var + "," + val + ");\n")
                 line = line.replace(text, "I.var" + str(var_count), 1)  # replace matched code with own function
                 var_count += 1
-            elif len(match[16]) > 0:  # Array Assignments - Not sure
+            elif len(match[16]) > 0:  # Array Assignments
                 text = match[16]
                 var = match[17]
                 val = match[18]
-                # print(types)
                 if var in types.keys() and (types[var] == "String" or types[var] == "String[]"):
                     out.write("I.myInd( I.str" + str(str_count) + "," + var + "," + val + ");\n")
                     line = line.replace(text, "I.str" + str(str_count), 1)  # replace matched code with own
@@ -279,7 +272,6 @@ def search_math_operations(out, line, types, var_count, str_count, bool_count):
                 var = match[20]
                 val = match[21]
                 line = line.replace(text, var + val, 1)  # replace matched code with own function
-        # print(line)
         m = re.findall(
             r'(' + addRe + '|' + delRe + '|' + mulRe + '|' + divRe + '|' + modRe + '|' + indRe + '|' + varRe + ')',
             line)  # find all matching
@@ -297,7 +289,6 @@ def search_gos_comp(out, line, bool_count):
                    line)  # find all matching sub-patterns
 
     while len(m) > 0:  # if any matching items
-        # print(line)
         var, val, text = "", "", ""
         for match in m:  # for each submatch, extract the condition, the var and the val
             if len(match[1]) > 0:  # Equals
@@ -306,42 +297,42 @@ def search_gos_comp(out, line, bool_count):
                 val = match[3]
                 out.write("I.myEquals( I.bool" + str(bool_count) + "," + var + "," + val + ",resultFuzz);\n")
                 line = line.replace(text, "I.bool" + str(bool_count),
-                                    1)  # replace matched code with own                #print(match[2], match[3])
+                                    1)  # replace matched code with own
             elif len(match[4]) > 0:  # Equals ==
                 text = match[4]
                 var = match[5]
                 val = match[6]
                 out.write("I.myEquals( I.bool" + str(bool_count) + "," + var + "," + val + ",resultFuzz);\n")
                 line = line.replace(text, "I.bool" + str(bool_count),
-                                    1)  # replace matched code with own                #print(match[2], match[3])
+                                    1)  # replace matched code with own
             elif len(match[7]) > 0:  # Less
                 text = match[7]
                 var = match[8]
                 val = match[9]
                 out.write("I.myLess( I.bool" + str(bool_count) + "," + var + "," + val + ",resultFuzz);\n")
                 line = line.replace(text, "I.bool" + str(bool_count),
-                                    1)  # replace matched code with own                #print(match[2], match[3])
+                                    1)  # replace matched code with own
             elif len(match[10]) > 0:  # Greater
                 text = match[10]
                 var = match[11]
                 val = match[12]
                 out.write("I.myGreater( I.bool" + str(bool_count) + "," + var + "," + val + ",resultFuzz);\n")
                 line = line.replace(text, "I.bool" + str(bool_count),
-                                    1)  # replace matched code with own                #print(match[2], match[3])
+                                    1)  # replace matched code with own
             elif len(match[13]) > 0:  # Less Equal
                 text = match[13]
                 var = match[14]
                 val = match[15]
                 out.write("I.myLessEqual( I.bool" + str(bool_count) + "," + var + "," + val + ",resultFuzz);\n")
                 line = line.replace(text, "I.bool" + str(bool_count),
-                                    1)  # replace matched code with own                #print(match[2], match[3])
+                                    1)  # replace matched code with own
             elif len(match[16]) > 0:  # Greater equal
                 text = match[16]
                 var = match[17]
                 val = match[18]
                 out.write("I.myGreaterEqual( I.bool" + str(bool_count) + "," + var + "," + val + ",resultFuzz);\n")
                 line = line.replace(text, "I.bool" + str(bool_count),
-                                    1)  # replace matched code with own                #print(match[2], match[3])
+                                    1)  # replace matched code with own
             bool_count += 1
         m = re.findall(r'(' + equalsRe + '|' + isisRe + '|' + leRe + '|' + geRe + '|' + leqRe + '|' + geqRe + ')',
                        line)  # find all matching sub-patterns
@@ -359,7 +350,6 @@ def search_and_or_not_comp(out, line, bool_count):
     m = re.findall(r'(' + andRe + '|' + orRe + '|' + notRe + '|' + boolRe + ')', line)  # find all matching sub-patterns
 
     while len(m) > 0:  # if any matching items
-        # print(line)
         var, val, text = "", "", ""
         for match in m:  # for each submatch, extract the condition, the var and the val
             if len(match[1]) > 0:  # AND
@@ -368,20 +358,20 @@ def search_and_or_not_comp(out, line, bool_count):
                 val = match[3]
                 out.write("I.myAnd( I.bool" + str(bool_count) + "," + var + "," + val + ",resultFuzz);\n")
                 line = line.replace(text, "I.bool" + str(bool_count),
-                                    1)  # replace matched code with own                #print(match[2], match[3])
+                                    1)  # replace matched code with own
             elif len(match[4]) > 0:  # OR
                 text = match[4]
                 var = match[5]
                 val = match[6]
                 out.write("I.myOr( I.bool" + str(bool_count) + "," + var + "," + val + ",resultFuzz);\n")
                 line = line.replace(text, "I.bool" + str(bool_count),
-                                    1)  # replace matched code with own                #print(match[2], match[3])
+                                    1)  # replace matched code with own
             elif len(match[7]) > 0:  # NOT
                 text = match[7]
                 var = match[8]
                 out.write("I.myNot( I.bool" + str(bool_count) + "," + var + ",resultFuzz);\n")
                 line = line.replace(text, "I.bool" + str(bool_count),
-                                    1)  # replace matched code with own                #print(match[2], match[3])
+                                    1)  # replace matched code with own
             elif len(match[9]) > 0:  # No idea??
                 text = match[9]
                 var = match[10]
@@ -391,7 +381,6 @@ def search_and_or_not_comp(out, line, bool_count):
             bool_count += 1
         m = re.findall(r'(' + andRe + '|' + orRe + '|' + notRe + '|' + boolRe + ')',
                        line)  # find all matching sub-patterns
-        # print(line)
     return line, bool_count
 
 
@@ -403,7 +392,6 @@ def search_print_assign_if(line):
     m = re.findall(r'(' + assignRe + '|' + printRe + '|' + ifRe + ')', line)  # find all matching sub-patterns
 
     while len(m) > 0:  # if any matching items
-        # print(line)
         var, val, text = "", "", ""
         for match in m:  # for each submatch, extract the condition, the var and the val
             if len(match[1]) > 0:  # if first kind of condition
@@ -430,7 +418,6 @@ def search_main_problem(line):
     """
     m = re.findall(r'(' + mainRe + ')', line)  # find all matching sub-patterns
     if len(m) > 0:  # if any matching items
-        # print(line)
         var, val, text = "", "", ""
         for match in m:  # for each submatch, extract the condition, the var and the val
             if len(match[1]) > 0:  # ProblemX
@@ -449,7 +436,6 @@ def search_stdin_readline(line):
     """
     m = re.findall(r'(' + readRe + ')', line)  # find all matching sub-patterns
     if len(m) > 0:  # if any matching items
-        # print(line)
         var, val, text = "", "", ""
         for match in m:  # for each submatch, extract the condition, the var and the val
             if len(match[1]) > 0:  # if first kind of condition
