@@ -39,10 +39,11 @@ def get_func_name(line):
     return None
 
 
-def new_branch(out, stack, parents, block_id):
+def new_branch(out, stack, parents, if_branch, block_id, if_block):
     new_id = get_id(block_id)
     write_instruction(out, new_id)
     parents[new_id] = stack[-1]
+    if_branch[new_id] = if_block
     stack += [new_id]
 
 
@@ -51,15 +52,15 @@ def analyze_branches(input_file, out):
     parents = dict()
     functions = dict()
     functions_call = dict()
+    if_branch = dict()
 
-    block_id = [0]
     line_n = -1
     for line in input_file:
         line_n += 1
         block_id = [line_n]
         if is_function_declaration(line):
             out.write(line)
-            new_branch(out, stack, parents, block_id)
+            new_branch(out, stack, parents, if_branch, block_id, False)
 
             func_name = get_func_name(line)
             functions[func_name] = block_id[0]
@@ -86,11 +87,16 @@ def analyze_branches(input_file, out):
             stack.append(0)
             continue
 
+        if_block = False
+        if 'if' in line:
+            out.write('I.this_branch_id = ' + str(block_id[0] + 1) + ';\n')
+            if_block = True
+
         for c in line:
             out.write(c)
 
             if c == '{':
-                new_branch(out, stack, parents, block_id)
+                new_branch(out, stack, parents, if_branch, block_id, if_block)
 
             if c == '}':
                 stack.pop()
@@ -104,10 +110,20 @@ def analyze_branches(input_file, out):
         parent_id = functions_call[name][0]  # assuming only one parent todo: extend this
         parents[fun_id] = parent_id
 
-    return parents
+    return parents, if_branch
 
 
-def write_graph(out, parents):
+def write_graph(out, graph):
     out.write('HashMap<Integer, Integer> branch_graph = new HashMap<Integer, Integer>();\n')
+    for n in graph[0]:
+        out.write('branch_graph.put(' + str(n) + ', ' + str(graph[0][n]) + ');\n')
+
+    out.write('HashMap<Integer, Boolean> branch_is_if = new HashMap<Integer, Boolean>();\n')
+    for n in graph[1]:
+        out.write('branch_is_if.put(' + str(n) + ', ' + ('true' if graph[1][n] else 'false') + ');\n')
+
+
+def initialize_visited_map(out, parents):
+    out.write('HashMap<Integer, Boolean> visited_branches = new HashMap<Integer, Integer>();\n')
     for n in parents:
-        out.write('branch_graph.put(' + str(n) + ', ' + str(parents[n]) + ');\n')
+        out.write('visited_branches.put(' + str(n) + ', false);\n')

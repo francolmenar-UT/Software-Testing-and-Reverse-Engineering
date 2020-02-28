@@ -97,6 +97,9 @@ def search_int_string_bool(line, types):
     :param line: The current text line found
     :param types:
     """
+    if 'this_branch_id' in line:
+        return line
+
     m = re.findall(r'(' + typeIntRe + '|' + typeStringRe + '|' + typeBoolRe + ')',
                    line)  # find all matching sub-patterns
 
@@ -192,9 +195,6 @@ def search_new_string_bool(line):
                 beg = match[8]
                 var = match[9]
                 end = match[10]
-                # print(beg)
-                # print(var)
-                # print(end)
                 line = line.replace(beg + var + end, beg + "new MyInt(" + var + ", I.stack.empty() ? false : I.stack.peek())" + end, 1)
         m = re.findall(r'(' + booleanRe1 + '|' + booleanRe2 + '|' + stringRe + '|' + numberRe + ')',
                        line)  # find all matching sub-patterns

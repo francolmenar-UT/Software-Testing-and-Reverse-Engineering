@@ -433,6 +433,7 @@ class I {
         return normalize_int(table[m][n]);
     }
 
+    public static int this_branch_id;
 
     public static Stack<Boolean> stack = new Stack<>();
 

@@ -77,6 +77,10 @@ for line in f.readlines():
         out.write(line)
         continue
 
+    if 'this_branch_id' in line:
+        out.write(line)
+        continue
+
     line = createProblemClass.search_close_bracket(out, line)  # Search for close brackets
 
     line = createProblemClass.search_int_string_bool(line, types)  # Search for Int, String and Boolean
