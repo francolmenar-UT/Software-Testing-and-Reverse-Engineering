@@ -550,6 +550,14 @@ class I {
         }
     }
 
+    static HashMap<String, String> cfg = new HashMap<String, String>();
+    static Context ctx;
+
+    public static void initiateContext() {
+        cfg.put("model", "true");
+        ctx = new Context(cfg);
+    }
+
     /**
      * Create the SAT solver and checks its result
      *

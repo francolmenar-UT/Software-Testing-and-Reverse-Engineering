@@ -29,7 +29,8 @@ class Fuzzer {
 
     public List<MyInput> created_inputs = new ArrayList<MyInput>();
 
-    public void Fuzzer() {
+    public Fuzzer() {
+        I.initiateContext();
     }
 
     // Random Fuzz
