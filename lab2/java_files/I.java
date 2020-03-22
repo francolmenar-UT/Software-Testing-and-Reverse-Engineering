@@ -549,4 +549,42 @@ class I {
             trait_counter++;
         }
     }
+
+    /**
+     * Create the SAT solver and checks its result
+     *
+     * @param ctx
+     * @param graph_c
+     * @param instance_c
+     *
+    public static void solve_sat(Context ctx, BoolExpr graph_c, BoolExpr instance_c) {
+
+
+        Solver s = ctx.mkSolver(); // create the Solver
+        s.add(graph_c); // Add the Expressions to the solver
+        s.add(instance_c);
+
+        if (s.check() == Status.SATISFIABLE) { // Check if the result of the solver
+            Model m = s.getModel(); // Get the model
+                /*  CHANGE, THIS IS FOR THE SUDOKU  - I think that it just sets everything to false
+                Expr[][]R=new Expr[9][9];
+                for(int i=0;i< 9;i++)
+                    for(int j=0;j< 9;j++)
+                        R[i][j]=m.evaluate(X[i][j],false);
+                *
+
+            System.out.println("Graph solution:");
+            /*  CHANGE, THIS JUST PRINTS THE SOLUTION OF THE SUDOKU
+            for (int i = 0; i < 9; i++) {
+                for (int j = 0; j < 9; j++)
+                    System.out.print(" " + R[i][j]);
+                System.out.println();
+            }
+            *
+        } else {
+            System.out.println("Failed to solve the graph");
+            throw new TestFailedException();
+        }
+    }
+    */
 }
