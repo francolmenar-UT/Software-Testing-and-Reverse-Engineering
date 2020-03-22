@@ -1,4 +1,6 @@
 class I {
+    static Context ctx = initiateContext();
+
 <insert_var>
 
 
@@ -550,12 +552,10 @@ class I {
         }
     }
 
-    static HashMap<String, String> cfg = new HashMap<String, String>();
-    static Context ctx;
-
-    public static void initiateContext() {
+    private static Context initiateContext() {
+        HashMap<String, String> cfg = new HashMap<String, String>();
         cfg.put("model", "true");
-        ctx = new Context(cfg);
+        return new Context(cfg);
     }
 
     /**

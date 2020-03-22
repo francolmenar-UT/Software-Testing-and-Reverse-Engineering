@@ -30,7 +30,6 @@ class Fuzzer {
     public List<MyInput> created_inputs = new ArrayList<MyInput>();
 
     public Fuzzer() {
-        I.initiateContext();
     }
 
     // Random Fuzz
