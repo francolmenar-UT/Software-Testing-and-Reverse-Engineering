@@ -1,3 +1,9 @@
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Date;
+
 // General class
 class MyVariable<T> {
     public T val;
@@ -20,7 +26,7 @@ class MyVariable<T> {
     }
 }
 
-//MyInt
+// MyInt
 class MyInt extends MyVariable<Integer> {
     public MyInt(int v) {
         super(v);
@@ -35,7 +41,7 @@ class MyInt extends MyVariable<Integer> {
     }
 }
 
-//MyBool
+// MyBool
 class MyBool extends MyVariable<Boolean> {
     public float branchDistance = (float) -1.0; // Used for the branch distance calculation
 
@@ -56,7 +62,7 @@ class MyBool extends MyVariable<Boolean> {
     }
 }
 
-//MyString
+// MyString
 class MyString extends MyVariable<String> {
     public MyString(String v) {
         super(v);
@@ -71,11 +77,13 @@ class MyString extends MyVariable<String> {
     }
 }
 
-//MyInput
+// MyInput
 class MyInput {
     public MyString[] myStr; // Array of Strings-char fuzzed
     public List<Integer> visitedBranchs = new ArrayList<Integer>(); // All the visited branches by a fuzzed input
-    public HashMap<Integer, Float> branch_distance = new HashMap<Integer, Float>();  // Hash map with the id of the visited branches and its branch distance
+    public HashMap<Integer, Float> branch_distance = new HashMap<Integer, Float>(); // Hash map with the id of the
+                                                                                    // visited branches and its branch
+                                                                                    // distance
 
     public int trait_count = 0;
 
@@ -95,6 +103,37 @@ class MyInput {
 class Errors {
     public static void __VERIFIER_error(int i) {
         Fuzzer.errors_reached.add(i);
-        throw new IllegalArgumentException( "error_" + i );
+        throw new IllegalArgumentException("error_" + i);
     }
+}
+
+/** Used log the elapsed time and the branch coverage. */
+class Logging {
+    public long startTime;
+    public long elapsedTime;
+    public PrintWriter out;
+
+    public Logging() {
+        startTime = System.nanoTime();
+        elapsedTime = 0;
+        try {
+            out = new PrintWriter(new BufferedWriter(new FileWriter("log_" + new Date(), true)));
+        } catch (IOException e) {
+            System.out.println("Could not write to file.");
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * @return the elapsedTime
+     */
+    public long getElapsedTime() {
+        return startTime - System.nanoTime();
+    }
+
+    /**TODO: Add branch distance. */
+    public void writeLog(){
+        out.write(String.valueOf(getElapsedTime()) + ", " + "branchDistance");
+    }
+
 }
