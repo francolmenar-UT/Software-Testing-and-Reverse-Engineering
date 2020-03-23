@@ -12,7 +12,7 @@ class Pair<A, B> {
 // Fuzzer
 // TODO Check which variables are not needed
 class Fuzzer {
-    public static final String INPUT = "EIFJCDGABHEIFJCDGABH"
+    public static final String INPUT = "EIFJCDGABHEIFJCDGABH";
 
     public HashMap<Integer, Integer> graph = new HashMap<>(); // Graph created of the program
     public HashMap<Integer, Boolean> if_branch = new HashMap<>();
@@ -62,9 +62,9 @@ class Fuzzer {
     public MyInput StrToInput(String str, Boolean bool) {
         MyString[] Mystr = new MyString[str.length()];
         for (int i = 0; i < str.length(); i++) {
-            Mystr[i] = new MyString(Character.toString(text.charAt(i)), bool) // Each char as String
+            Mystr[i] = new MyString(Character.toString(str.charAt(i)), bool); // Each char as String
         }
-        new MyInput(Mystr);
+        return new MyInput(Mystr);
     }
 
     public MyInput fuzz_sat(MyString[] inputs) {
