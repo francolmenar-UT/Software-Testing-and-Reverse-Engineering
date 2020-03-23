@@ -157,7 +157,7 @@ class Logging {
         startTime = System.nanoTime();
         elapsedTime = 0;
         try {
-            out = new PrintWriter(new BufferedWriter(new FileWriter("log_" + new Date() + ".txt", true)));
+            out = new PrintWriter(new BufferedWriter(new FileWriter("log_" + String.valueOf(new Date().getTime()) + ".txt", true)));
         } catch (IOException e) {
             System.out.println("Could not write to file.");
             e.printStackTrace();
@@ -168,7 +168,7 @@ class Logging {
      * @return the elapsedTime
      */
     public long getElapsedTime() {
-        return startTime - System.nanoTime();
+        return System.nanoTime() - startTime;
     }
 
     /**
