@@ -62,7 +62,7 @@ def create_while_true(out, line):
     out.write('if (resultFuzz != null)\n')
     out.write('\tfuzzer.after_execution(resultFuzz, I.trait_counter);\n')
     out.write("eca.reset();\n")  # Add a reset for the next iteration
-    out.write('resultFuzz = fuzzer.fuzz_sat(eca.inputs, I.ctx, I.z3f, I.z3f);\n')  # Run the fuzzer
+    out.write('resultFuzz = fuzzer.fuzz_sat(eca.inputs, I.ctx, I.z3f, I.last_comparison_expr, eca.inputs);\n')  # Run the fuzzer
     # Write the start of a for loop which will iterate through the fuzzed values
     out.write("for(MyInputIndex = 0; MyInputIndex < resultFuzz.myStr.length; MyInputIndex++){\n")
     out.write("int i = MyInputIndex;\n")  # Global auxiliary counter

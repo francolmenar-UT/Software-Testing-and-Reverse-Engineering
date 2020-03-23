@@ -70,20 +70,21 @@ class Fuzzer {
     }
 
     /**
-     * Print information when a new input triggers a longer branch - or a new one
+     * Print information when a new input triggers a new branch
      */
     public void printNewBranch() {
-        if (!DEBUG_NEW_BRANCH) return;
-        System.err.println("\nIteration: " + iteration_number + " visited " + max_branches_visited + " branches out of " + visited_branches.size());
+        if (!DEBUG_NEW_BRANCH) return; // It is only printed if DEBUG_NEW_BRANCH is true
+        System.err.println("\n************ FUZZER ************");
+        System.err.println("Iteration: " + iteration_number + " visited " + max_branches_visited + " branches out of " + visited_branches.size());
         System.err.println("\tErrors reached: " + errors_reached.size());
-        if (created_inputs.size() == 0) {
+        if (created_inputs.size() == 0) { // Avoid index issues
             System.err.println("\tTraits with this input: " + created_inputs.get(created_inputs.size()).trait_count);
         } else {
             System.err.println("\tTraits with this input: " + created_inputs.get(created_inputs.size() - 1).trait_count);
         }
         System.err.println("\tMax traits: " + max_trait);
-
         System.err.print("\tInput used: ");
+
         for (MyString s : created_inputs.get(created_inputs.size() - 1).myStr) {
             System.err.print(s.val);
         }
@@ -91,14 +92,60 @@ class Fuzzer {
     }
 
     /**
-     * Generates the input for the program
-     * If it is the first iteration it gets the fixed INPUT
-     * Otherwise, it uses the SAT solver to get a new input which trigers a new branch
+     * Print information when a new input triggers a longer branch - or a new one
      *
-     * @param inputs: TODO I think that they are not being used, Maybe after the second iteration
+     * @param condition:   Last Boolean Expression
+     * @param new_input:   MyInput to be created
+     * @param satisfiable: boolean used to knwo which branch has been taken
+     */
+    public static void printSAT(BoolExpr condition, MyInput new_input, Boolean satisfiable) {
+        if (!DEBUG_SAT) return; // It is only printed if DEBUG_SAT is true
+        System.err.println("\n************ SAT SOLVER ************");
+        System.err.println("\tLast Condition: " + condition.toString());
+        if (satisfiable) {
+            System.err.println("\tBranch Reacheable, the condition is Satisfiable!");
+        } else {
+            System.err.println("Branch unreachable, the condition is NOT Satisfiable");
+        }
+        System.err.print("New input created: ");
+        printMyInput(new_input);
+    }
+
+    /**
+     * Auxiliary method for printing a MyInput
+     * It mainly calls to printMyArrString
+     *
+     * @param input: MyInput to be printed
+     */
+    public static void printMyInput(MyInput input) {
+        printMyArrString(input.myStr);
+    }
+
+    /**
+     * Auxiliary method for printing a MyString[]
+     *
+     * @param str: MyString[] to be printed
+     */
+    public static void printMyArrString(MyString[] str) {
+        for (int i = 0; i < str.length; i++) {
+            System.err.print(str[i].val);
+        }
+        System.err.print("\n");
+    }
+
+    /**
+     * Generates the new input for the program
+     * If it is the first iteration it gets the fixed INPUT
+     * Otherwise, it uses the SAT solver to decide the new input
+     *
+     * @param current_input: input of the actual execution of the program
+     * @param ctx:           z3 context
+     * @param z3f:           Boolean Expresion representing the Path Constraint
+     * @param condition:     Last condition triggered by the input
+     * @param valid_inputs:  Valid characters for the input of the program
      * @return the MyInput which corresponds to the new input for the program
      */
-    public MyInput fuzz_sat(MyString[] inputs, Context ctx, BoolExpr z3f, BoolExpr z3f_aux) {
+    public MyInput fuzz_sat(MyString[] current_input, Context ctx, BoolExpr z3f, Expr condition, MyString[] valid_inputs) {
         iteration_number++;
         // stats
         int visited_stats = 0;
@@ -106,79 +153,89 @@ class Fuzzer {
             if (visit)
                 visited_stats++;
         }
-        // We found a longer branch  TODO Ask if it is still needed
+        // We found a longer branch
         if (visited_stats > max_branches_visited) {
             max_branches_visited = visited_stats;
             printNewBranch();
         }
 
-        // TODO Check that this is correct
-        //  if (iteration_number < 2 || iteration_number % 100 == 0) {
-        // In the beginning just return the predefined Input
-        if (iteration_number < 2) {
-            // Create the object to return
+        if (iteration_number < 2) { // Use the defined String as an starting point
             MyInput result = StrToInput(INPUT, true);
             created_inputs.add(result);
             return result;
         } else { // Use the SAT Solver
-
-            sat_solver(ctx, z3f, z3f_aux);
-            MyInput result = StrToInput(INPUT, true); // TODO Change to SAT solver
+            MyInput result = sat_solver(ctx, z3f, (BoolExpr) condition, valid_inputs, current_input);
             created_inputs.add(result);
             return result;
         }
     }
 
-
     /**
-     * Create the SAT solver and checks its result
+     * Runs the SAT Solver
+     * If it is Satisfiable, only one character is modified for the new input
+     * Otherwise, a new random MyInput is created
      *
-     * @param ctx
-     * @param graph_c
-     * @param instance_c
+     * @param ctx:           z3 context
+     * @param z3f:           Boolean Expresion representing the Path Constraint
+     * @param condition:     Last condition triggered by the input
+     * @param valid_inputs:  Valid characters for the input of the program
+     * @param current_input: input of the actual execution of the program
+     * @return the MyInput which corresponds to the new input for the program
      */
-    public static void sat_solver(Context ctx, BoolExpr z3f, BoolExpr condition) {
+    public static MyInput sat_solver(Context ctx, BoolExpr z3f, BoolExpr condition, MyString[] valid_inputs, MyString[] current_input) {
+        MyInput new_input = new MyInput(new MyString[]{new MyString("")}); // Empty MyInput for later use
+
         Solver s = ctx.mkSolver(); // create the Solver
         s.add(z3f); // Add the Path Constraint to the solver
-        //s.add(ctx.mkEq(condition.z3var, condition.val ? ctx.mkFalse() : ctx.mkTrue())); // Add the !branch
-
-        // make sure to run solve on a model containing: the input variables, the initial global settings,
-        // the current path constraint (complete code path up to that point), and the inverted last branch
+        s.add(ctx.mkEq(condition, condition.isTrue() ? ctx.mkFalse() : ctx.mkTrue())); // Add the !branch
 
         // path-constraint + branch=false -> SAT
         if (s.check() == Status.SATISFIABLE) { // The branch can be reachable
-            System.err.println("New branch reached");
-
-            Model m = s.getModel(); // Get the model
-            // System.err.println(m.toString());
-            // foundModel.evaluate(input.z3var, true).toString();
-
-            // Basically it's a Backtrack, you just go to the parent comparison to try to go to the other leaf
-
-            // TODO Print the new Input that reaches this leaf
-
-            // TODO Iterate through the model to print the solution
-            // TODO Reverse engineried the solution from the expresion
-            /*  CHANGE, THIS JUST PRINTS THE SOLUTION OF THE SUDOKU
-            for (int i = 0; i < 9; i++) {
-                for (int j = 0; j < 9; j++)
-                    System.out.print(" " + R[i][j]);
-                System.out.println();
-            }*/
-
+            // Create a new input by changing one random character
+            new_input = slight_fuzz(current_input, valid_inputs);
+            printSAT(condition, new_input, true);
         } else { // The branch is unreachable
-            System.err.println("c");
-            if (DEBUG_SAT) System.err.println("Branch unreachable");
-            // TODO Go to the parent node?
+            new_input = random_fuzz(valid_inputs); // Return a random input
+            printSAT(condition, new_input, false);
         }
+        return new_input;
     }
 
-    //  ----- Genetic Algorithm Implementation ----
-    // Random Fuzz
+    /**
+     * Generates a new input by changing only one character
+     *
+     * @param current_input: original input which is going to be changed only one char
+     * @param valid_inputs:  valid charcters to be inserted in the input
+     * @return new_input as a MyInput
+     */
+    public static MyInput slight_fuzz(MyString[] current_input, MyString[] valid_inputs) {
+        Random rand = new Random();
+        int count = 0; // Counter for exiting the while loop
+        MyString[] new_input = current_input; // The new input is the old one with one char changed
+        while (count < 10) { // To avoid an infinite loop if the characters are reapted
+            int new_input_char = rand.nextInt(valid_inputs.length); // The char which is going to be inserted
+            int char_to_change = rand.nextInt(current_input.length); // The char wich is going to be erased
+
+            // Check that the chars are not the same
+            if (current_input[char_to_change] != valid_inputs[new_input_char]) {
+                new_input[char_to_change] = valid_inputs[new_input_char]; // Substitute the char
+                break;
+            }
+        }
+        return new MyInput(new_input); // Return the new input as a MyInput
+    }
+
+    /**
+     * Generates a randon MyInput using the valid MyStrings of inputs
+     *
+     * @param inputs: Valid MyStrings to be used in the generation
+     * @return MyInput which is randomly generated
+     */
     public static MyInput random_fuzz(MyString[] inputs) {
         Random rand = new Random();
         int length = rand.nextInt(iteration_number) + 10;
         MyString[] fuzzStr = new MyString[length];
+
         for (int i = 0; i < length; i++) {
             int index = rand.nextInt(inputs.length);
             fuzzStr[i] = new MyString(inputs[index].val, true);
@@ -187,7 +244,7 @@ class Fuzzer {
     }
 
     //  ----- Genetic Algorithm Implementation ----
-    // Normal Fuzz
+    // Normal Fuzz (lab1)
     public MyInput fuzz(MyString[] inputs) {
         iteration_number++;
         // stats
@@ -281,7 +338,6 @@ class Fuzzer {
 
     /*
     After an execution update the visited_branches with the data computed during the execution
-    TODO Is it needed to do more stuff here?
     */
     public void after_execution(MyInput input, int trait_count) {
         input.trait_count = trait_count; // TODO Probably unused
