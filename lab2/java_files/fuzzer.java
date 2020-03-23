@@ -10,19 +10,22 @@ class Pair<A, B> {
 }
 
 // Fuzzer
+// TODO Check which variables are not needed
 class Fuzzer {
+    public static final String INPUT = "EIFJCDGABHEIFJCDGABH";
+
     public HashMap<Integer, Integer> graph = new HashMap<>(); // Graph created of the program
     public HashMap<Integer, Boolean> if_branch = new HashMap<>();
     public HashMap<Integer, Boolean> visited_branches = new HashMap<Integer, Boolean>();
     public static int inputCreated = 0;
-    public static int randomFuzz = 10;
-    public static int mutationRate = 3;
+    public static int randomFuzz = 10; // Probably unused
+    public static int mutationRate = 3; // Probably unused
 
     public static int max_branches_visited = 0;
-    public static int max_trait = 0;
+    public static int max_trait = 0; // Probably unused
     public static int iteration_number = 0;
 
-    public static boolean USE_TAINT = false;
+    public static boolean USE_TAINT = false; // Probably unused
 
     // Errors
     public static HashSet<Integer> errors_reached = new HashSet<>();
@@ -30,18 +33,6 @@ class Fuzzer {
     public List<MyInput> created_inputs = new ArrayList<MyInput>();
 
     public Fuzzer() {
-    }
-
-    // Random Fuzz
-    public static MyInput random_fuzz(MyString[] inputs) {
-        Random rand = new Random();
-        int length = rand.nextInt(iteration_number) + 10;
-        MyString[] fuzzStr = new MyString[length];
-        for (int i = 0; i < length; i++) {
-            int index = rand.nextInt(inputs.length);
-            fuzzStr[i] = new MyString(inputs[index].val, true);
-        }
-        return new MyInput(fuzzStr);
     }
 
     public Pair<Integer, Integer> approachLevel(int goal, MyInput input) {
@@ -61,6 +52,69 @@ class Fuzzer {
         return new Pair(distance, node);
     }
 
+    /**
+     * Returns a MyInput from a String
+     *
+     * @param str:  String to be converted to MyInput
+     * @param bool: boolen to set the flow
+     * @return
+     */
+    public MyInput StrToInput(String str, Boolean bool) {
+        MyString[] Mystr = new MyString[str.length()];
+        for (int i = 0; i < str.length(); i++) {
+            Mystr[i] = new MyString(Character.toString(str.charAt(i)), bool); // Each char as String
+        }
+        return new MyInput(Mystr);
+    }
+
+    public MyInput fuzz_sat(MyString[] inputs) {
+        iteration_number++;
+        // stats
+        int visited_stats = 0;
+        for (Boolean visit : visited_branches.values()) {
+            if (visit)
+                visited_stats++;
+        }
+        // TODO Ask Andrea if this is to be removed, the traits
+        if (visited_stats > max_branches_visited) {
+            max_branches_visited = visited_stats;
+            System.err.println("Iteration: " + iteration_number + " visited " + visited_stats + " branches out of" + visited_branches.size());
+            System.err.println("Errors reached:" + errors_reached.size());
+            System.err.println("Traits with this input: " + created_inputs.get(created_inputs.size() - 1).trait_count);
+            System.err.println("Max traits: " + max_trait);
+
+            // TODO I'm not sure about this
+            for (MyString s : created_inputs.get(created_inputs.size() - 1).myStr) {
+                System.err.print(s.val);
+            }
+            System.err.println();
+        }
+
+        // TODO Check that this is correct
+        //  if (iteration_number < 2 || iteration_number % 100 == 0) {
+        // In the beginning just return the predefined Input
+        if (iteration_number < 2) {
+            // Create the object to return
+            return StrToInput(INPUT, true);
+        } else { // Use the SAT Solver
+            return StrToInput(INPUT, true); // TODO Change to SAT
+        }
+    }
+
+    //  ----- Genetic Algorithm Implementation ----
+    // Random Fuzz
+    public static MyInput random_fuzz(MyString[] inputs) {
+        Random rand = new Random();
+        int length = rand.nextInt(iteration_number) + 10;
+        MyString[] fuzzStr = new MyString[length];
+        for (int i = 0; i < length; i++) {
+            int index = rand.nextInt(inputs.length);
+            fuzzStr[i] = new MyString(inputs[index].val, true);
+        }
+        return new MyInput(fuzzStr);
+    }
+
+    //  ----- Genetic Algorithm Implementation ----
     // Normal Fuzz
     public MyInput fuzz(MyString[] inputs) {
         iteration_number++;
@@ -72,12 +126,12 @@ class Fuzzer {
         }
         if (visited_stats > max_branches_visited) {
             max_branches_visited = visited_stats;
-            System.err.println("Iteration: " + iteration_number+ " visited " + visited_stats + " branches out of" + visited_branches.size());
+            System.err.println("Iteration: " + iteration_number + " visited " + visited_stats + " branches out of" + visited_branches.size());
             System.err.println("Errors reached:" + errors_reached.size());
-            System.err.println("Traits with this input: " + created_inputs.get(created_inputs.size()-1).trait_count);
+            System.err.println("Traits with this input: " + created_inputs.get(created_inputs.size() - 1).trait_count);
             System.err.println("Max traits: " + max_trait);
 
-            for (MyString s : created_inputs.get(created_inputs.size()-1).myStr) {
+            for (MyString s : created_inputs.get(created_inputs.size() - 1).myStr) {
                 System.err.print(s.val);
             }
             System.err.println();
@@ -102,8 +156,7 @@ class Fuzzer {
                 }
             }
 
-        }
-        else { // use AF and branch distance
+        } else { // use AF and branch distance
             int target_branch = -1;
 
             int minAL = -1;
@@ -125,15 +178,14 @@ class Fuzzer {
                     best_input = created_inputs.get(0);
                     for (MyInput input : created_inputs) {
                         Pair<Integer, Integer> res = approachLevel(target_branch, input);
-                        if (res.first <0) continue; //there was an error
+                        if (res.first < 0) continue; //there was an error
 
-                        if(minAL == -1 || res.first < minAL) {
+                        if (minAL == -1 || res.first < minAL) {
                             minAL = res.first;
                             branch_id = res.second;
                             minDistance = input.branch_distance.get(branch_id);
                             best_input = input;
-                        }
-                        else if (res.first == minAL) {
+                        } else if (res.first == minAL) {
                             float distance = input.branch_distance.get(branch_id);
                             if (distance < minDistance && distance >= 0) {
                                 minAL = res.first;
@@ -166,12 +218,12 @@ class Fuzzer {
     /*
     After an execution update the visited_branches with the data computed during the execution
     */
-    public void after_execution (MyInput input, int trait_count) {
-        input.trait_count = trait_count;
+    public void after_execution(MyInput input, int trait_count) {
+        input.trait_count = trait_count; // Probably unused
         for (int branch : input.visitedBranchs) {
             visited_branches.put(branch, true);
         }
-        if (trait_count > max_trait)
+        if (trait_count > max_trait) // Probably unused
             max_trait = input.trait_count;
     }
 }
