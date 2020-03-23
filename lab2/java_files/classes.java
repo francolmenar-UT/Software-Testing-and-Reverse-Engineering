@@ -154,11 +154,15 @@ class Logging {
     public long elapsedTime;
     public PrintWriter out;
 
+    /**
+     * Creates a new logger.
+     * The name of the logfile depends on the current time.
+     */
     public Logging() {
         startTime = System.nanoTime();
         elapsedTime = 0;
         try {
-            out = new PrintWriter(new BufferedWriter(new FileWriter("log_" + new Date(), true)));
+            out = new PrintWriter(new BufferedWriter(new FileWriter("log_" + new Date() + ".txt", true)));
         } catch (IOException e) {
             System.out.println("Could not write to file.");
             e.printStackTrace();
@@ -172,9 +176,12 @@ class Logging {
         return startTime - System.nanoTime();
     }
 
-    /**TODO: Add branch distance. */
-    public void writeLog(){
-        out.write(String.valueOf(getElapsedTime()) + ", " + "branchDistance");
+    /**
+     * Write the elapsed time and the number of visited branches into the logfile.
+     * @param numVisited number of visited branches
+     */
+    public void writeLog(int numVisited){
+        out.write(String.valueOf(getElapsedTime()) + ", " + String.valueOf(numVisited) + "\n");
     }
 
 }
