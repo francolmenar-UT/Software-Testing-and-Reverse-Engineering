@@ -1,9 +1,17 @@
 class I {
     static Context ctx = initiateContext();
     static BoolExpr z3f = ctx.mkTrue();
+    static Expr last_comparison_expr;
 
 <insert_var>
 
+    public static void update_comparison_expression(Expr expr) {
+        if (last_comparison_expr != null) {
+            I.z3f = ctx.mkAnd((BoolExpr) last_comparison_expr, z3f);
+        }
+
+        last_comparison_expr = expr;
+    }
 
     public static void myAdd(MyInt a, MyInt b, MyInt c) {
         a.val = b.val + c.val;
@@ -69,7 +77,7 @@ class I {
         a.setBranchDistance(b_distance); // Set Branch distance to the resulting boolean
 
         Expr z3var = ctx.mkEq(b.expr, c.expr);
-        I.z3f = ctx.mkAnd(ctx.mkEq(z3var, a.expr), z3f);
+        update_comparison_expression(ctx.mkEq(z3var, a.expr));
     }
 
     public static void myEquals(MyBool a, MyInt b, MyInt c, MyInput input) {
@@ -80,7 +88,7 @@ class I {
         a.setBranchDistance(b_distance); // Set Branch distance to the resulting boolean
 
         Expr z3var = ctx.mkEq((ArithExpr) b.expr, (ArithExpr) c.expr);
-        I.z3f = ctx.mkAnd(ctx.mkEq(z3var, a.expr), z3f);
+        update_comparison_expression(ctx.mkEq(z3var, a.expr));
     }
 
     public static void myEquals(MyBool a, MyString b, MyString c, MyInput input) {
@@ -91,7 +99,7 @@ class I {
         a.setBranchDistance(b_distance); // Set Branch distance to the resulting boolean
 
         Expr z3var = ctx.mkEq(b.expr, c.expr);
-        I.z3f = ctx.mkAnd(ctx.mkEq(z3var, a.expr), z3f);
+        update_comparison_expression(ctx.mkEq(z3var, a.expr));
     }
 
     /****************************               ****************************/
@@ -103,7 +111,7 @@ class I {
         a.setBranchDistance(b_distance); // Set Branch distance to the resulting boolean
 
         Expr z3var = ctx.mkLt((ArithExpr) b.expr, (ArithExpr) c.expr);
-        I.z3f = ctx.mkAnd(ctx.mkEq(z3var, a.expr), z3f);
+        update_comparison_expression(ctx.mkEq(z3var, a.expr));
     }
 
     public static void myGreater(MyBool a, MyInt b, MyInt c, MyInput input) {
@@ -114,7 +122,7 @@ class I {
         a.setBranchDistance(b_distance); // Set Branch distance to the resulting boolean
 
         Expr z3var = ctx.mkGt((ArithExpr) b.expr, (ArithExpr) c.expr);
-        I.z3f = ctx.mkAnd(ctx.mkEq(z3var, a.expr), z3f);
+        update_comparison_expression(ctx.mkEq(z3var, a.expr));
     }
 
     public static void myLessEqual(MyBool a, MyInt b, MyInt c, MyInput input) {
@@ -125,7 +133,7 @@ class I {
         a.setBranchDistance(b_distance); // Set Branch distance to the resulting boolean
 
         Expr z3var = ctx.mkLe((ArithExpr) b.expr, (ArithExpr) c.expr);
-        I.z3f = ctx.mkAnd(ctx.mkEq(z3var, a.expr), z3f);
+        update_comparison_expression(ctx.mkEq(z3var, a.expr));
     }
 
     public static void myGreaterEqual(MyBool a, MyInt b, MyInt c, MyInput input) {
@@ -136,7 +144,7 @@ class I {
         a.setBranchDistance(b_distance); // Set Branch distance to the resulting boolean
 
         Expr z3var = ctx.mkGe((ArithExpr) b.expr, (ArithExpr) c.expr);
-        I.z3f = ctx.mkAnd(ctx.mkEq(z3var, a.expr), z3f);
+        update_comparison_expression(ctx.mkEq(z3var, a.expr));
     }
 
     /****************************               ****************************/
