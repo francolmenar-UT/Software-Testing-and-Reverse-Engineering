@@ -14,6 +14,7 @@ class Pair<A, B> {
 class Fuzzer {
     public static final String INPUT = "EIFJCDGABHEIFJCDGABH";
     private static final Boolean DEBUG_NEW_BRANCH = true; // Enables printNewBranch
+    private static final Boolean DEBUG_SAT = true; // Enables SAT Debugger
 
     public HashMap<Integer, Integer> graph = new HashMap<>(); // Graph created of the program
     public HashMap<Integer, Boolean> if_branch = new HashMap<>();
@@ -97,7 +98,7 @@ class Fuzzer {
      * @param inputs: TODO I think that they are not being used, Maybe after the second iteration
      * @return the MyInput which corresponds to the new input for the program
      */
-    public MyInput fuzz_sat(MyString[] inputs) {
+    public MyInput fuzz_sat(MyString[] inputs, Context ctx, BoolExpr z3f, BoolExpr z3f_aux) {
         iteration_number++;
         // stats
         int visited_stats = 0;
@@ -120,6 +121,8 @@ class Fuzzer {
             created_inputs.add(result);
             return result;
         } else { // Use the SAT Solver
+
+            sat_solver(ctx, z3f, z3f_aux);
             MyInput result = StrToInput(INPUT, true); // TODO Change to SAT solver
             created_inputs.add(result);
             return result;
@@ -134,30 +137,39 @@ class Fuzzer {
      * @param graph_c
      * @param instance_c
      */
-    public static void sat_solver(Context ctx, BoolExpr graph_c, BoolExpr instance_c) {
+    public static void sat_solver(Context ctx, BoolExpr z3f, BoolExpr condition) {
         Solver s = ctx.mkSolver(); // create the Solver
-        s.add(graph_c); // Add the Expressions to the solver
-        s.add(instance_c);
+        s.add(z3f); // Add the Path Constraint to the solver
+        //s.add(ctx.mkEq(condition.z3var, condition.val ? ctx.mkFalse() : ctx.mkTrue())); // Add the !branch
 
-        if (s.check() == Status.SATISFIABLE) { // Check the result of the solver
+        // make sure to run solve on a model containing: the input variables, the initial global settings,
+        // the current path constraint (complete code path up to that point), and the inverted last branch
+
+        // path-constraint + branch=false -> SAT
+        if (s.check() == Status.SATISFIABLE) { // The branch can be reachable
+            System.err.println("New branch reached");
+
             Model m = s.getModel(); // Get the model
-            // TODO Negate the last Expr of the comparisons in order to reach a new branch
+            // System.err.println(m.toString());
+            // foundModel.evaluate(input.z3var, true).toString();
+
             // Basically it's a Backtrack, you just go to the parent comparison to try to go to the other leaf
 
             // TODO Print the new Input that reaches this leaf
-            System.out.println("Graph solution:");
+
             // TODO Iterate through the model to print the solution
             // TODO Reverse engineried the solution from the expresion
-
             /*  CHANGE, THIS JUST PRINTS THE SOLUTION OF THE SUDOKU
             for (int i = 0; i < 9; i++) {
                 for (int j = 0; j < 9; j++)
                     System.out.print(" " + R[i][j]);
                 System.out.println();
             }*/
-        } else {
-            System.out.println("Failed to solve the graph");
-            // TODO I have no idea what happens then, Try to negate a new Expr? Go to the parent node?
+
+        } else { // The branch is unreachable
+            System.err.println("c");
+            if (DEBUG_SAT) System.err.println("Branch unreachable");
+            // TODO Go to the parent node?
         }
     }
 
