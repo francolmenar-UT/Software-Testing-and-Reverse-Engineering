@@ -13,6 +13,7 @@ class Pair<A, B> {
 // TODO Check which variables are not needed
 class Fuzzer {
     public static final String INPUT = "EIFJCDGABHEIFJCDGABH";
+    private static final Boolean DEBUG_NEW_BRANCH = true; // Enables printNewBranch
 
     public HashMap<Integer, Integer> graph = new HashMap<>(); // Graph created of the program
     public HashMap<Integer, Boolean> if_branch = new HashMap<>();
@@ -67,6 +68,31 @@ class Fuzzer {
         return new MyInput(Mystr);
     }
 
+    /**
+     * Print information when a new input triggers a longer branch - or a new one
+     */
+    public void printNewBranch(){
+        if (!DEBUG_NEW_BRANCH) return;
+        System.err.println("\nIteration: " + iteration_number + " visited " + max_branches_visited + " branches out of " + visited_branches.size());
+        System.err.println("\tErrors reached: " + errors_reached.size());
+        System.err.println("\tTraits with this input: " + created_inputs.get(created_inputs.size() - 1).trait_count);
+        System.err.println("\tMax traits: " + max_trait);
+
+        System.err.print("\tInput used: ");
+        for (MyString s : created_inputs.get(created_inputs.size() - 1).myStr) {
+            System.err.print(s.val);
+        }
+        System.err.println();
+    }
+
+    /**
+     * Generates the input for the program
+     * If it is the first iteration it gets the fixed INPUT
+     * Otherwise, it uses the SAT solver to get a new input which trigers a new branch
+     *
+     * @param inputs: TODO I think that they are not being used, Maybe after the second iteration
+     * @return the MyInput which corresponds to the new input for the program
+     */
     public MyInput fuzz_sat(MyString[] inputs) {
         iteration_number++;
         // stats
@@ -75,19 +101,10 @@ class Fuzzer {
             if (visit)
                 visited_stats++;
         }
-        // TODO Ask Andrea if this is to be removed, the traits
+        // We found a longer branch  TODO Ask if it is still needed
         if (visited_stats > max_branches_visited) {
             max_branches_visited = visited_stats;
-            System.err.println("Iteration: " + iteration_number + " visited " + visited_stats + " branches out of" + visited_branches.size());
-            System.err.println("Errors reached:" + errors_reached.size());
-            System.err.println("Traits with this input: " + created_inputs.get(created_inputs.size() - 1).trait_count);
-            System.err.println("Max traits: " + max_trait);
-
-            // TODO I'm not sure about this
-            for (MyString s : created_inputs.get(created_inputs.size() - 1).myStr) {
-                System.err.print(s.val);
-            }
-            System.err.println();
+            printNewBranch();
         }
 
         // TODO Check that this is correct
@@ -97,7 +114,42 @@ class Fuzzer {
             // Create the object to return
             return StrToInput(INPUT, true);
         } else { // Use the SAT Solver
-            return StrToInput(INPUT, true); // TODO Change to SAT
+            return StrToInput(INPUT, true); // TODO Change to SAT solver
+        }
+    }
+
+
+    /**
+     * Create the SAT solver and checks its result
+     *
+     * @param ctx
+     * @param graph_c
+     * @param instance_c
+     */
+    public static void sat_solver(Context ctx, BoolExpr graph_c, BoolExpr instance_c) {
+        Solver s = ctx.mkSolver(); // create the Solver
+        s.add(graph_c); // Add the Expressions to the solver
+        s.add(instance_c);
+
+        if (s.check() == Status.SATISFIABLE) { // Check the result of the solver
+            Model m = s.getModel(); // Get the model
+            // TODO Negate the last Expr of the comparisons in order to reach a new branch
+            // Basically it's a Backtrack, you just go to the parent comparison to try to go to the other leaf
+
+            // TODO Print the new Input that reaches this leaf
+            System.out.println("Graph solution:");
+            // TODO Iterate through the model to print the solution
+            // TODO Reverse engineried the solution from the expresion
+
+            /*  CHANGE, THIS JUST PRINTS THE SOLUTION OF THE SUDOKU
+            for (int i = 0; i < 9; i++) {
+                for (int j = 0; j < 9; j++)
+                    System.out.print(" " + R[i][j]);
+                System.out.println();
+            }*/
+        } else {
+            System.out.println("Failed to solve the graph");
+            // TODO I have no idea what happens then, Try to negate a new Expr? Go to the parent node?
         }
     }
 
@@ -126,15 +178,7 @@ class Fuzzer {
         }
         if (visited_stats > max_branches_visited) {
             max_branches_visited = visited_stats;
-            System.err.println("Iteration: " + iteration_number + " visited " + visited_stats + " branches out of" + visited_branches.size());
-            System.err.println("Errors reached:" + errors_reached.size());
-            System.err.println("Traits with this input: " + created_inputs.get(created_inputs.size() - 1).trait_count);
-            System.err.println("Max traits: " + max_trait);
-
-            for (MyString s : created_inputs.get(created_inputs.size() - 1).myStr) {
-                System.err.print(s.val);
-            }
-            System.err.println();
+            printNewBranch();
         }
 
         // In the beginning just generate random inputs
@@ -217,13 +261,14 @@ class Fuzzer {
 
     /*
     After an execution update the visited_branches with the data computed during the execution
+    TODO Is it needed to do more stuff here?
     */
     public void after_execution(MyInput input, int trait_count) {
-        input.trait_count = trait_count; // Probably unused
+        input.trait_count = trait_count; // TODO Probably unused
         for (int branch : input.visitedBranchs) {
             visited_branches.put(branch, true);
         }
-        if (trait_count > max_trait) // Probably unused
+        if (trait_count > max_trait) // TODO Probably unused
             max_trait = input.trait_count;
     }
 }

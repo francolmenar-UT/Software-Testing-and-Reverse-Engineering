@@ -1,5 +1,6 @@
 class I {
     static Context ctx = initiateContext();
+    static BoolExpr z3f = ctx.mkTrue();
 
 <insert_var>
 
@@ -7,37 +8,56 @@ class I {
     public static void myAdd(MyInt a, MyInt b, MyInt c) {
         a.val = b.val + c.val;
         check_trait(a, b, c);
+
+        Expr z3var = ctx.mkAdd((ArithExpr) b.expr, (ArithExpr) c.expr);
+        I.z3f = ctx.mkAnd(ctx.mkEq(z3var, (ArithExpr) a.expr), z3f);
     }
 
     public static void myDel(MyInt a, MyInt b, MyInt c) {
         a.val = b.val - c.val;
         check_trait(a, b, c);
+
+        Expr z3var = ctx.mkSub((ArithExpr) b.expr, (ArithExpr) c.expr);
+        I.z3f = ctx.mkAnd(ctx.mkEq(z3var, (ArithExpr) a.expr), z3f);
     }
 
     public static void myMul(MyInt a, MyInt b, MyInt c) {
         a.val = b.val * c.val;
         check_trait(a, b, c);
+
+        Expr z3var = ctx.mkMul((ArithExpr) b.expr, (ArithExpr) c.expr);
+        I.z3f = ctx.mkAnd(ctx.mkEq(z3var, (ArithExpr) a.expr), z3f);
     }
 
     public static void myDiv(MyInt a, MyInt b, MyInt c) {
         a.val = b.val / c.val;
         check_trait(a, b, c);
+
+        Expr z3var = ctx.mkDiv((ArithExpr) b.expr, (ArithExpr) c.expr);
+        I.z3f = ctx.mkAnd(ctx.mkEq(z3var, (ArithExpr) a.expr), z3f);
     }
 
     public static void myMod(MyInt a, MyInt b, MyInt c) {
         a.val = b.val % c.val;
         check_trait(a, b, c);
+
+        Expr z3var = ctx.mkMod((IntExpr) b.expr, (IntExpr) c.expr);
+        I.z3f = ctx.mkAnd(ctx.mkEq(z3var, (ArithExpr) a.expr), z3f);
     }
 
     /****************************               ****************************/
     public static void myInd(MyInt a, MyInt[] b, MyInt c) {
         a.val = b[c.val].val;
         check_trait(a, b[c.val], c);
+
+        I.z3f = ctx.mkAnd(ctx.mkEq((ArithExpr) b[c.val].expr, (ArithExpr) a.expr), z3f);
     }
 
     public static void myInd(MyString a, MyString[] b, MyInt c) {
         a.val = b[c.val].val;
         check_trait(a, b[c.val], c);
+
+        I.z3f = ctx.mkAnd(ctx.mkEq(b[c.val].expr, a.expr), z3f);
     }
 
     /****************************               ****************************/
@@ -47,6 +67,9 @@ class I {
         float b_distance = branch_distance_eq(a.val);
         input.setBranchDistance(this_branch_id, b_distance); // Set Branch distance to the MyInput
         a.setBranchDistance(b_distance); // Set Branch distance to the resulting boolean
+
+        Expr z3var = ctx.mkEq(b.expr, c.expr);
+        I.z3f = ctx.mkAnd(ctx.mkEq(z3var, a.expr), z3f);
     }
 
     public static void myEquals(MyBool a, MyInt b, MyInt c, MyInput input) {
@@ -56,6 +79,8 @@ class I {
         input.setBranchDistance(this_branch_id, b_distance);
         a.setBranchDistance(b_distance); // Set Branch distance to the resulting boolean
 
+        Expr z3var = ctx.mkEq((ArithExpr) b.expr, (ArithExpr) c.expr);
+        I.z3f = ctx.mkAnd(ctx.mkEq(z3var, a.expr), z3f);
     }
 
     public static void myEquals(MyBool a, MyString b, MyString c, MyInput input) {
@@ -64,6 +89,9 @@ class I {
         float b_distance = editDistDP(b.val, c.val, b.val.length(), c.val.length());
         input.setBranchDistance(this_branch_id, b_distance);
         a.setBranchDistance(b_distance); // Set Branch distance to the resulting boolean
+
+        Expr z3var = ctx.mkEq(b.expr, c.expr);
+        I.z3f = ctx.mkAnd(ctx.mkEq(z3var, a.expr), z3f);
     }
 
     /****************************               ****************************/
@@ -73,6 +101,9 @@ class I {
         float b_distance = branch_distance_less_eq(b.val, c.val, a.val);
         input.setBranchDistance(this_branch_id, b_distance);
         a.setBranchDistance(b_distance); // Set Branch distance to the resulting boolean
+
+        Expr z3var = ctx.mkLt((ArithExpr) b.expr, (ArithExpr) c.expr);
+        I.z3f = ctx.mkAnd(ctx.mkEq(z3var, a.expr), z3f);
     }
 
     public static void myGreater(MyBool a, MyInt b, MyInt c, MyInput input) {
@@ -81,6 +112,9 @@ class I {
         float b_distance = branch_distance_greater_eq(b.val, c.val, a.val);
         input.setBranchDistance(this_branch_id, b_distance);
         a.setBranchDistance(b_distance); // Set Branch distance to the resulting boolean
+
+        Expr z3var = ctx.mkGt((ArithExpr) b.expr, (ArithExpr) c.expr);
+        I.z3f = ctx.mkAnd(ctx.mkEq(z3var, a.expr), z3f);
     }
 
     public static void myLessEqual(MyBool a, MyInt b, MyInt c, MyInput input) {
@@ -89,6 +123,9 @@ class I {
         float b_distance = branch_distance_less_eq(b.val, c.val, a.val);
         input.setBranchDistance(this_branch_id, b_distance);
         a.setBranchDistance(b_distance); // Set Branch distance to the resulting boolean
+
+        Expr z3var = ctx.mkLe((ArithExpr) b.expr, (ArithExpr) c.expr);
+        I.z3f = ctx.mkAnd(ctx.mkEq(z3var, a.expr), z3f);
     }
 
     public static void myGreaterEqual(MyBool a, MyInt b, MyInt c, MyInput input) {
@@ -97,18 +134,25 @@ class I {
         float b_distance = branch_distance_greater_eq(b.val, c.val, a.val);
         input.setBranchDistance(this_branch_id, b_distance);
         a.setBranchDistance(b_distance); // Set Branch distance to the resulting boolean
+
+        Expr z3var = ctx.mkGe((ArithExpr) b.expr, (ArithExpr) c.expr);
+        I.z3f = ctx.mkAnd(ctx.mkEq(z3var, a.expr), z3f);
     }
 
     /****************************               ****************************/
     public static MyBool myAssign(MyBool b) {
         MyBool a = new MyBool(b.val);
         check_trait(a, b);
+
+        I.z3f = ctx.mkAnd(ctx.mkEq(b.expr, a.expr), z3f);
         return a;
     }
 
     public static MyInt myAssign(MyInt b) {
         MyInt a = new MyInt(b.val);
         check_trait(a, b);
+
+        I.z3f = ctx.mkAnd(ctx.mkEq(b.expr, a.expr), z3f);
         return a;
     }
 
@@ -117,6 +161,8 @@ class I {
         for (int i = 0; i < b.length; i++) {
             a[i] = new MyInt(b[i].val);
             check_trait(a[i], b[i]);
+
+        I.z3f = ctx.mkAnd(ctx.mkEq(b[i].expr, a[i].expr), z3f);
         }
         return a;
     }
@@ -124,6 +170,8 @@ class I {
     public static MyString myAssign(MyString b) {
         MyString a = new MyString(b.val);
         check_trait(a, b);
+
+        I.z3f = ctx.mkAnd(ctx.mkEq(b.expr, a.expr), z3f);
         return a;
     }
 
@@ -134,6 +182,9 @@ class I {
         float b_distance = branch_distance_and(b.branchDistance, c.branchDistance);
         input.setBranchDistance(this_branch_id, b_distance);
         a.setBranchDistance(b_distance); // Set Branch distance to the resulting boolean
+
+        Expr z3var = ctx.mkAnd((BoolExpr) b.expr, (BoolExpr) c.expr);
+        I.z3f = ctx.mkAnd(ctx.mkEq(z3var, a.expr), z3f);
     }
 
     public static void myOr(MyBool a, MyBool b, MyBool c, MyInput input) {
@@ -142,6 +193,9 @@ class I {
         float b_distance = branch_distance_or(b.branchDistance, c.branchDistance);
         input.setBranchDistance(this_branch_id, b_distance);
         a.setBranchDistance(b_distance); // Set Branch distance to the resulting boolean
+
+        Expr z3var = ctx.mkOr((BoolExpr) b.expr, (BoolExpr) c.expr);
+        I.z3f = ctx.mkAnd(ctx.mkEq(z3var, a.expr), z3f);
     }
 
     public static void myNot(MyBool a, MyBool b, MyInput input) {
@@ -150,6 +204,8 @@ class I {
         float b_distance = branch_distance_not(b.branchDistance);
         input.setBranchDistance(this_branch_id, b_distance);
         a.setBranchDistance(b_distance); // Set Branch distance to the resulting boolean
+
+        I.z3f = ctx.mkAnd(ctx.mkEq(ctx.mkNot((BoolExpr) b.expr), a.expr), z3f);
     }
 
     /****************************               ****************************/
@@ -495,7 +551,7 @@ class I {
         if (!Fuzzer.USE_TAINT)
             return;
         boolean stack_val = stack.empty() ? false : stack.peek();
-        System.out.println("S: " + stack_val);
+        // System.out.println("S: " + stack_val);
 
         boolean b_flow = false;
         boolean c_flow = false;
@@ -557,42 +613,4 @@ class I {
         cfg.put("model", "true");
         return new Context(cfg);
     }
-
-    /**
-     * Create the SAT solver and checks its result
-     *
-     * @param ctx
-     * @param graph_c
-     * @param instance_c
-     *
-    public static void solve_sat(Context ctx, BoolExpr graph_c, BoolExpr instance_c) {
-
-
-        Solver s = ctx.mkSolver(); // create the Solver
-        s.add(graph_c); // Add the Expressions to the solver
-        s.add(instance_c);
-
-        if (s.check() == Status.SATISFIABLE) { // Check if the result of the solver
-            Model m = s.getModel(); // Get the model
-                /*  CHANGE, THIS IS FOR THE SUDOKU  - I think that it just sets everything to false
-                Expr[][]R=new Expr[9][9];
-                for(int i=0;i< 9;i++)
-                    for(int j=0;j< 9;j++)
-                        R[i][j]=m.evaluate(X[i][j],false);
-                *
-
-            System.out.println("Graph solution:");
-            /*  CHANGE, THIS JUST PRINTS THE SOLUTION OF THE SUDOKU
-            for (int i = 0; i < 9; i++) {
-                for (int j = 0; j < 9; j++)
-                    System.out.print(" " + R[i][j]);
-                System.out.println();
-            }
-            *
-        } else {
-            System.out.println("Failed to solve the graph");
-            throw new TestFailedException();
-        }
-    }
-    */
 }
