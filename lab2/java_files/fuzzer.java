@@ -71,11 +71,15 @@ class Fuzzer {
     /**
      * Print information when a new input triggers a longer branch - or a new one
      */
-    public void printNewBranch(){
+    public void printNewBranch() {
         if (!DEBUG_NEW_BRANCH) return;
         System.err.println("\nIteration: " + iteration_number + " visited " + max_branches_visited + " branches out of " + visited_branches.size());
         System.err.println("\tErrors reached: " + errors_reached.size());
-        System.err.println("\tTraits with this input: " + created_inputs.get(created_inputs.size() - 1).trait_count);
+        if (created_inputs.size() == 0) {
+            System.err.println("\tTraits with this input: " + created_inputs.get(created_inputs.size()).trait_count);
+        } else {
+            System.err.println("\tTraits with this input: " + created_inputs.get(created_inputs.size() - 1).trait_count);
+        }
         System.err.println("\tMax traits: " + max_trait);
 
         System.err.print("\tInput used: ");
@@ -112,9 +116,13 @@ class Fuzzer {
         // In the beginning just return the predefined Input
         if (iteration_number < 2) {
             // Create the object to return
-            return StrToInput(INPUT, true);
+            MyInput result = StrToInput(INPUT, true);
+            created_inputs.add(result);
+            return result;
         } else { // Use the SAT Solver
-            return StrToInput(INPUT, true); // TODO Change to SAT solver
+            MyInput result = StrToInput(INPUT, true); // TODO Change to SAT solver
+            created_inputs.add(result);
+            return result;
         }
     }
 
