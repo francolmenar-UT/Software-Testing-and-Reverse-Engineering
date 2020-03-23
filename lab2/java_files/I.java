@@ -1,4 +1,6 @@
 class I {
+    static Context ctx = initiateContext();
+
 <insert_var>
 
 
@@ -548,6 +550,12 @@ class I {
             a.flow = true;
             trait_counter++;
         }
+    }
+
+    private static Context initiateContext() {
+        HashMap<String, String> cfg = new HashMap<String, String>();
+        cfg.put("model", "true");
+        return new Context(cfg);
     }
 
     /**

@@ -10,19 +10,60 @@ class MyVariable<T> {
     public boolean flow = false; // Used for tainting
     public int id = -1;
 
+    public Expr expr; // Symbolic expression
+    public int varType = 0;
+    public static int symbolic_int_counter = 0;
+    public static int symbolic_string_counter = 0;
+    public static int symbolic_bool_counter = 0;
+    public static int symbolic_input_counter = 0;
+
+    private void setExpr(boolean sym_input) {
+        if (this instanceof MyInt) {
+            String expr_name = sym_input ? "inp_" + symbolic_input_counter++ : "int_" + symbolic_int_counter++;
+            expr = I.ctx.mkConst(I.ctx.mkSymbol(expr_name), I.ctx.getIntSort());
+        } else if (this instanceof MyString) {
+            String expr_name = sym_input ? "inp_" + symbolic_input_counter++ : "str_" + symbolic_string_counter++;
+            expr = I.ctx.mkConst(I.ctx.mkSymbol(expr_name), I.ctx.getStringSort());
+        } else if (this instanceof MyBool) {
+            String expr_name = sym_input ? "inp_" + symbolic_input_counter++ : "bol_" + symbolic_bool_counter++;
+            expr = I.ctx.mkConst(I.ctx.mkSymbol(expr_name), I.ctx.getBoolSort());
+        }
+        else {
+            System.err.println("Wrong varType: " + varType);
+            System.exit(1);
+        }
+    }
+
     public MyVariable(T v) {
         this.val = v;
+
+        this.setExpr(false);
     }
 
     public MyVariable(T v, boolean f) {
         this.val = v;
         this.flow = f;
+
+        this.setExpr(false);
     }
 
     public MyVariable(T v, boolean f, int id) {
         this.val = v;
         this.flow = f;
         this.id = id;
+
+        this.setExpr(false);
+    }
+
+    /**
+     * Use this function to create MyInput variables setting sym_input to true.
+     * It sets the name of expr to recognisable value
+     */
+    public MyVariable(T v, boolean f, boolean sym_input) {
+        this.val = v;
+        this.flow = f;
+
+        this.setExpr(sym_input);
     }
 }
 
