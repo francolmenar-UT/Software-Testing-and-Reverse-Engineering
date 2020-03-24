@@ -41,6 +41,12 @@ out = open(instructed_file, 'w')  # Create instructed file to write into it
 out.write("import java.util.*;\n")
 out.write("import java.lang.Math;\n")
 out.write("import com.microsoft.z3.*;\n")
+out.write("import java.io.BufferedWriter;\n")
+out.write("import java.io.FileWriter;\n")
+out.write("import java.io.IOException;\n")
+out.write("import java.io.PrintWriter;\n")
+out.write("import java.util.Date;\n")
+
 var_count, bool_count, str_count = 1, 1, 1  # Reset the variables
 
 for line in f.readlines():
