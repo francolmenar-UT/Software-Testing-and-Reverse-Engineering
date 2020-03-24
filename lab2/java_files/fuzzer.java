@@ -9,6 +9,44 @@ class Pair<A, B> {
     }
 }
 
+/** Used log the elapsed time and the branch coverage. */
+class Logging {
+    public long startTime;
+    public long elapsedTime;
+    public PrintWriter out;
+
+    /**
+     * Creates a new logger.
+     * The name of the logfile depends on the current time.
+     */
+    public Logging() {
+        startTime = System.nanoTime();
+        elapsedTime = 0;
+        try {
+            out = new PrintWriter(new BufferedWriter(new FileWriter("log_" + String.valueOf(new Date().getTime()) + ".txt", true)));
+        } catch (IOException e) {
+            System.out.println("Could not write to file.");
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * @return the elapsedTime
+     */
+    public long getElapsedTime() {
+        return System.nanoTime() - startTime;
+    }
+
+    /**
+     * Write the elapsed time and the number of visited branches into the logfile.
+     * @param numVisited number of visited branches
+     */
+    public void writeLog(int numVisited){
+        out.write(String.valueOf(getElapsedTime()) + ", " + String.valueOf(numVisited) + "\n");
+    }
+
+}
+
 // Fuzzer
 // TODO Check which variables are not needed
 class Fuzzer {
@@ -28,6 +66,8 @@ class Fuzzer {
     public static int iteration_number = 0;
 
     public static boolean USE_TAINT = false; // Probably unused
+
+    public static Logging log = new Logging();
 
     // Errors
     public static HashSet<Integer> errors_reached = new HashSet<>();
@@ -153,6 +193,8 @@ class Fuzzer {
             if (visit)
                 visited_stats++;
         }
+        // Log visited branches
+        log.writeLog(visited_stats);
         // We found a longer branch
         if (visited_stats > max_branches_visited) {
             max_branches_visited = visited_stats;
