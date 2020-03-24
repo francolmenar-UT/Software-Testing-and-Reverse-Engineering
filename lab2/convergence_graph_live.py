@@ -14,7 +14,7 @@ def animate(i):
     time = []
     visitedBr = []
     for eachLine in dataArray:
-        if len(eachLine)>1:
+        if len(eachLine)>1 and "," in eachLine:
             x,y = eachLine.split(',')
             time.append(int(x)/10**9)
             visitedBr.append(int(y))
