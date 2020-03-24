@@ -23,7 +23,7 @@ dataArray = getData.split('\n')
 time = []
 visitedBr = []
 for eachLine in dataArray:
-    if len(eachLine)>1:
+    if len(eachLine)>1 and "," in eachLine:
         x,y = eachLine.split(',')
         time.append(int(x)/10**9) #convert from nanoseconds to seconds
         visitedBr.append(int(y))
@@ -34,10 +34,10 @@ if(len(sys.argv) == 3):
     time2 = []
     visitedBr2 = []
     for eachLine in dataArray:
-        if len(eachLine)>1:
-            x,y = eachLine.split(',')
-            time2.append(int(x)/10**9) #convert from nanoseconds to seconds
-            visitedBr2.append(int(y))
+        if len(eachLine)>1 and "," in eachLine:
+            x2,y2 = eachLine.split(',')
+            time2.append(int(x2)/10**9) #convert from nanoseconds to seconds
+            visitedBr2.append(int(y2))
 
 ax1.plot(time,visitedBr,'r', label = legend1)
 if(len(sys.argv) == 3):
