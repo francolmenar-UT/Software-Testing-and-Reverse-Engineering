@@ -50,9 +50,11 @@ class Logging {
 // Fuzzer
 // TODO Check which variables are not needed
 class Fuzzer {
-    public static final String INPUT = "EIFJCDGABHEIFJCDGABH";
+    public static String INPUT = "EIFJCDGABHEIFJCDGABH";
     private static final Boolean DEBUG_NEW_BRANCH = true; // Enables printNewBranch
-    private static final Boolean DEBUG_SAT = true; // Enables SAT Debugger
+    private static final Boolean DEBUG_SAT = true; // Enables printSAT
+    private static final Boolean DEBUG_SLIGHT = false; // Enables printSlightFuzz
+    private static final Boolean DEBUG_RANDOM = false; // Enables printRandomFuzz
 
     public HashMap<Integer, Integer> graph = new HashMap<>(); // Graph created of the program
     public HashMap<Integer, Boolean> if_branch = new HashMap<>();
@@ -151,6 +153,41 @@ class Fuzzer {
         printMyInput(new_input);
     }
 
+
+    public static void printSlightFuzz(MyString[] current_input, MyString[] valid_inputs, MyString[] new_input,
+                                       int count, int new_input_char, int char_to_change) {
+        if (!DEBUG_SLIGHT) return; // It is only printed if DEBUG_SLIGHT is true
+        System.err.println("\n************ SLIGHT FUZZ ************");
+        System.err.print("\tPrevious input: ");
+        printMyArrString(current_input);
+
+        System.err.println("\tLocation of char to change: " + char_to_change);
+
+        System.err.print("\tValid inputs: ");
+        printMyArrString(valid_inputs);
+
+        System.err.println("\tLocation of char to introduce: " + new_input_char);
+
+        System.err.print("\tNew input: ");
+        printMyArrString(new_input);
+
+        System.err.println("\tCounter: " + count);
+
+    }
+
+
+    public static void printRandomFuzz(MyString[] valid_inputs, MyString[] new_input, int length) {
+        if (!DEBUG_RANDOM) return; // It is only printed if DEBUG_RANDOM is true
+        System.err.print("\tValid inputs: ");
+        printMyArrString(valid_inputs);
+
+        System.err.print("\tNew input: ");
+        printMyArrString(new_input);
+
+        System.err.println("\tLenght of the Input: " + length + " == " + new_input.length);
+    }
+
+
     /**
      * Auxiliary method for printing a MyInput
      * It mainly calls to printMyArrString
@@ -201,7 +238,7 @@ class Fuzzer {
             printNewBranch();
         }
 
-        if (iteration_number < 2) { // Use the defined String as an starting point
+        if (iteration_number < 3) { // Use the defined String as an starting point
             MyInput result = StrToInput(INPUT, true);
             created_inputs.add(result);
             return result;
@@ -228,9 +265,9 @@ class Fuzzer {
         MyInput new_input = new MyInput(new MyString[]{new MyString("")}); // Empty MyInput for later use
 
         Solver s = ctx.mkSolver(); // create the Solver
+        s.push();
         s.add(z3f); // Add the Path Constraint to the solver
         s.add(ctx.mkEq(condition, condition.isTrue() ? ctx.mkFalse() : ctx.mkTrue())); // Add the !branch
-
         // path-constraint + branch=false -> SAT
         if (s.check() == Status.SATISFIABLE) { // The branch can be reachable
             // Create a new input by changing one random character
@@ -252,11 +289,11 @@ class Fuzzer {
      */
     public static MyInput slight_fuzz(MyString[] current_input, MyString[] valid_inputs) {
         Random rand = new Random();
-        int count = 0; // Counter for exiting the while loop
+        int count = 0, new_input_char = 0, char_to_change = 0; // Counter for exiting the while loop
         MyString[] new_input = current_input; // The new input is the old one with one char changed
         while (count < 10) { // To avoid an infinite loop if the characters are reapted
-            int new_input_char = rand.nextInt(valid_inputs.length); // The char which is going to be inserted
-            int char_to_change = rand.nextInt(current_input.length); // The char wich is going to be erased
+            new_input_char = rand.nextInt(valid_inputs.length); // The char which is going to be inserted
+            char_to_change = rand.nextInt(current_input.length); // The char wich is going to be erased
 
             // Check that the chars are not the same
             if (current_input[char_to_change] != valid_inputs[new_input_char]) {
@@ -264,6 +301,7 @@ class Fuzzer {
                 break;
             }
         }
+        printSlightFuzz(current_input, valid_inputs, new_input, count, new_input_char, char_to_change);
         return new MyInput(new_input); // Return the new input as a MyInput
     }
 
@@ -282,6 +320,8 @@ class Fuzzer {
             int index = rand.nextInt(inputs.length);
             fuzzStr[i] = new MyString(inputs[index].val, true);
         }
+        System.err.println("AAAAAA");
+        printRandomFuzz(inputs, fuzzStr, length);
         return new MyInput(fuzzStr);
     }
 
