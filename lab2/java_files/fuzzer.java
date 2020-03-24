@@ -13,7 +13,7 @@ class Pair<A, B> {
 class Logging {
     public long startTime;
     public long elapsedTime;
-    public PrintWriter out;
+    public BufferedWriter out;
 
     /**
      * Creates a new logger.
@@ -22,12 +22,12 @@ class Logging {
     public Logging() {
         startTime = System.nanoTime();
         elapsedTime = 0;
-        try {
+        /*try {
             out = new PrintWriter(new BufferedWriter(new FileWriter("log_" + String.valueOf(new Date().getTime()) + ".txt", true)));
         } catch (IOException e) {
             System.out.println("Could not write to file.");
             e.printStackTrace();
-        }
+        }*/
     }
 
     /**
@@ -42,7 +42,14 @@ class Logging {
      * @param numVisited number of visited branches
      */
     public void writeLog(int numVisited){
-        out.write(String.valueOf(getElapsedTime()) + ", " + String.valueOf(numVisited) + "\n");
+        try {
+            out = new BufferedWriter(new FileWriter("log_problem1.txt", true));
+            out.write(String.valueOf(getElapsedTime()) + ", " + String.valueOf(numVisited) + "\n");
+            out.close();
+        } catch (IOException e) {
+            System.out.println("Could not write to file.");
+            e.printStackTrace();
+        }
     }
 
 }
