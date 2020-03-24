@@ -120,6 +120,10 @@ class MyInput {
 
     public int trait_count = 0;
 
+    public MyInput() {
+        this.myStr = new MyString[1];
+    }
+
     public MyInput(MyString[] myStr) {
         this.myStr = myStr;
     }

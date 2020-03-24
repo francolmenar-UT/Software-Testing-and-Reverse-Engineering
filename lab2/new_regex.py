@@ -50,17 +50,6 @@ for line in f.readlines():
 
     line = line.replace('System.err', 'System.out')
 
-    # if line.startswith("}") and first_bracket == True:
-    # method_out.close()
-    #    f2 = open('IM.java', 'r')
-    #    for line2 in f2.readlines():
-    #        out.write(line2)
-    #    first_bracket = False
-    # if line.startswith("}"):
-    #    first_bracket = True
-    # else:
-    #    first_bracket = False
-
     if line.find("public static void main") != -1:  # Main statement
         createProblemClass.create_main_method(out, line)  # Create main method
         # Write graph
