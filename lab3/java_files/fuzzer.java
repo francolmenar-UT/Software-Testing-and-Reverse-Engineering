@@ -174,4 +174,64 @@ class Fuzzer {
         if (trait_count > max_trait)
             max_trait = input.trait_count;
     }
+
+    /**
+     * Returns a MyInput from a String
+     *
+     * @param str:  String to be converted to MyInput
+     * @param bool: boolen to set the flow
+     * @return
+     */
+    public MyInput StrToInput(String str, Boolean bool) {
+        MyString[] Mystr = new MyString[str.length()];
+        for (int i = 0; i < str.length(); i++) {
+            Mystr[i] = new MyString(Character.toString(str.charAt(i)), bool); // Each char as String
+        }
+        return new MyInput(Mystr);
+    }
 }
+
+    /**
+     * Print information when a new input triggers a new branch
+     */
+    public void printNewBranch() {
+        if (!DEBUG_NEW_BRANCH) return; // It is only printed if DEBUG_NEW_BRANCH is true
+        System.err.println("\n************ FUZZER ************");
+        System.err.println("Iteration: " + iteration_number + " visited " + max_branches_visited + " branches out of " + visited_branches.size());
+        System.err.println("\tErrors reached: " + errors_reached.size());
+        if (created_inputs.size() == 0) { // Avoid index issues
+            System.err.println("\tTraits with this input: " + created_inputs.get(created_inputs.size()).trait_count);
+        } else {
+            System.err.println("\tTraits with this input: " + created_inputs.get(created_inputs.size() - 1).trait_count);
+        }
+        System.err.println("\tMax traits: " + max_trait);
+        System.err.print("\tInput used: ");
+
+        for (MyString s : created_inputs.get(created_inputs.size() - 1).myStr) {
+            System.err.print(s.val);
+        }
+        System.err.println();
+    }
+
+    /**
+     * Auxiliary method for printing a MyInput
+     * It mainly calls to printMyArrString
+     *
+     * @param input: MyInput to be printed
+     */
+    public static void printMyInput(MyInput input) {
+        printMyArrString(input.myStr);
+    }
+
+
+    /**
+     * Auxiliary method for printing a MyString[]
+     *
+     * @param str: MyString[] to be printed
+     */
+    public static void printMyArrString(MyString[] str) {
+        for (int i = 0; i < str.length; i++) {
+            System.err.print(str[i].val);
+        }
+        System.err.print("\n");
+    }
