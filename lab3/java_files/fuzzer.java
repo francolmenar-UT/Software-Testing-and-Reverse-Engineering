@@ -14,6 +14,7 @@ class Fuzzer {
     public HashMap<Integer, Integer> graph = new HashMap<>(); // Graph created of the program
     public HashMap<Integer, Boolean> if_branch = new HashMap<>();
     public HashMap<Integer, Boolean> visited_branches = new HashMap<Integer, Boolean>();
+
     public static int inputCreated = 0;
     public static int randomFuzz = 10;
     public static int mutationRate = 3;
@@ -22,7 +23,16 @@ class Fuzzer {
     public static int max_trait = 0;
     public static int iteration_number = 0;
 
+    // Used to decide when the random fuzz will be used
+    // Each #reset_iteration iterations the random fuzz is called
+    public static final int reset_iteration = 100;
+    // Used in random_fuzz to decide the posible new length of the input
+    // new_length = TODO EXPLAIN THIS VAR
+    public static final int rdn_len_increase = 10;
+
     public static boolean USE_TAINT = false;
+    private static final Boolean DEBUG_NEW_BRANCH = true; // Enables printNewBranch
+    private static final Boolean DEBUG_RANDOM = true; // Enables printRandomFuzz
 
     // Errors
     public static HashSet<Integer> errors_reached = new HashSet<>();
@@ -32,18 +42,33 @@ class Fuzzer {
     public void Fuzzer() {
     }
 
-    // Random Fuzz
+    /**
+     * Generates a randon MyInput using the valid MyStrings of inputs
+     *
+     * @param inputs: Valid MyStrings to be used in the generation
+     * @return MyInput which is randomly generated
+     */
     public static MyInput random_fuzz(MyString[] inputs) {
         Random rand = new Random();
-        int length = rand.nextInt(iteration_number) + 10;
+        int length = rand.nextInt(iteration_number) + rdn_len_increase; // TODO Check if it makes sense
+
         MyString[] fuzzStr = new MyString[length];
+
         for (int i = 0; i < length; i++) {
             int index = rand.nextInt(inputs.length);
             fuzzStr[i] = new MyString(inputs[index].val, true);
         }
+        printRandomFuzz(inputs, fuzzStr, length);
         return new MyInput(fuzzStr);
     }
 
+    /**
+     * TODO: EXPLAIN THIS METHOD, I HAVE NO IDEA WHAT IT DOES
+     *
+     * @param goal
+     * @param input
+     * @return
+     */
     public Pair<Integer, Integer> approachLevel(int goal, MyInput input) {
         int distance = -1;
         int node = goal;
@@ -61,37 +86,41 @@ class Fuzzer {
         return new Pair(distance, node);
     }
 
-    // Normal Fuzz
+    /**
+     * Genetic algorithm Fuzz
+     * Entry point to the Fuzz process
+     *
+     * @param inputs: current Input in the form of MyString[]
+     * @return the new input to be used as a MyInput Object
+     */
     public MyInput fuzz(MyString[] inputs) {
-        iteration_number++;
-        // stats
-        int visited_stats = 0;
+        iteration_number++; // Update global iteration counter
+        int visited_stats = 0; // Counter to check the amount of visited branchs
+
+        // Count the visited branchs
         for (Boolean visit : visited_branches.values()) {
             if (visit)
                 visited_stats++;
         }
-        if (visited_stats > max_branches_visited) {
-            max_branches_visited = visited_stats;
-            System.err.println("Iteration: " + iteration_number+ " visited " + visited_stats + " branches out of" + visited_branches.size());
-            System.err.println("Errors reached:" + errors_reached.size());
-            System.err.println("Traits with this input: " + created_inputs.get(created_inputs.size()-1).trait_count);
-            System.err.println("Max traits: " + max_trait);
 
-            for (MyString s : created_inputs.get(created_inputs.size()-1).myStr) {
-                System.err.print(s.val);
-            }
-            System.err.println();
+        // Check if we acchieved a new maximum of visited branches
+        if (visited_stats > max_branches_visited) {
+            max_branches_visited = visited_stats; // Update counter
+            printNewBranch(); // Debug print
         }
 
         // In the beginning just generate random inputs
-        if (iteration_number < randomFuzz || iteration_number % 100 == 0) {
-            MyInput result = random_fuzz(inputs);
-            created_inputs.add(result);
+        // Or when we reach the reset iteration
+        if (iteration_number < randomFuzz || iteration_number % reset_iteration == 0) {
+            MyInput result = random_fuzz(inputs); // Generate a random input
+            created_inputs.add(result); // Update the history of created inputs
             return result;
         }
 
         // The input to mutate
         MyInput best_input = created_inputs.get(0);
+
+        // HERE
 
         // Every 10 iterations create new input by mutating the one with more taints
         if (iteration_number % 10 == 0 && USE_TAINT) {
@@ -102,8 +131,7 @@ class Fuzzer {
                 }
             }
 
-        }
-        else { // use AF and branch distance
+        } else { // use AF and branch distance
             int target_branch = -1;
 
             int minAL = -1;
@@ -125,15 +153,14 @@ class Fuzzer {
                     best_input = created_inputs.get(0);
                     for (MyInput input : created_inputs) {
                         Pair<Integer, Integer> res = approachLevel(target_branch, input);
-                        if (res.first <0) continue; //there was an error
+                        if (res.first < 0) continue; //there was an error
 
-                        if(minAL == -1 || res.first < minAL) {
+                        if (minAL == -1 || res.first < minAL) {
                             minAL = res.first;
                             branch_id = res.second;
                             minDistance = input.branch_distance.get(branch_id);
                             best_input = input;
-                        }
-                        else if (res.first == minAL) {
+                        } else if (res.first == minAL) {
                             float distance = input.branch_distance.get(branch_id);
                             if (distance < minDistance && distance >= 0) {
                                 minAL = res.first;
@@ -166,7 +193,7 @@ class Fuzzer {
     /*
     After an execution update the visited_branches with the data computed during the execution
     */
-    public void after_execution (MyInput input, int trait_count) {
+    public void after_execution(MyInput input, int trait_count) {
         input.trait_count = trait_count;
         for (int branch : input.visitedBranchs) {
             visited_branches.put(branch, true);
@@ -189,7 +216,7 @@ class Fuzzer {
         }
         return new MyInput(Mystr);
     }
-}
+
 
     /**
      * Print information when a new input triggers a new branch
@@ -235,3 +262,25 @@ class Fuzzer {
         }
         System.err.print("\n");
     }
+
+    /**
+     * TODO EXPLAIN
+     * @param valid_inputs
+     * @param new_input
+     * @param length
+     */
+    public static void printRandomFuzz(MyString[] valid_inputs, MyString[] new_input, int length) {
+        if (!DEBUG_RANDOM) return; // It is only printed if DEBUG_RANDOM is true
+        System.err.println("\n******* Random Fuzzer *******");
+        System.err.println("\tIteration_number: " + iteration_number);
+        System.err.print("\tValid inputs: ");
+        printMyArrString(valid_inputs);
+
+        System.err.print("\tNew input: ");
+        printMyArrString(new_input);
+
+        System.err.println("\tLenght of the Input: " + length + " == " + new_input.length);
+    }
+}
+
+
