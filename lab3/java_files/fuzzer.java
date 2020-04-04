@@ -9,6 +9,44 @@ class Pair<A, B> {
     }
 }
 
+/** Used log the elapsed time and the branch coverage. */
+class Logging {
+    public long startTime;
+    public long elapsedTime;
+    public BufferedWriter out;
+
+    /**
+     * Creates a new logger.
+     * The name of the logfile depends on the current time.
+     */
+    public Logging() {
+        startTime = System.nanoTime();
+        elapsedTime = 0;
+    }
+
+    /**
+     * @return the elapsedTime
+     */
+    public long getElapsedTime() {
+        return System.nanoTime() - startTime;
+    }
+
+    /**
+     * Write the elapsed time and the number of visited branches into the logfile.
+     * @param numVisited number of visited branches
+     */
+    public void writeLog(int numVisited){
+        try {
+            out = new BufferedWriter(new FileWriter("log_problem1.txt", true));
+            out.write(String.valueOf(getElapsedTime()) + ", " + String.valueOf(numVisited) + "\n");
+            out.close();
+        } catch (IOException e) {
+            System.out.println("Could not write to file.");
+            e.printStackTrace();
+        }
+    }
+}
+
 // Fuzzer
 class Fuzzer {
     public HashMap<Integer, Integer> graph = new HashMap<>(); // Graph created of the program
