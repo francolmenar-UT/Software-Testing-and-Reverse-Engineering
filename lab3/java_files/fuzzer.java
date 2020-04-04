@@ -83,6 +83,44 @@ class Fuzzer {
     public void Fuzzer() {
     }
 
+    private Population population =  null;
+    private int populationSize = 30;
+    private int dnaIndex = 0;
+
+    public MyInput fuzz_genetic(MyString[] inputs) {
+        this.inputs = inputs;
+        if (dnaIndex > 1)
+            this.statistics(population.population[dnaIndex-1].dna);
+
+        if (this.population == null) {
+            this.population = new Population(populationSize);
+        }
+
+        // The entire generation was used. So we need to get a new generation
+        if (dnaIndex == populationSize) {
+            // Get a branch to target
+            int target_branch = -1;
+            for (Map.Entry<Integer, Boolean> entry : visited_branches.entrySet()) {
+                Integer branch = entry.getKey();
+                Boolean visited = entry.getValue();
+
+                if (!visited) {
+                    target_branch = branch;
+                    break;
+                }
+            }
+
+            //System.err.println("Nex generation");
+
+            population.calculateFitness(target_branch);
+            population.nextGeneration();
+            dnaIndex = 0;
+        }
+
+        // Use the next input in the population
+        return population.population[dnaIndex++].dna;
+    }
+
     /**
      * Generates a randon MyInput using the valid MyStrings of inputs
      *
@@ -125,15 +163,7 @@ class Fuzzer {
         return new Pair(distance, node);
     }
 
-    /**
-     * Genetic algorithm Fuzz
-     * Entry point to the Fuzz process
-     *
-     * @param inputs: current Input in the form of MyString[]
-     * @return the new input to be used as a MyInput Object
-     */
-    public MyInput fuzz(MyString[] inputs) {
-        this.inputs = inputs;
+    private void statistics(MyInput lastInput) {
         iteration_number++; // Update global iteration counter
         int visited_stats = 0; // Counter to check the amount of visited branchs
 
@@ -146,8 +176,24 @@ class Fuzzer {
         // Check if we acchieved a new maximum of visited branches
         if (visited_stats > max_branches_visited) {
             max_branches_visited = visited_stats; // Update counter
-            printNewBranch(); // Debug print
+            printNewBranch(lastInput); // Debug print
         }
+    }
+
+    /**
+     * Genetic algorithm Fuzz
+     * Entry point to the Fuzz process
+     *
+     * @param inputs: current Input in the form of MyString[]
+     * @return the new input to be used as a MyInput Object
+     */
+    public MyInput fuzz(MyString[] inputs) {
+        if (1 ==1)
+            return fuzz_genetic(inputs);
+
+        this.inputs = inputs;
+        if (created_inputs.size() > 0)
+            this.statistics(created_inputs.get(created_inputs.size() -1));
 
         // In the beginning just generate random inputs
         // Or when we reach the reset iteration
@@ -268,20 +314,17 @@ class Fuzzer {
     /**
      * Print information when a new input triggers a new branch
      */
-    public void printNewBranch() {
+    public void printNewBranch(MyInput lastInput) {
         if (!DEBUG_NEW_BRANCH) return; // It is only printed if DEBUG_NEW_BRANCH is true
         System.err.println("\n************ FUZZER ************");
         System.err.println("Iteration: " + iteration_number + " visited " + max_branches_visited + " branches out of " + visited_branches.size());
         System.err.println("\tErrors reached: " + errors_reached.size());
-        if (created_inputs.size() == 0) { // Avoid index issues
-            System.err.println("\tTraits with this input: " + created_inputs.get(created_inputs.size()).trait_count);
-        } else {
-            System.err.println("\tTraits with this input: " + created_inputs.get(created_inputs.size() - 1).trait_count);
-        }
+        System.err.println("\tTraits with this input: " + lastInput.trait_count);
+
         System.err.println("\tMax traits: " + max_trait);
         System.err.print("\tInput used: ");
 
-        for (MyString s : created_inputs.get(created_inputs.size() - 1).myStr) {
+        for (MyString s : lastInput.myStr) {
             System.err.print(s.val);
         }
         System.err.println();

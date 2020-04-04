@@ -90,9 +90,10 @@ class Dna {
     public Double calculateFitness(int targetBranch) {
         Pair<Integer, Integer> al = Fuzzer.approachLevel(targetBranch, dna);
 
-        if (al.first < 0) { // there was an error
-            System.err.println("Error in approachLevel");
-            System.exit(1);
+        if (al.first < 0) {// there was an error
+            //System.err.println("Error in approachLevel " + targetBranch);
+            return 0.0;
+            // System.exit(1);
         }
         int approachLevel = al.first;
         int branchId = al.second;
