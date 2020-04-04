@@ -7,9 +7,20 @@ def create_all(out, var_count, bool_count, str_count):
     Calls all the create_X methods
     :param out: destination file in which the code is written
     """
+    create_genetic(out)
     create_fuzzer(out)
     create_myclasses(out)
     create_i(out, var_count, bool_count, str_count)
+
+
+def create_genetic(out):
+    """
+    Writes the classes used for the geneti algorithm into out
+    :param out: destination file in which the code is written
+    """
+    with open(genetic_filename, 'r') as genetic_file:
+        for line in genetic_file:
+            out.write(line)
 
 
 def create_fuzzer(out):

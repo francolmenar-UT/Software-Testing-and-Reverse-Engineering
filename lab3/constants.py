@@ -1,3 +1,4 @@
+genetic_filename = "java_files/genetic.java"
 fuzzer_filename = "java_files/fuzzer.java"
 classes_filename = "java_files/classes.java"
 i_filename = "java_files/I.java"

@@ -49,9 +49,9 @@ class Logging {
 
 // Fuzzer
 class Fuzzer {
-    public HashMap<Integer, Integer> graph = new HashMap<>(); // Graph created of the program
-    public HashMap<Integer, Boolean> if_branch = new HashMap<>();
-    public HashMap<Integer, Boolean> visited_branches = new HashMap<Integer, Boolean>();
+    static public HashMap<Integer, Integer> graph = new HashMap<>(); // Graph created of the program
+    static public HashMap<Integer, Boolean> if_branch = new HashMap<>();
+    static public HashMap<Integer, Boolean> visited_branches = new HashMap<Integer, Boolean>();
 
     public static int inputCreated = 0;
     public static int randomFuzz = 10;  // Up to the iteration that we randomly generate the input
@@ -77,6 +77,8 @@ class Fuzzer {
     public static HashSet<Integer> errors_reached = new HashSet<>();
 
     public List<MyInput> created_inputs = new ArrayList<MyInput>();
+
+    static MyString[] inputs;
 
     public void Fuzzer() {
     }
@@ -108,15 +110,13 @@ class Fuzzer {
      * @param input
      * @return
      */
-    public Pair<Integer, Integer> approachLevel(int goal, MyInput input) {
+    static public Pair<Integer, Integer> approachLevel(int goal, MyInput input) {
         int distance = -1;
         int node = goal;
 
-        String trace = new String("");
-
-        while (!(input.visitedBranchs.contains(node) && this.if_branch.get(node)) || node == 0) {
+        while (!(input.visitedBranchs.contains(node) && if_branch.get(node)) || node == 0) {
             distance++;
-            node = this.graph.get(node);
+            node = graph.get(node);
 
             if (node == 0)
                 return new Pair(-2, -1);
@@ -133,6 +133,7 @@ class Fuzzer {
      * @return the new input to be used as a MyInput Object
      */
     public MyInput fuzz(MyString[] inputs) {
+        this.inputs = inputs;
         iteration_number++; // Update global iteration counter
         int visited_stats = 0; // Counter to check the amount of visited branchs
 
