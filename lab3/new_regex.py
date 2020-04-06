@@ -5,6 +5,7 @@ import createProblemClass
 import constants
 from constants import *
 from branch import analyze_branches, write_graph
+from timer import timerInit
 
 import functions
 
@@ -69,6 +70,7 @@ for line in f.readlines():
         createProblemClass.create_main_method(out, line)  # Create main method
         # Write graph
         write_graph(out, graph)
+        timerInit(out)
         continue
 
     if line.find("while(true) {") != -1:  # While(true) statement
