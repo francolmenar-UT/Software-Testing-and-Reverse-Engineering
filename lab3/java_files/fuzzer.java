@@ -21,6 +21,10 @@ class Fuzzer {
     /*********************** Debug Variables ***********************/
     private static final Boolean DEBUG_NEW_BRANCH = true; // Enables printNewBranch
 
+    /*********************** Logging Variables *********************/
+    private static Logging log = new Logging("Problem1");
+    private static int count = 0;
+
 
     public void Fuzzer() {
     }
@@ -100,6 +104,12 @@ class Fuzzer {
                 visited_stats++;
         }
 
+        // write to logfile. Only write in every 5th iteration to reduce the amount of data
+        if (count++ % 5 == 0){
+            log.writeLog(visited_stats);
+        }
+        
+
         // Check if we acchieved a new maximum of visited branches
         if (visited_stats > max_branches_visited) {
             max_branches_visited = visited_stats; // Update counter
@@ -132,6 +142,48 @@ class Fuzzer {
             System.err.print(s.val);
         }
         System.err.println();
+    }
+}
+
+
+/** Used log the elapsed time and the branch coverage. */
+class Logging {
+    public long startTime;
+    public long elapsedTime;
+    public BufferedWriter out;
+    public String outName;
+
+    /**
+     * Creates a new logger.
+     * The name of the logfile depends on the current time.
+     * @param outName The name of the logfile
+     */
+    public Logging(String outName) {
+        startTime = System.nanoTime();
+        elapsedTime = 0;
+        this.outName = outName;
+    }
+
+    /**
+     * @return the elapsedTime
+     */
+    public long getElapsedTime() {
+        return System.nanoTime() - startTime;
+    }
+
+    /**
+     * Write the elapsed time and the number of visited branches into the logfile.
+     * @param numVisited number of visited branches
+     */
+    public void writeLog(int numVisited){
+        try {
+            out = new BufferedWriter(new FileWriter(this.outName + ".txt", true));
+            out.write(String.valueOf(getElapsedTime()) + ", " + String.valueOf(numVisited) + "\n");
+            out.close();
+        } catch (IOException e) {
+            System.out.println("Could not write to file.");
+            e.printStackTrace();
+        }
     }
 }
 
