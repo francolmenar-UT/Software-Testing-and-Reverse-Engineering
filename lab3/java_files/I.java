@@ -4,44 +4,36 @@ class I {
 
     public static void myAdd(MyInt a, MyInt b, MyInt c) {
         a.val = b.val + c.val;
-        check_trait(a, b, c);
     }
 
     public static void myDel(MyInt a, MyInt b, MyInt c) {
         a.val = b.val - c.val;
-        check_trait(a, b, c);
     }
 
     public static void myMul(MyInt a, MyInt b, MyInt c) {
         a.val = b.val * c.val;
-        check_trait(a, b, c);
     }
 
     public static void myDiv(MyInt a, MyInt b, MyInt c) {
         a.val = b.val / c.val;
-        check_trait(a, b, c);
     }
 
     public static void myMod(MyInt a, MyInt b, MyInt c) {
         a.val = b.val % c.val;
-        check_trait(a, b, c);
     }
 
     /****************************               ****************************/
     public static void myInd(MyInt a, MyInt[] b, MyInt c) {
         a.val = b[c.val].val;
-        check_trait(a, b[c.val], c);
     }
 
     public static void myInd(MyString a, MyString[] b, MyInt c) {
         a.val = b[c.val].val;
-        check_trait(a, b[c.val], c);
     }
 
     /****************************               ****************************/
     public static void myEquals(MyBool a, MyBool b, MyBool c, MyInput input) {
         a.val = (b.val == c.val);
-        check_trait(a, b, c);
         float b_distance = branch_distance_eq(a.val);
         input.setBranchDistance(this_branch_id, b_distance); // Set Branch distance to the MyInput
         a.setBranchDistance(b_distance); // Set Branch distance to the resulting boolean
@@ -49,7 +41,6 @@ class I {
 
     public static void myEquals(MyBool a, MyInt b, MyInt c, MyInput input) {
         a.val = (b.val == c.val);
-        check_trait(a, b, c);
         float b_distance = branch_distance_eq(a.val);
         input.setBranchDistance(this_branch_id, b_distance);
         a.setBranchDistance(b_distance); // Set Branch distance to the resulting boolean
@@ -58,7 +49,6 @@ class I {
 
     public static void myEquals(MyBool a, MyString b, MyString c, MyInput input) {
         a.val = (b.val.equals(c.val));
-        check_trait(a, b, c);
         float b_distance = editDistDP(b.val, c.val, b.val.length(), c.val.length());
         input.setBranchDistance(this_branch_id, b_distance);
         a.setBranchDistance(b_distance); // Set Branch distance to the resulting boolean
@@ -67,7 +57,6 @@ class I {
     /****************************               ****************************/
     public static void myLess(MyBool a, MyInt b, MyInt c, MyInput input) {
         a.val = (b.val < c.val);
-        check_trait(a, b, c);
         float b_distance = branch_distance_less_eq(b.val, c.val, a.val);
         input.setBranchDistance(this_branch_id, b_distance);
         a.setBranchDistance(b_distance); // Set Branch distance to the resulting boolean
@@ -75,7 +64,6 @@ class I {
 
     public static void myGreater(MyBool a, MyInt b, MyInt c, MyInput input) {
         a.val = (b.val > c.val);
-        check_trait(a, b, c);
         float b_distance = branch_distance_greater_eq(b.val, c.val, a.val);
         input.setBranchDistance(this_branch_id, b_distance);
         a.setBranchDistance(b_distance); // Set Branch distance to the resulting boolean
@@ -83,7 +71,6 @@ class I {
 
     public static void myLessEqual(MyBool a, MyInt b, MyInt c, MyInput input) {
         a.val = (b.val <= c.val);
-        check_trait(a, b, c);
         float b_distance = branch_distance_less_eq(b.val, c.val, a.val);
         input.setBranchDistance(this_branch_id, b_distance);
         a.setBranchDistance(b_distance); // Set Branch distance to the resulting boolean
@@ -91,7 +78,6 @@ class I {
 
     public static void myGreaterEqual(MyBool a, MyInt b, MyInt c, MyInput input) {
         a.val = (b.val >= c.val);
-        check_trait(a, b, c);
         float b_distance = branch_distance_greater_eq(b.val, c.val, a.val);
         input.setBranchDistance(this_branch_id, b_distance);
         a.setBranchDistance(b_distance); // Set Branch distance to the resulting boolean
@@ -100,13 +86,11 @@ class I {
     /****************************               ****************************/
     public static MyBool myAssign(MyBool b) {
         MyBool a = new MyBool(b.val);
-        check_trait(a, b);
         return a;
     }
 
     public static MyInt myAssign(MyInt b) {
         MyInt a = new MyInt(b.val);
-        check_trait(a, b);
         return a;
     }
 
@@ -114,21 +98,18 @@ class I {
         MyInt a[] = new MyInt[b.length];
         for (int i = 0; i < b.length; i++) {
             a[i] = new MyInt(b[i].val);
-            check_trait(a[i], b[i]);
         }
         return a;
     }
 
     public static MyString myAssign(MyString b) {
         MyString a = new MyString(b.val);
-        check_trait(a, b);
         return a;
     }
 
     /****************************               ****************************/
     public static void myAnd(MyBool a, MyBool b, MyBool c, MyInput input) {
         a.val = (b.val && c.val);
-        check_trait(a, b, c);
         float b_distance = branch_distance_and(b.branchDistance, c.branchDistance);
         input.setBranchDistance(this_branch_id, b_distance);
         a.setBranchDistance(b_distance); // Set Branch distance to the resulting boolean
@@ -136,7 +117,6 @@ class I {
 
     public static void myOr(MyBool a, MyBool b, MyBool c, MyInput input) {
         a.val = (b.val || c.val);
-        check_trait(a, b, c);
         float b_distance = branch_distance_or(b.branchDistance, c.branchDistance);
         input.setBranchDistance(this_branch_id, b_distance);
         a.setBranchDistance(b_distance); // Set Branch distance to the resulting boolean
@@ -144,7 +124,6 @@ class I {
 
     public static void myNot(MyBool a, MyBool b, MyInput input) {
         a.val = (!b.val);
-        check_trait(a, b);
         float b_distance = branch_distance_not(b.branchDistance);
         input.setBranchDistance(this_branch_id, b_distance);
         a.setBranchDistance(b_distance); // Set Branch distance to the resulting boolean
@@ -486,67 +465,4 @@ class I {
     public static int this_branch_id; // ID used for storing the branch distance in the Hash Map
 
     public static Stack<Boolean> stack = new Stack<>();
-
-    public static int trait_counter = 0;
-
-    public static void check_trait(MyVariable a, Object b, Object c) {
-        if (!Fuzzer.USE_TAINT)
-            return;
-        boolean stack_val = stack.empty() ? false : stack.peek();
-        System.out.println("S: " + stack_val);
-
-        boolean b_flow = false;
-        boolean c_flow = false;
-
-        System.out.print("B  ");
-        if (b instanceof MyVariable) {
-            MyVariable _b = (MyVariable) b;
-            b_flow = _b.flow;
-/*
-            System.out.print(" t: " + (b instanceof MyBool ? "b" : b instanceof MyInt ? "i" : b instanceof MyString ? "s" : " "));
-            System.out.print(_b.id);
-            System.out.println(" v: " + b_flow);
-*/
-        }
-
-        System.out.print("C  ");
-        if (c instanceof MyVariable) {
-            MyVariable _c = (MyVariable) c;
-            c_flow = _c.flow;
-/*
-            System.out.print(" t: " + (c instanceof MyBool ? "b" : c instanceof MyInt ? "i" : c instanceof MyString ? "s" : " "));
-            System.out.print(_c.id);
-            System.out.println(" v: " + c_flow);
-*/
-        }
-
-        if ((b_flow || c_flow || stack_val) && a.flow == false) {
-            a.flow = true;
-            trait_counter++;
-        }
-/*
-        System.out.print("A  ");
-        System.out.print(" t: " + (a instanceof MyBool ? "b" : a instanceof MyInt ? "i" : a instanceof MyString ? "s" : " "));
-        System.out.print(a.id);
-        System.out.println(" v: " + a.flow);
-        System.out.println();
-*/
-    }
-
-    public static void check_trait(MyVariable a, Object b) {
-        if (!Fuzzer.USE_TAINT)
-            return;
-        boolean stack_val = stack.empty() ? false : stack.peek();
-        boolean b_flow = false;
-
-        if (b instanceof MyVariable) {
-            MyVariable _b = (MyVariable) b;
-            b_flow = _b.flow;
-        }
-
-        if ((b_flow == true || stack_val) && a.flow == false) {
-            a.flow = true;
-            trait_counter++;
-        }
-    }
 }

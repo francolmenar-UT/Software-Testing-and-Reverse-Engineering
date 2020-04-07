@@ -11,10 +11,6 @@ def create_reset_method(out, reset_in):
     :param reset_in:
     """
     out.write("public void reset(){\n")
-    out.write('\
-        //System.err.print("\\n\\nNumber of traits: ");\n\
-        //System.err.println(I.trait_counter);\n\
-        I.trait_counter = 0;\n')
     out.write("System.out.println(\"reset\");\n")
     for line in reset_in.readlines():
         line = line.replace(', I.stack.empty() ? false : I.stack.peek()', '')
@@ -61,7 +57,7 @@ def create_while_true(out, line):
     """
     out.write(line)  # Write while statement
     out.write('if (resultFuzz != null)\n')
-    out.write('\tfuzzer.after_execution(resultFuzz, I.trait_counter);\n')
+    out.write('\tfuzzer.after_execution(resultFuzz);\n')
     out.write("eca.reset();\n")  # Add a reset for the next iteration
     timerExec(out) # write timer check
     out.write('resultFuzz = fuzzer.fuzz(eca.inputs);\n')  # Run the fuzzer
