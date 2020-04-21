@@ -114,13 +114,42 @@ def analyze_branches(input_file, out):
     return parents, if_branch
 
 
+# Given a graph stored as dict(node, parent) return it stored as dict(node, list(child))
+def reverse(graph):
+    rg = dict()
+
+    for child in graph:
+        parent = graph[child]
+
+        if parent not in rg:
+            rg[parent] = list()
+
+        rg[parent].append(child)
+
+    return rg
+
+
 def write_graph(out, graph):
     for n in graph[0]:
         out.write('fuzzer.graph.put(' + str(n) + ', ' + str(graph[0][n]) + ');\n')
-        print(str(n) + ' -> ' + str(graph[0][n]))
+        # print(str(n) + ' -> ' + str(graph[0][n]))
 
     for n in graph[1]:
         out.write('fuzzer.if_branch.put(' + str(n) + ', ' + ('true' if graph[1][n] else 'false') + ');\n')
 
     for n in graph[0]:
         out.write('fuzzer.visited_branches.put(' + str(n) + ', false);\n')
+
+    rg = reverse(graph[0])
+    for node in rg:
+        out.write('fuzzer.rev_graph.put(' + str(node) + ', Arrays.asList(')
+
+        for i, child in enumerate(rg[node]):
+            out.write(str(child))
+            if i < len(rg[node]) - 1:
+                out.write(', ')
+
+        out.write('));\n')
+
+    out.write('\n')
+    out.write('fuzzer.visit_order_queue.add(0);\n\n')
