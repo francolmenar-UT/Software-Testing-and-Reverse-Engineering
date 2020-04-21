@@ -72,14 +72,15 @@ class Fuzzer {
 
     public static boolean USE_TAINT = false; // Probably unused
 
-    public static Logging log = new Logging();
+    public static Logging log = null;
 
     // Errors
     public static HashSet<Integer> errors_reached = new HashSet<>();
 
     public List<MyInput> created_inputs = new ArrayList<MyInput>();
 
-    public Fuzzer() {
+    public Fuzzer(String filename) {
+        log = new Logging(filename);
     }
 
     public Pair<Integer, Integer> approachLevel(int goal, MyInput input) {
