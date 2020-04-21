@@ -23,11 +23,12 @@ class Fuzzer {
     private static final Boolean DEBUG_NEW_BRANCH = true; // Enables printNewBranch
 
     /*********************** Logging Variables *********************/
-    private static Logging log = new Logging("Problem1");
+    private static Logging log = null; 
     private static int count = 0;
 
 
-    public void Fuzzer() {
+    public Fuzzer(String filename) {
+        log = new Logging(filename);
     }
 
     public static boolean DEPTH_FIRST_SEARCH = true;

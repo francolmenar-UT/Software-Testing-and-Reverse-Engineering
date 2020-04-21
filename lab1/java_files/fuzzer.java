@@ -25,12 +25,17 @@ class Fuzzer {
 
     public static boolean USE_TAINT = false;
 
+    /*********************** Logging Variables *********************/
+    private static Logging log = null; 
+    private static int count = 0;
+
     // Errors
     public static HashSet<Integer> errors_reached = new HashSet<>();
 
     public List<MyInput> created_inputs = new ArrayList<MyInput>();
 
-    public void Fuzzer() {
+    public Fuzzer(String filename) {
+        log = new Logging(filename);
     }
 
     public static boolean DEPTH_FIRST_SEARCH = true;
@@ -118,6 +123,12 @@ class Fuzzer {
             if (visit)
                 visited_stats++;
         }
+
+        // write to logfile. Only write in every 2nd iteration to reduce the amount of data
+        if (count++ % 2 == 0){
+            log.writeLog(visited_stats);
+        }
+
         if (visited_stats > max_branches_visited) {
             max_branches_visited = visited_stats;
             System.err.println("Iteration: " + iteration_number+ " visited " + visited_stats + " branches out of" + visited_branches.size());
@@ -205,5 +216,46 @@ class Fuzzer {
         }
         if (trait_count > max_trait)
             max_trait = input.trait_count;
+    }
+}
+
+/** Used log the elapsed time and the branch coverage. */
+class Logging {
+    public long startTime;
+    public long elapsedTime;
+    public BufferedWriter out;
+    public String outName;
+
+    /**
+     * Creates a new logger.
+     * The name of the logfile depends on the current time.
+     * @param outName The name of the logfile
+     */
+    public Logging(String outName) {
+        startTime = System.nanoTime();
+        elapsedTime = 0;
+        this.outName = outName;
+    }
+
+    /**
+     * @return the elapsedTime
+     */
+    public long getElapsedTime() {
+        return System.nanoTime() - startTime;
+    }
+
+    /**
+     * Write the elapsed time and the number of visited branches into the logfile.
+     * @param numVisited number of visited branches
+     */
+    public void writeLog(int numVisited){
+        try {
+            out = new BufferedWriter(new FileWriter(this.outName + ".txt", true));
+            out.write(String.valueOf(getElapsedTime()) + ", " + String.valueOf(numVisited) + "\n");
+            out.close();
+        } catch (IOException e) {
+            System.out.println("Could not write to file.");
+            e.printStackTrace();
+        }
     }
 }

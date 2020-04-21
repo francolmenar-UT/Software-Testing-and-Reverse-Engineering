@@ -5,6 +5,7 @@ import createProblemClass
 import constants
 from constants import *
 from branch import analyze_branches, write_graph
+from timer import timerInit
 
 import functions
 
@@ -40,6 +41,11 @@ instructed_file = path.join(path.dirname(realpath), inst_filename)
 out = open(instructed_file, 'w')  # Create instructed file to write into it
 out.write("import java.util.*;\n")
 out.write("import java.lang.Math;\n")
+out.write("import java.io.BufferedWriter;\n")
+out.write("import java.io.FileWriter;\n")
+out.write("import java.io.IOException;\n")
+out.write("import java.io.PrintWriter;\n")
+out.write("import java.util.Date;\n")
 var_count, bool_count, str_count = 1, 1, 1  # Reset the variables
 
 for line in f.readlines():
@@ -64,6 +70,7 @@ for line in f.readlines():
         createProblemClass.create_main_method(out, line)  # Create main method
         # Write graph
         write_graph(out, graph)
+        timerInit(out)
         continue
 
     if line.find("while(true) {") != -1:  # While(true) statement
