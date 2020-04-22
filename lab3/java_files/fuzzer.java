@@ -26,16 +26,19 @@ class Fuzzer {
     private static Logging log = null; 
     private static int count = 0;
 
-
-    public Fuzzer(String filename) {
-        log = new Logging(filename);
-    }
-
-    public static boolean DEPTH_FIRST_SEARCH = true;
+    public static boolean DEPTH_FIRST_SEARCH = false;
     public static ArrayDeque<Integer> visit_order_queue = new ArrayDeque<>();
     public static int current_target_branch = -1;
     public static int attempt_for_target = 0;
     public static int MAX_ATTEMPT = 10000;
+
+    public Fuzzer(String filename, String isDepth) {
+        log = new Logging(filename);
+        if (isDepth != null && isDepth.equals("true")){
+            DEPTH_FIRST_SEARCH = true;
+        }
+       
+    }
 
     // Returns the next branch to target. If there are no branches to target then returns -2.
     // Takes a boolean as parameter, which sets the type of priority: true -> depth-first | false -> breadth-first

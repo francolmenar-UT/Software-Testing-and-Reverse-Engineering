@@ -36,6 +36,9 @@ class Fuzzer {
 
     public Fuzzer(String filename) {
         log = new Logging(filename);
+        if (isDepth != null && isDepth.equals("true")){
+            DEPTH_FIRST_SEARCH = true;
+        }
     }
 
     public static boolean DEPTH_FIRST_SEARCH = true;

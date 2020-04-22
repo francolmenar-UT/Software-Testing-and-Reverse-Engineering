@@ -50,7 +50,7 @@ def create_main_method(out, line):
     :param line: The current text line found
     """
     out.write(line)  # Write main statement
-    out.write('Fuzzer fuzzer = new Fuzzer(args[0]);\n')  # Create the fuzzer
+    out.write('Fuzzer fuzzer = new Fuzzer(args[0], args[1]);\n')  # Create the fuzzer
 
 
 def create_while_true(out, line):
