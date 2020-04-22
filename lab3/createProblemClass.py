@@ -47,6 +47,8 @@ def create_main_method(out, line):
     """
     out.write(line)  # Write main statement
     out.write('Fuzzer fuzzer = new Fuzzer(args[0], args[1]);\n')  # Create the fuzzer
+    out.write('if (args.length > 2) fuzzer.populationSize = Integer.parseInt(args[2]);\n')
+    out.write('if (args.length > 3) fuzzer.mutation_factor = Double.parseDouble(args[3]);\n')
 
 
 def create_while_true(out, line):
