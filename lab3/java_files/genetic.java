@@ -117,14 +117,20 @@ class Dna {
      * Generate a new Dna which is the crossover between this dna and the partner
      */
     public Dna crossover(Dna partner) {
-        MyString[] gene = new MyString[this.length];
-
         Random rand = new Random();
+        int splitPosition = rand.nextInt(this.length);
 
-        int splitPosition = rand.nextInt(partner.length);
+        // The final len is the segment from this [0..splitPosition] + what is added from partner
+        // [splitPosition..partner.length] If partner.length < splitPosition then nothing is added and the final len =
+        // the segment from this, which is splitPosition +1 because splitPosition starts from 0
+        int child_len = splitPosition >= partner.length - 1 ? splitPosition + 1 : partner.length;
 
-        for (int i = 0; i < gene.length; i++) {
-            if (i < splitPosition)
+        MyString[] gene = new MyString[child_len];
+
+        assert(this.length == this.dna.myStr.length) : "this.len";
+        assert(partner.length == partner.dna.myStr.length) : "partner.len";
+        for (int i = 0; i < child_len; i++) {
+            if (i <= splitPosition)
                 gene[i] = new MyString(this.dna.myStr[i].val, true);
             else
                 gene[i] = new MyString(partner.dna.myStr[i].val, true);
@@ -137,9 +143,32 @@ class Dna {
 
         for (int i = 0; i < this.length; i++) {
             if (rand.nextDouble() < this.mutation_factor) {
-                int index = rand.nextInt(Fuzzer.inputs.length);
-                this.dna.myStr[i] = new MyString(Fuzzer.inputs[index].val, true);
+                /* Decide which mutation to apply:
+                 * 0 -> modify char
+                 * 1 -> remove char
+                 * 2 -> add char after this
+                 */
+                int operation = rand.nextInt(3);
+
+                if (operation == 0) { //change
+                    int index = rand.nextInt(Fuzzer.inputs.length);
+                    this.dna.myStr[i] = new MyString(Fuzzer.inputs[index].val, true);
+                } else if (operation == 1 && this.length > 1) { //remove
+                    int p = this.dna.myStr.length;
+                    this.dna.myStr = ArrayUtils.remove(this.dna.myStr, i);
+                    assert(p != this.dna.myStr.length) : "java sucks";
+                    this.length--;
+                } else { // add
+                    int index = rand.nextInt(Fuzzer.inputs.length);
+                    int p = this.dna.myStr.length;
+                    this.dna.myStr = ArrayUtils.insert(i+1, this.dna.myStr, new MyString(Fuzzer.inputs[index].val, true));
+                    assert(p != this.dna.myStr.length) : "java sucks 2";
+                    this.length++;
+                    i++; // skip the next element cause it was just added
+                }
+
             }
         }
+        assert(this.length == this.dna.myStr.length) : "wrong mutate";
     }
 }
