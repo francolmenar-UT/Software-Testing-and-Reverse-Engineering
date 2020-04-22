@@ -165,6 +165,9 @@ class I {
         // System.out.print("b" + a.val + " ");
         return a.val;
     }
+    
+    public static void openIf(){ }
+    public static void closeIf(){ }
 
     /****************************               ****************************/
     public static void myAdd(MyInt a, MyInt b, int c) {

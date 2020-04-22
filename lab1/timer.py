@@ -1,8 +1,11 @@
 import sys, re
-#fuction which adds a timer after which the program terminates
+
+
+# fuction which adds a timer after which the program terminates
 def timerInit(out):
     out.write("long startTime = System.nanoTime();\n")
     out.write("int endTime = 5;\n")
+
 
 def timerExec(out):
     out.write("if ((System.nanoTime() - startTime) >= endTime * Math.pow(10,9) * 60) {\n")
