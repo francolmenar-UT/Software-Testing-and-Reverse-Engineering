@@ -3,9 +3,9 @@
 pythonPath="./new_regex.py" # Path to the Python file
 seqPath="../../RERS/sequential/" # First Path
 # Folders inside /sequential/
-declare -a arrFolders=("TrainingSeqLtlRers2019/")
+# declare -a arrFolders=("TrainingSeqLtlRers2019/")
 
-# declare -a arrFolders=("TrainingSeqLtlRers2019/" "SeqLtlRers2019/" "SeqReachabilityRers2019/" "TrainingSeqReachRers2019/")
+declare -a arrFolders=("TrainingSeqLtlRers2019/" "SeqLtlRers2019/" "SeqReachabilityRers2019/" "TrainingSeqReachRers2019/")
 
 fileType=".java" # File type
 
