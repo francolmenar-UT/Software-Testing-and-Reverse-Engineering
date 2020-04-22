@@ -142,7 +142,7 @@ class Dna {
         Random rand = new Random();
 
         for (int i = 0; i < this.length; i++) {
-            if (rand.nextDouble() < this.mutation_factor) {
+            if (rand.nextDouble() < Fuzzer.mutation_factor) {
                 /* Decide which mutation to apply:
                  * 0 -> modify char
                  * 1 -> remove char

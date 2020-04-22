@@ -16,7 +16,8 @@ class Fuzzer {
 
     /*********************** Population Variables ***********************/
     private Population population = null;
-    private int populationSize = 30;
+    public int populationSize = 30;
+    public static double mutation_factor = 0.01;
     private int dnaIndex = 0;
 
     /*********************** Debug Variables ***********************/
