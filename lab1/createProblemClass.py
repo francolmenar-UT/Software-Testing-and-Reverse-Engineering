@@ -222,6 +222,7 @@ def search_math_operations(out, line, types, var_count, str_count, bool_count):
                 text = match[1]
                 var = match[2]
                 val = match[3]
+                out.write("I.var" + str(var_count) + " = new MyInt(0);\n")
                 out.write("I.myAdd( I.var" + str(var_count) + "," + var + "," + val + ");\n")
                 line = line.replace(text, "I.var" + str(var_count), 1)  # replace matched code with own function
                 var_count += 1
@@ -229,6 +230,7 @@ def search_math_operations(out, line, types, var_count, str_count, bool_count):
                 text = match[4]
                 var = match[5]
                 val = match[6]
+                out.write("I.var" + str(var_count) + " = new MyInt(0);\n")
                 out.write("I.myDel( I.var" + str(var_count) + "," + var + "," + val + ");\n")
                 line = line.replace(text, "I.var" + str(var_count), 1)  # replace matched code with own function
                 var_count += 1
@@ -236,6 +238,7 @@ def search_math_operations(out, line, types, var_count, str_count, bool_count):
                 text = match[7]
                 var = match[8]
                 val = match[9]
+                out.write("I.var" + str(var_count) + " = new MyInt(0);\n")
                 out.write("I.myMul( I.var" + str(var_count) + "," + var + "," + val + ");\n")
                 line = line.replace(text, "I.var" + str(var_count), 1)  # replace matched code with own function
                 var_count += 1
@@ -243,6 +246,7 @@ def search_math_operations(out, line, types, var_count, str_count, bool_count):
                 text = match[10]
                 var = match[11]
                 val = match[12]
+                out.write("I.var" + str(var_count) + " = new MyInt(0);\n")
                 out.write("I.myDiv( I.var" + str(var_count) + "," + var + "," + val + ");\n")
                 line = line.replace(text, "I.var" + str(var_count), 1)  # replace matched code with own function
                 var_count += 1
@@ -250,6 +254,7 @@ def search_math_operations(out, line, types, var_count, str_count, bool_count):
                 text = match[13]
                 var = match[14]
                 val = match[15]
+                out.write("I.var" + str(var_count) + " = new MyInt(0);\n")
                 out.write("I.myMod( I.var" + str(var_count) + "," + var + "," + val + ");\n")
                 line = line.replace(text, "I.var" + str(var_count), 1)  # replace matched code with own function
                 var_count += 1
@@ -258,14 +263,17 @@ def search_math_operations(out, line, types, var_count, str_count, bool_count):
                 var = match[17]
                 val = match[18]
                 if var in types.keys() and (types[var] == "String" or types[var] == "String[]"):
+                    out.write("I.str" + str(var_count) + " = new MyString(\"\");\n")
                     out.write("I.myInd( I.str" + str(str_count) + "," + var + "," + val + ");\n")
                     line = line.replace(text, "I.str" + str(str_count), 1)  # replace matched code with own
                     str_count += 1
                 elif var in types.keys() and types[var] == "boolean[]":
+                    out.write("I.bool" + str(bool_count) + " = new MyBool(false);\n")
                     out.write("I.myInd( I.bool" + str(bool_count) + "," + var + "," + val + ");\n")
                     line = line.replace(text, "I.bool" + str(bool_count), 1)  # replace matched code with own
                     bool_count += 1
                 else:
+                    out.write("I.var" + str(var_count) + " = new MyInt(0);\n")
                     out.write("I.myInd( I.var" + str(var_count) + "," + var + "," + val + ");\n")
                     line = line.replace(text, "I.var" + str(var_count), 1)  # replace matched code with own
                     var_count += 1
@@ -297,6 +305,7 @@ def search_gos_comp(out, line, bool_count):
                 text = match[1]
                 var = match[2]
                 val = match[3]
+                out.write("I.bool" + str(bool_count) + " = new MyBool(false);\n")
                 out.write("I.myEquals( I.bool" + str(bool_count) + "," + var + "," + val + ",resultFuzz);\n")
                 line = line.replace(text, "I.bool" + str(bool_count),
                                     1)  # replace matched code with own
@@ -304,6 +313,7 @@ def search_gos_comp(out, line, bool_count):
                 text = match[4]
                 var = match[5]
                 val = match[6]
+                out.write("I.bool" + str(bool_count) + " = new MyBool(false);\n")
                 out.write("I.myEquals( I.bool" + str(bool_count) + "," + var + "," + val + ",resultFuzz);\n")
                 line = line.replace(text, "I.bool" + str(bool_count),
                                     1)  # replace matched code with own
@@ -311,6 +321,7 @@ def search_gos_comp(out, line, bool_count):
                 text = match[7]
                 var = match[8]
                 val = match[9]
+                out.write("I.bool" + str(bool_count) + " = new MyBool(false);\n")
                 out.write("I.myLess( I.bool" + str(bool_count) + "," + var + "," + val + ",resultFuzz);\n")
                 line = line.replace(text, "I.bool" + str(bool_count),
                                     1)  # replace matched code with own
@@ -318,6 +329,7 @@ def search_gos_comp(out, line, bool_count):
                 text = match[10]
                 var = match[11]
                 val = match[12]
+                out.write("I.bool" + str(bool_count) + " = new MyBool(false);\n")
                 out.write("I.myGreater( I.bool" + str(bool_count) + "," + var + "," + val + ",resultFuzz);\n")
                 line = line.replace(text, "I.bool" + str(bool_count),
                                     1)  # replace matched code with own
@@ -325,6 +337,7 @@ def search_gos_comp(out, line, bool_count):
                 text = match[13]
                 var = match[14]
                 val = match[15]
+                out.write("I.bool" + str(bool_count) + " = new MyBool(false);\n")
                 out.write("I.myLessEqual( I.bool" + str(bool_count) + "," + var + "," + val + ",resultFuzz);\n")
                 line = line.replace(text, "I.bool" + str(bool_count),
                                     1)  # replace matched code with own
@@ -332,6 +345,7 @@ def search_gos_comp(out, line, bool_count):
                 text = match[16]
                 var = match[17]
                 val = match[18]
+                out.write("I.bool" + str(bool_count) + " = new MyBool(false);\n")
                 out.write("I.myGreaterEqual( I.bool" + str(bool_count) + "," + var + "," + val + ",resultFuzz);\n")
                 line = line.replace(text, "I.bool" + str(bool_count),
                                     1)  # replace matched code with own
@@ -358,6 +372,7 @@ def search_and_or_not_comp(out, line, bool_count):
                 text = match[1]
                 var = match[2]
                 val = match[3]
+                out.write("I.bool" + str(bool_count) + " = new MyBool(false);\n")
                 out.write("I.myAnd( I.bool" + str(bool_count) + "," + var + "," + val + ",resultFuzz);\n")
                 line = line.replace(text, "I.bool" + str(bool_count),
                                     1)  # replace matched code with own
@@ -365,12 +380,14 @@ def search_and_or_not_comp(out, line, bool_count):
                 text = match[4]
                 var = match[5]
                 val = match[6]
+                out.write("I.bool" + str(bool_count) + " = new MyBool(false);\n")
                 out.write("I.myOr( I.bool" + str(bool_count) + "," + var + "," + val + ",resultFuzz);\n")
                 line = line.replace(text, "I.bool" + str(bool_count),
                                     1)  # replace matched code with own
             elif len(match[7]) > 0:  # NOT
                 text = match[7]
                 var = match[8]
+                out.write("I.bool" + str(bool_count) + " = new MyBool(false);\n")
                 out.write("I.myNot( I.bool" + str(bool_count) + "," + var + ",resultFuzz);\n")
                 line = line.replace(text, "I.bool" + str(bool_count),
                                     1)  # replace matched code with own
@@ -386,29 +403,68 @@ def search_and_or_not_comp(out, line, bool_count):
     return line, bool_count
 
 
-def search_print_assign_if(line):
+def search_print_assign_if(line, out):
     """
     Searches for printing, assigning and if statements
     :param line: The current text line found
     """
-    m = re.findall(r'(' + assignRe + '|' + printRe + '|' + ifRe + ')', line)  # find all matching sub-patterns
+    m = re.findall(r'('+assignRe+'|'+assignPlusRe+'|'+assignMinRe+'|'+printRe+'|'+ifRe+'|'+ifCompactRe+'|'+ifCompactReP+'|'+ifCompactReM+')', line)  # find all matching sub-patterns
 
     while len(m) > 0:  # if any matching items
         var, val, text = "", "", ""
-        for match in m:  # for each submatch, extract the condition, the var and the val
-            if len(match[1]) > 0:  # if first kind of condition
+        for match in m: # for each submatch, extract the condition, the var and the val
+            if len(match[1]) > 0: # if first kind of condition
                 text = match[1]
                 var = match[2]
                 val = match[3]
                 line = line.replace(text, var + " = I.myAssign(" + val + ");", 1)
-            if len(match[4]) > 0:  # if first kind of condition
+            if len(match[4]) > 0: # if first kind of condition
                 text = match[4]
                 var = match[5]
+                val = match[6]
+                out.write("I.myAdd(" + var + "," + var + "," + val + ");")
+                line = line.replace(text,var, 1)
+            if len(match[7]) > 0: # if first kind of condition
+                text = match[7]
+                var = match[8]
+                val = match[9]
+                out.write("I.myMin(" + var + "," + var + "," + val + ");")
+                line = line.replace(text, var, 1)
+            if len(match[10]) > 0: # if first kind of condition
+                text = match[10]
+                var = match[11]
                 line = line.replace(text, "I.myPrint", 1)
-            if len(match[6]) > 0:  # if first kind of condition
-                text = match[6]
-                var = match[7]
+            if len(match[12]) > 0: # if first kind of condition
+                text = match[12]
+                var = match[13]
                 line = line.replace(text, "if(I.myIf(" + var + "))", 1)
+            if len(match[14]) > 0: # if first kind of condition
+                text = match[14]
+                var1 = match[15]
+                var2 = match[16]
+                var3 = match[17]
+                var4 = match[18]
+                out.write("if(I.myIf(" + var2 + ")){ I.openIf(); " + var1 + " = I.myAssign(" + var3 + "); I.closeIf(); }\n")
+                out.write("else { I.openIf(); " + var1 + " = I.myAssign(" + var4 + "); I.closeIf(); }\n")
+                line = line.replace(text, "", 1)
+            if len(match[19]) > 0: # if first kind of condition
+                text = match[19]
+                var1 = match[20]
+                var2 = match[21]
+                var3 = match[22]
+                var4 = match[23]
+                out.write("if(I.myIf(" + var2 + ")){ I.openIf(); I.myAdd(" + var1 + "," + var1 + "," + var3 + "); I.closeIf(); }\n")
+                out.write("else { I.openIf(); I.myAdd(" + var1 + "," + var1 + "," + var4 + "); I.closeIf(); }\n")
+                line = line.replace(text, "", 1)
+            if len(match[24]) > 0: # if first kind of condition
+                text = match[24]
+                var1 = match[25]
+                var2 = match[26]
+                var3 = match[27]
+                var4 = match[28]
+                out.write("if(I.myIf(" + var2 + ")){ I.openIf(); I.myDel(" + var1 + "," + var1 + "," + var3 + "); I.closeIf(); }\n")
+                out.write("else { I.openIf(); I.myDel(" + var1 + "," + var1 + "," + var4 + "); I.closeIf(); }\n")
+                line = line.replace(text, "", 1)
         m = re.findall(r'(' + assignRe + '|' + printRe + '|' + ifRe + ')', line)  # find all matching sub-patterns
     return line
 
