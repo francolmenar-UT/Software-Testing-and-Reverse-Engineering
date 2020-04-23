@@ -12,7 +12,7 @@ import functions
 types = dict()
 
 # Global Variables
-var_count, bool_count, str_count, method_count, scope_depth = 1, 1, 1, 1, 0
+var_count, bool_count, str_count, method_count = 1, 1, 1, 1
 main_found = False
 
 first_bracket = False
@@ -46,8 +46,7 @@ out.write("import java.io.FileWriter;\n")
 out.write("import java.io.IOException;\n")
 out.write("import java.io.PrintWriter;\n")
 out.write("import java.util.Date;\n")
-out.write("import java.util.Random;\n")
-var_count, bool_count, str_count, scope_depth = 1, 1, 1, 0  # Reset the variables
+var_count, bool_count, str_count = 1, 1, 1  # Reset the variables
 
 for line in f.readlines():
     outline = line
@@ -80,31 +79,6 @@ for line in f.readlines():
         out.write(line)
         continue
 
-    bracket_openRe = '({)'
-    m = re.findall(r'('+bracket_openRe+')', line)
-    if len(m) > 0:
-        for match in m:
-            scope_depth += 1
-
-    bracket_closeRe = '(})'
-    m = re.findall(r'('+bracket_closeRe+')', line)
-    if len(m) > 0:
-        for match in m:
-            scope_depth -= 1
-
-    bracket_closeRe = '(^\s*})'
-    m = re.findall(r'('+bracket_closeRe+')', line)
-    while len(m) > 0:
-        for match in m:
-            if len(match[1]) > 0:
-                text = match[1]
-                line = line.replace(text, "", 1)
-                if scope_depth >= 2:
-                    out.write("I.closeIf();}\n")
-                else:
-                    out.write("}\n")
-        m = re.findall(r'('+bracket_closeRe+')', line)
-
     line = createProblemClass.search_close_bracket(out, line)  # Search for close brackets
 
     line = createProblemClass.search_int_string_bool(line, types)  # Search for Int, String and Boolean
@@ -121,7 +95,7 @@ for line in f.readlines():
     line, bool_count = createProblemClass.search_and_or_not_comp(out, line, bool_count)
 
     # Search for printing, assigning and if statements
-    line = createProblemClass.search_print_assign_if(line, out)
+    line = createProblemClass.search_print_assign_if(line)
 
     # Searches for ProblemX
     line = createProblemClass.search_main_problem(line)
@@ -129,16 +103,6 @@ for line in f.readlines():
     # Searches for stdin.readLine
     line = createProblemClass.search_stdin_readline(line)
     out.write(line)  # write updated code to file
-
-    bracket_openRe = '({\s*$)'
-    m = re.findall(r'('+bracket_openRe+')', line)
-    if len(m) > 0:
-        for match in m:
-            if len(match[1]) > 0:
-                text = match[1]
-                line = line.replace(text, "", 1)
-                if scope_depth >= 3:
-                    out.write("I.openIf();\n")
 
 reset_in = open(instructed_file, 'r')
 

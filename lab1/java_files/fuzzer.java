@@ -34,7 +34,7 @@ class Fuzzer {
 
     public List<MyInput> created_inputs = new ArrayList<MyInput>();
 
-    public Fuzzer(String filename) {
+    public Fuzzer(String filename, String isDepth) {
         log = new Logging(filename);
         if (isDepth != null && isDepth.equals("true")){
             DEPTH_FIRST_SEARCH = true;

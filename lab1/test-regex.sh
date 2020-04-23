@@ -116,7 +116,12 @@ for arrFolder_i in "${arrFolders[@]}"; do
     # Check if the file exists
     if [ -f "${newFilePath}${fileToRun}" ] && [ "${newFilePath}${fileToRun}" != $notWorking ]; then
       echo "${newFilePath}${fileToRun}"
-      python "${pythonPath}" "${newFilePath}${fileToRun}" # Run the file
+      echo "> Python regex"
+      python "${pythonPath}" "${newFilePath}${fileToRun}" # Run the python file
+      echo "> Java compiling"
+      javac  "${newFilePath}inst${fileToRun}" &&
+      echo "> Java run"
+      java -classpath "${newFilePath}" "inst${problem}" "Logs/TestLogger" "true" # TODO Parametarized the last two options too
     fi
   done
   printf "\n\n"
