@@ -122,11 +122,14 @@ for arrFolder_i in "${arrFolders[@]}"; do
     if [ -f "${newFilePath}${fileToRun}" ] && [ "${newFilePath}${fileToRun}" != $notWorking ]; then
       echo "> Running new_regex.py"
       python "${pythonPath}" "${newFilePath}${fileToRun}" # Run the python file
+
       echo "> Compiling inst${fileToRun}"
-      javac "${newFilePath}inst${fileToRun}" &&
-        echo "> Running inst${problem}"
+      javac "${newFilePath}inst${fileToRun}"
+
+      echo "> Running inst${problem}"
+      InslogPath=$logPath$(echo "${newFilePath}inst${problem}" | tr "/" -)"-log" # Create path to Log
       # timeout -s SIGKILL "${timeout}" TODO enable Control C signal
-      java -classpath "${newFilePath}" "inst${problem}" "Logger" "${DEPTH}" >/dev/null # TODO add files to the File
+      java -classpath "${newFilePath}" "inst${problem}" "$InslogPath" "${DEPTH}" >/dev/null 
     fi
   done
   printf "\n\n"
