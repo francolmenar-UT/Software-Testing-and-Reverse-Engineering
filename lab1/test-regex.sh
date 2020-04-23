@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 
-pythonPath="./new_regex.py"      # Path to the Python file
-seqPath="../../RERS/sequential/" # First Path
+pythonPath="./new_regex.py" # Path to the Python file
+logPath="Logs/"             # Log folder
+seqPath="sequential/"       # First Path
+fileType=".java"            # File type
 # Files not to be executed
-notWorking="../../RERS/sequential/TrainingSeqLtlRers2019/Problem1/Problem1.java"
+notWorking="sequential/TrainingSeqLtlRers2019/Problem1/Problem1.java"
 
 declare -a arrFolders=() # Array for the folders to be executed
 folder1="TrainingSeqLtlRers2019/"
@@ -11,7 +13,7 @@ folder2="SeqLtlRers2019/"
 folder3="SeqReachabilityRers2019/"
 folder4="TrainingSeqReachRers2019/"
 
-fileType=".java" # File type
+DEPTH="true" # True by default
 
 ############## Reading inputs ##############
 POSITIONAL=()
@@ -21,11 +23,19 @@ while [[ $# -gt 0 ]]; do
   case $key in
   -f | --folder) # Folder lab to be executed
     IFS=',' read -ra FOLDER <<<"$2" # Separate by ","
-    shift # past argument
-    shift # past value
+    shift                           # past argument
+    shift                           # past value
     ;;
-  -t | --timeout) # Folder lab to be executed
+  -t | --timeout)                           # Timeout
     IFS='-' read -ra TIMEOUT <<<"$2" # Separate by "-"
+    shift
+    shift
+    ;;
+  -d | --depth) # DEPTH_FIRST_SEARCH input
+    if [ "${2}" != "true" ] && [ "${2}" == "false" ];then
+        DEPTH="$2"
+    fi
+    echo "$DEPTH"
     shift
     shift
     ;;
@@ -115,13 +125,12 @@ for arrFolder_i in "${arrFolders[@]}"; do
 
     # Check if the file exists
     if [ -f "${newFilePath}${fileToRun}" ] && [ "${newFilePath}${fileToRun}" != $notWorking ]; then
-      echo "${newFilePath}${fileToRun}"
-      echo "> Python regex"
+      echo "> Running new_regex.py"
       python "${pythonPath}" "${newFilePath}${fileToRun}" # Run the python file
-      echo "> Java compiling"
-      javac  "${newFilePath}inst${fileToRun}" &&
-      echo "> Java run"
-      java -classpath "${newFilePath}" "inst${problem}" "Logs/TestLogger" "true" # TODO Parametarized the last two options too
+      echo "> Compiling inst${fileToRun}"
+      javac "${newFilePath}inst${fileToRun}" &&
+      echo "> Running inst${problem}"
+      java -classpath "${newFilePath}" "inst${problem}" "Logger" "${DEPTH}" > /dev/null
     fi
   done
   printf "\n\n"
