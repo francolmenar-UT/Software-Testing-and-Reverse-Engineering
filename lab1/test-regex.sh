@@ -127,9 +127,8 @@ for arrFolder_i in "${arrFolders[@]}"; do
       javac "${newFilePath}inst${fileToRun}"
 
       echo "> Running inst${problem}"
-      InslogPath=$logPath$(echo "${newFilePath}inst${problem}" | tr "/" -)"-log" # Create path to Log
-      # timeout -s SIGKILL "${timeout}" TODO enable Control C signal
-      java -classpath "${newFilePath}" "inst${problem}" "$InslogPath" "${DEPTH}" >/dev/null 
+      InslogPath=$logPath$(echo "${newFilePath}inst${problem}" | tr "/" -)"-log" # Create path to Log 
+      timeout -k 20 -s SIGKILL "${timeout}" java -classpath "${newFilePath}" "inst${problem}" "$InslogPath" "${DEPTH}" >/dev/null
     fi
   done
   printf "\n\n"
