@@ -46,7 +46,19 @@ def create_main_method(out, line):
     :param line: The current text line found
     """
     out.write(line)  # Write main statement
-    out.write('Fuzzer fuzzer = new Fuzzer();\n')  # Create the fuzzer
+    out.write('Fuzzer fuzzer = new Fuzzer(args[0], args[1]);\n')  # Create the fuzzer
+    # Write SIGINT handler
+    out.write("Signal.handle(new Signal(\"INT\"), new SignalHandler() {\n"
+              "     public void handle(Signal sig) {\n"
+              "         int counter = 0;\n"
+              "         for (Boolean visit : fuzzer.visited_branches.values()) {\n"
+              "             if (visit) counter++;\n"
+              "         }\n"
+              "         System.exit(counter);\n"
+              "     }\n"
+              "});\n")
+    out.write('if (args.length > 2) fuzzer.populationSize = Integer.parseInt(args[2]);\n')
+    out.write('if (args.length > 3) fuzzer.mutation_factor = Double.parseDouble(args[3]);\n')
 
 
 def create_while_true(out, line):

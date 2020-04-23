@@ -1,6 +1,7 @@
 import re
 import constants
 from constants import *
+from timer import timerExec
 
 
 def create_reset_method(out, reset_in):
@@ -49,7 +50,7 @@ def create_main_method(out, line):
     :param line: The current text line found
     """
     out.write(line)  # Write main statement
-    out.write('Fuzzer fuzzer = new Fuzzer();\n')  # Create the fuzzer
+    out.write('Fuzzer fuzzer = new Fuzzer(args[0], args[1]);\n')  # Create the fuzzer
 
 
 def create_while_true(out, line):
@@ -62,6 +63,7 @@ def create_while_true(out, line):
     out.write('if (resultFuzz != null)\n')
     out.write('\tfuzzer.after_execution(resultFuzz, I.trait_counter);\n')
     out.write("eca.reset();\n")  # Add a reset for the next iteration
+    timerExec(out) # write timer check
     out.write('resultFuzz = fuzzer.fuzz(eca.inputs);\n')  # Run the fuzzer
     # Write the start of a for loop which will iterate through the fuzzed values
     out.write("for(MyInputIndex = 0; MyInputIndex < resultFuzz.myStr.length; MyInputIndex++){\n")

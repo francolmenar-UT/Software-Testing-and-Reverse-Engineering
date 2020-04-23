@@ -14,20 +14,16 @@ class Logging {
     public long startTime;
     public long elapsedTime;
     public BufferedWriter out;
+    private String filename;
 
     /**
      * Creates a new logger.
      * The name of the logfile depends on the current time.
      */
-    public Logging() {
+    public Logging(String fname) {
         startTime = System.nanoTime();
         elapsedTime = 0;
-        /*try {
-            out = new PrintWriter(new BufferedWriter(new FileWriter("log_" + String.valueOf(new Date().getTime()) + ".txt", true)));
-        } catch (IOException e) {
-            System.out.println("Could not write to file.");
-            e.printStackTrace();
-        }*/
+        filename = fname;
     }
 
     /**
@@ -43,7 +39,7 @@ class Logging {
      */
     public void writeLog(int numVisited){
         try {
-            out = new BufferedWriter(new FileWriter("log_problem1.txt", true));
+            out = new BufferedWriter(new FileWriter(filename + ".txt", true));
             out.write(String.valueOf(getElapsedTime()) + ", " + String.valueOf(numVisited) + "\n");
             out.close();
         } catch (IOException e) {
@@ -76,14 +72,15 @@ class Fuzzer {
 
     public static boolean USE_TAINT = false; // Probably unused
 
-    public static Logging log = new Logging();
+    public static Logging log = null;
 
     // Errors
     public static HashSet<Integer> errors_reached = new HashSet<>();
 
     public List<MyInput> created_inputs = new ArrayList<MyInput>();
 
-    public Fuzzer() {
+    public Fuzzer(String filename) {
+        log = new Logging(filename);
     }
 
     public Pair<Integer, Integer> approachLevel(int goal, MyInput input) {

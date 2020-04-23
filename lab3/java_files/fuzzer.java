@@ -4,6 +4,7 @@
 class Fuzzer {
     /*********************** Graph Variables ***********************/
     static public HashMap<Integer, Integer> graph = new HashMap<>(); // Graph created of the program
+    static public HashMap<Integer, List<Integer> > rev_graph = new HashMap<>();
     static public HashMap<Integer, Boolean> if_branch = new HashMap<>();
     static public HashMap<Integer, Boolean> visited_branches = new HashMap<Integer, Boolean>();
     public static MyString[] inputs;
@@ -15,20 +16,69 @@ class Fuzzer {
 
     /*********************** Population Variables ***********************/
     private Population population = null;
-    private int populationSize = 30;
+    public int populationSize = 30;
+    public static double mutation_factor = 0.01;
     private int dnaIndex = 0;
 
     /*********************** Debug Variables ***********************/
     private static final Boolean DEBUG_NEW_BRANCH = true; // Enables printNewBranch
 
     /*********************** Logging Variables *********************/
-    private static Logging log = new Logging("Problem1");
+    private static Logging log = null; 
     private static int count = 0;
 
+    public static boolean DEPTH_FIRST_SEARCH = false;
+    public static ArrayDeque<Integer> visit_order_queue = new ArrayDeque<>();
+    public static int current_target_branch = -1;
+    public static int attempt_for_target = 0;
+    public static int MAX_ATTEMPT = 10000;
 
-    public void Fuzzer() {
+    public Fuzzer(String filename, String isDepth) {
+        log = new Logging(filename);
+        if (isDepth != null && isDepth.equals("true")){
+            DEPTH_FIRST_SEARCH = true;
+        }
+       
     }
 
+    // Returns the next branch to target. If there are no branches to target then returns -2.
+    // Takes a boolean as parameter, which sets the type of priority: true -> depth-first | false -> breadth-first
+    int getTargetBranch() {
+        // Check if the previously returned branch was visited. If not, just return it
+        if (current_target_branch != -1 && !visited_branches.get(current_target_branch)) {
+            // We tried too much on this target without success. Put it back at the end of the queue.
+            if (attempt_for_target > MAX_ATTEMPT) {
+                visit_order_queue.addLast(current_target_branch);
+            }
+            else {
+                attempt_for_target += 1;
+                return current_target_branch;
+            }
+        }
+
+        int node;
+        // We visited every branch
+        if (visit_order_queue.isEmpty())
+            System.exit(25);
+        do {
+            node = visit_order_queue.removeFirst();
+            List<Integer> children = rev_graph.get(node);
+            if(children != null) { // Check that it actually has children, otherwise no need to insert them
+                for (Integer child : children) {
+                    if (DEPTH_FIRST_SEARCH)
+                        visit_order_queue.addFirst(child);
+                    else
+                        visit_order_queue.addLast(child);
+                }
+            }
+        } while (node == 0 || visited_branches.get(node));
+        System.err.println("\nNext target branch: " + node);
+
+        // Save the current target and set attempt_for_target to 1
+        current_target_branch = node;
+        attempt_for_target = 1;
+        return node;
+    }
 
     /**
      * Genetic algorithm Fuzz
@@ -48,16 +98,7 @@ class Fuzzer {
         // The entire generation was used. So we need to get a new generation
         if (dnaIndex == populationSize) {
             // Get a branch to target
-            int target_branch = -1;
-            for (Map.Entry<Integer, Boolean> entry : visited_branches.entrySet()) {
-                Integer branch = entry.getKey();
-                Boolean visited = entry.getValue();
-
-                if (!visited) {
-                    target_branch = branch;
-                    break;
-                }
-            }
+            int target_branch = getTargetBranch();
 
             population.calculateFitness(target_branch);
             population.nextGeneration();

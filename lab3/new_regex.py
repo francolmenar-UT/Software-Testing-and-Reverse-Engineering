@@ -46,6 +46,9 @@ out.write("import java.io.FileWriter;\n")
 out.write("import java.io.IOException;\n")
 out.write("import java.io.PrintWriter;\n")
 out.write("import java.util.Date;\n")
+out.write("import org.apache.commons.lang3.ArrayUtils;\n")
+out.write("import sun.misc.Signal;\n")
+out.write("import sun.misc.SignalHandler;\n")
 var_count, bool_count, str_count = 1, 1, 1  # Reset the variables
 
 for line in f.readlines():
