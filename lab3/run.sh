@@ -128,7 +128,7 @@ for arrFolder_i in "${arrFolders[@]}"; do
 
       echo "> Running inst${problem}"
       InslogPath=$logPath$(echo "${newFilePath}inst${problem}" | tr "/" -)"-log" # Create path to Log 
-      timeout -k 20 -s SIGKILL "${timeout}" java -classpath "${newFilePath}" "inst${problem}" "$InslogPath" "${DEPTH}" >/dev/null
+      timeout -k 20 -s KILL "${timeout}" java -classpath "${newFilePath}" "inst${problem}" "$InslogPath" "${DEPTH}" 2> /dev/null > /dev/null
     fi
   done
   printf "\n\n"
