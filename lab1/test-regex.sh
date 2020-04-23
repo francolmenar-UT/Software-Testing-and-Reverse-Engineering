@@ -14,6 +14,7 @@ folder3="SeqReachabilityRers2019/"
 folder4="TrainingSeqReachRers2019/"
 
 DEPTH="true" # True by default
+timeout="1m" # No timeout by default
 
 ############## Reading inputs ##############
 POSITIONAL=()
@@ -27,22 +28,33 @@ while [[ $# -gt 0 ]]; do
     shift                           # past value
     ;;
   -t | --timeout)                           # Timeout
-    IFS='-' read -ra TIMEOUT <<<"$2" # Separate by "-"
+    if [ -z "$2" ] || ! [[ "$2" =~ ^[0-9]+[mh]$ ]]; then
+      echo "Wrong usage of -t [0-9]+[mh]"
+      exit 1
+    else
+      timeout="$2"
+    fi
     shift
     shift
     ;;
   -d | --depth) # DEPTH_FIRST_SEARCH input
-    if [ "${2}" != "true" ] && [ "${2}" == "false" ];then
-        DEPTH="$2"
+    if [ "${2}" != "true" ] && [ "${2}" != "false" ]; then
+      echo "Wrong usage of -d [ true || false ]"
+      exit 1
+    else
+      DEPTH="$2"
     fi
-    echo "$DEPTH"
     shift
     shift
     ;;
-  -h | --help) # TODO Add a help command
-    HELP="$2"
+  -h | --help) # Help command
+    echo "Usage: "
+    echo "-d | --depth [ true || false ]"
+    echo "-f | --folder [ 1,2,3,4 || 1,3,4 || 1,2 ...]"
+    echo "-t | --timeout [0-9]+[mh]"
     shift
     shift
+    exit 1
     ;;
   *) # unknown option
     POSITIONAL+=("$1") # save it in an array for later
@@ -54,7 +66,7 @@ set -- "${POSITIONAL[@]}" # restore positional parameters
 
 if [[ -n $1 ]]; then
   echo "Last line of file specified as non-opt/last argument:"
-  tail -1 "$1"
+  exit 1
 fi
 
 ############## Processing the parameters ##############
@@ -82,32 +94,15 @@ if [ ${#FOLDER[@]} -ge 1 ]; then
       shift
       shift
       ;;
+    *)
+      echo "Wrong usage of -f [ 1,2,3,4 || 1,3,4 || 1,2 ...]"
+      exit 1
+      ;;
     esac
   done
 else # By default all of the folders are executed
   arrFolders+=("${folder1}" "${folder2}" "${folder3}" "${folder4}")
 fi
-
-############ Timeout ############
-case ${#TIMEOUT[@]} in
-1) # By default minutes
-  timeout=$((TIMEOUT[0] * 60))
-  shift
-  shift
-  ;;
-2) # Option added
-  if [ "${TIMEOUT[1]}" == "h" ]; then # Hours
-    timeout=$((TIMEOUT[0] * 3600))
-  elif [ "${TIMEOUT[1]}" == "m" ]; then # Minutes
-    timeout=$((TIMEOUT[0] * 60))
-  elif [ "${TIMEOUT[1]}" == "s" ]; then # Seconds
-    timeout=${TIMEOUT[0]}
-  fi
-  shift
-  shift
-  ;;
-esac
-
 
 ############## Runing the RERS programs ##############
 for arrFolder_i in "${arrFolders[@]}"; do
@@ -129,8 +124,9 @@ for arrFolder_i in "${arrFolders[@]}"; do
       python "${pythonPath}" "${newFilePath}${fileToRun}" # Run the python file
       echo "> Compiling inst${fileToRun}"
       javac "${newFilePath}inst${fileToRun}" &&
-      echo "> Running inst${problem}"
-      java -classpath "${newFilePath}" "inst${problem}" "Logger" "${DEPTH}" > /dev/null
+        echo "> Running inst${problem}"
+      # timeout -s SIGKILL "${timeout}" TODO enable Control C signal
+      java -classpath "${newFilePath}" "inst${problem}" "Logger" "${DEPTH}" >/dev/null # TODO add files to the File
     fi
   done
   printf "\n\n"
