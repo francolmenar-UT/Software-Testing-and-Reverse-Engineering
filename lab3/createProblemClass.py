@@ -47,6 +47,11 @@ def create_main_method(out, line):
     """
     out.write(line)  # Write main statement
     out.write('Fuzzer fuzzer = new Fuzzer(args[0], args[1]);\n')  # Create the fuzzer
+    out.write('_set_graph(fuzzer);\n')
+    out.write("_set_fi_branch(fuzzer);\n")
+    out.write("_set_visited_branches(fuzzer);\n")
+    out.write("_set_rev_graph(fuzzer);\n")
+
     # Write SIGINT handler
     out.write("Signal.handle(new Signal(\"INT\"), new SignalHandler() {\n"
               "     public void handle(Signal sig) {\n"

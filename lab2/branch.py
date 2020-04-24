@@ -115,12 +115,19 @@ def analyze_branches(input_file, out):
 
 
 def write_graph(out, graph):
+    out.write("static void _set_graph(Fuzzer fuzzer) {\n")
     for n in graph[0]:
-        out.write('fuzzer.graph.put(' + str(n) + ', ' + str(graph[0][n]) + ');\n')
-        if debug_graph: print(str(n) + ' -> ' + str(graph[0][n]))
+        out.write('\tfuzzer.graph.put(' + str(n) + ', ' + str(graph[0][n]) + ');\n')
+        if debug_graph:
+            print(str(n) + ' -> ' + str(graph[0][n]))
+    out.write("}\n")
 
+    out.write("static void _set_fi_branch(Fuzzer fuzzer) {\n")
     for n in graph[1]:
-        if debug_graph: out.write('fuzzer.if_branch.put(' + str(n) + ', ' + ('true' if graph[1][n] else 'false') + ');\n')
+        out.write('\tfuzzer.if_branch.put(' + str(n) + ', ' + ('true' if graph[1][n] else 'false') + ');\n')
+    out.write("}\n")
 
+    out.write("static void _set_visited_branches(Fuzzer fuzzer) {\n")
     for n in graph[0]:
-        if debug_graph: out.write('fuzzer.visited_branches.put(' + str(n) + ', false);\n')
+        out.write('\tfuzzer.visited_branches.put(' + str(n) + ', false);\n')
+    out.write("}\n\n")

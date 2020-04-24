@@ -70,9 +70,9 @@ for line in f.readlines():
     #    first_bracket = False
 
     if line.find("public static void main") != -1:  # Main statement
-        createProblemClass.create_main_method(out, line)  # Create main method
         # Write graph
         write_graph(out, graph)
+        createProblemClass.create_main_method(out, line)  # Create main method
         timerInit(out)
         continue
 

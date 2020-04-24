@@ -130,19 +130,27 @@ def reverse(graph):
 
 
 def write_graph(out, graph):
+    out.write("static void _set_graph(Fuzzer fuzzer) {\n")
     for n in graph[0]:
-        out.write('fuzzer.graph.put(' + str(n) + ', ' + str(graph[0][n]) + ');\n')
-        # print(str(n) + ' -> ' + str(graph[0][n]))
+        out.write('\tfuzzer.graph.put(' + str(n) + ', ' + str(graph[0][n]) + ');\n')
+        if debug_graph:
+            print(str(n) + ' -> ' + str(graph[0][n]))
+    out.write("}\n")
 
+    out.write("static void _set_fi_branch(Fuzzer fuzzer) {\n")
     for n in graph[1]:
-        out.write('fuzzer.if_branch.put(' + str(n) + ', ' + ('true' if graph[1][n] else 'false') + ');\n')
+        out.write('\tfuzzer.if_branch.put(' + str(n) + ', ' + ('true' if graph[1][n] else 'false') + ');\n')
+    out.write("}\n")
 
+    out.write("static void _set_visited_branches(Fuzzer fuzzer) {\n")
     for n in graph[0]:
-        out.write('fuzzer.visited_branches.put(' + str(n) + ', false);\n')
+        out.write('\tfuzzer.visited_branches.put(' + str(n) + ', false);\n')
+    out.write("}\n")
 
+    out.write("static void _set_rev_graph(Fuzzer fuzzer) {\n")
     rg = reverse(graph[0])
     for node in rg:
-        out.write('fuzzer.rev_graph.put(' + str(node) + ', Arrays.asList(')
+        out.write('\tfuzzer.rev_graph.put(' + str(node) + ', Arrays.asList(')
 
         for i, child in enumerate(rg[node]):
             out.write(str(child))
@@ -150,6 +158,5 @@ def write_graph(out, graph):
                 out.write(', ')
 
         out.write('));\n')
-
-    out.write('\n')
-    out.write('fuzzer.visit_order_queue.add(0);\n\n')
+    out.write('\tfuzzer.visit_order_queue.add(0);\n\n')
+    out.write("}\n\n")

@@ -52,6 +52,21 @@ def create_main_method(out, line):
     """
     out.write(line)  # Write main statement
     out.write('Fuzzer fuzzer = new Fuzzer(args[0]);\n')  # Create the fuzzer
+    out.write('_set_graph(fuzzer);\n')
+    out.write("_set_fi_branch(fuzzer);\n")
+    out.write("_set_visited_branches(fuzzer);\n")
+    out.write("_set_rev_graph(fuzzer);\n")
+
+    # Write SIGINT handler
+    out.write("Signal.handle(new Signal(\"INT\"), new SignalHandler() {\n"
+              "     public void handle(Signal sig) {\n"
+              "         int counter = 0;\n"
+              "         for (Boolean visit : fuzzer.visited_branches.values()) {\n"
+              "             if (visit) counter++;\n"
+              "         }\n"
+              "         System.exit(counter);\n"
+              "     }\n"
+              "});\n")
 
 
 def create_while_true(out, line):
