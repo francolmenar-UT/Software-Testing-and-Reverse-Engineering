@@ -13,8 +13,9 @@ folder2="SeqLtlRers2019/"
 folder3="SeqReachabilityRers2019/"
 folder4="TrainingSeqReachRers2019/"
 
-DEPTH="true" # True by default
-timeout="1m" # No timeout by default
+DEPTH="true"    # True by default
+timeout="1m"    # No timeout by default
+verbose="false" # Print output or not
 
 ############## Reading inputs ##############
 POSITIONAL=()
@@ -22,7 +23,7 @@ while [[ $# -gt 0 ]]; do
   key="$1"
 
   case $key in
-    -d | --depth) # DEPTH_FIRST_SEARCH input
+  -d | --depth) # DEPTH_FIRST_SEARCH input
     if [ "${2}" != "true" ] && [ "${2}" != "false" ]; then
       echo "Wrong usage of -d [ true || false ]"
       exit 1
@@ -32,11 +33,12 @@ while [[ $# -gt 0 ]]; do
     shift
     shift
     ;;
-    -h | --help) # Help command
+  -h | --help) # Help command
     echo "Usage: "
     echo "-d | --depth [ true || false ]"
     echo "-f | --folder [ 1,2,3,4 || 1,3,4 || 1,2 ...]"
     echo "-t | --timeout [0-9]+[smh]"
+    echo "-v | --verbose"
     shift
     shift
     exit 1
@@ -54,6 +56,10 @@ while [[ $# -gt 0 ]]; do
       timeout="$2"
     fi
     shift
+    shift
+    ;;
+  -v | --verbose) # verbose
+    verbose="true"
     shift
     ;;
   *) # unknown option
@@ -128,7 +134,11 @@ for arrFolder_i in "${arrFolders[@]}"; do
 
       echo "> Running inst${problem}"
       InslogPath=$logPath$(echo "${newFilePath}inst${problem}" | tr "/" -)"-log" # Create path to Log
-      timeout -k 20 -s KILL "${timeout}" java -classpath "${newFilePath}" "inst${problem}" "$InslogPath" "${DEPTH}" 2>/dev/null >/dev/null
+      if [ "${verbose}" == "true" ]; then
+        timeout "${timeout}" java -classpath "${newFilePath}" "inst${problem}" "$InslogPath" "${DEPTH}" >/dev/null >/dev/null
+      else
+        timeout "${timeout}" java -classpath "${newFilePath}" "inst${problem}" "$InslogPath" "${DEPTH}" 2>/dev/null >/dev/null
+      fi
     fi
   done
   printf "\n\n"
