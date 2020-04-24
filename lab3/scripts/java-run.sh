@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
-# Addapt of run.sh to run just new_regex
+# Addapt of run.sh to run just java
 
-pythonPath="./new_regex.py" # Path to the Python file
+logPath="Logs/"             # Log folder
 seqPath="sequential/"       # First Path
 fileType=".java"            # File type
 # Files not to be executed
 declare -a notWorking=("sequential/TrainingSeqLtlRers2019/Problem1/Problem1.java"
 "sequential/SeqLtlRers2019/Problem4/Problem4.java" "sequential/SeqLtlRers2019/Problem5/Problem5.java" "sequential/SeqLtlRers2019/Problem6/Problem6.java" "sequential/SeqLtlRers2019/Problem7/Problem7.java" "sequential/SeqLtlRers2019/Problem8/Problem8.java" "sequential/SeqLtlRers2019/Problem9/Problem9.java"
-"sequential/SeqReachabilityRers2019/Problem12/Problem12.java" "sequential/SeqReachabilityRers2019/Problem13/Problem13.java"  "sequential/SeqReachabilityRers2019/Problem14/Problem14.java"  "sequential/SeqReachabilityRers2019/Problem15/Problem15.java"  "sequential/SeqReachabilityRers2019/Problem16/Problem16.java"   "sequential/SeqReachabilityRers2019/Problem17/Problem17.java"    "sequential/SeqReachabilityRers2019/Problem18/Problem18.java"    "sequential/SeqReachabilityRers2019/Problem19/Problem19.java")
+"sequential/SeqReachabilityRers2019/Problem12/Problem12.java" "sequential/SeqReachabilityRers2019/Problem13/Problem13.java"  "sequential/SeqReachabilityRers2019/Problem14/Problem14.java"  "sequential/SeqReachabilityRers2019/Problem15/Problem15.java"  "sequential/SeqReachabilityRers2019/Problem16/Problem16.java"   "sequential/SeqReachabilityRers2019/Problem17/Problem17.java"    "sequential/SeqReachabilityRers2019/Problem18/Problem18.java"    "sequential/SeqReachabilityRers2019/Problem19/Problem19.java"
+"sequential/TrainingSeqReachRers2019/Problem12/Problem12.java" "sequential/TrainingSeqReachRers2019/Problem13/Problem13.java")
 
 declare -a arrFolders=() # Array for the folders to be executed
 folder1="TrainingSeqLtlRers2019/"
@@ -15,6 +16,9 @@ folder2="SeqLtlRers2019/"
 folder3="SeqReachabilityRers2019/"
 folder4="TrainingSeqReachRers2019/"
 
+DEPTH="true"    # True by default
+timeout="1m"    # No timeout by default
+verbose="false" # Print output or not
 
 ############## Reading inputs ##############
 POSITIONAL=()
@@ -22,9 +26,22 @@ while [[ $# -gt 0 ]]; do
   key="$1"
 
   case $key in
+  -d | --depth) # DEPTH_FIRST_SEARCH input
+    if [ "${2}" != "true" ] && [ "${2}" != "false" ]; then
+      echo "Wrong usage of -d [ true || false ]"
+      exit 1
+    else
+      DEPTH="$2"
+    fi
+    shift
+    shift
+    ;;
   -h | --help) # Help command
     echo "Usage: "
+    echo "-d | --depth [ true || false ]"
     echo "-f | --folder [ 1,2,3,4 || 1,3,4 || 1,2 ...]"
+    echo "-t | --timeout [0-9]+[smh]"
+    echo "-v | --verbose"
     shift
     shift
     exit 1
@@ -33,6 +50,20 @@ while [[ $# -gt 0 ]]; do
     IFS=',' read -ra FOLDER <<<"$2" # Separate by ","
     shift                           # past argument
     shift                           # past value
+    ;;
+  -t | --timeout)                           # Timeout
+    if [ -z "$2" ] || ! [[ "$2" =~ ^[0-9]+[smh]$ ]]; then
+      echo "Wrong usage of -t [0-9]+[smh]"
+      exit 1
+    else
+      timeout="$2"
+    fi
+    shift
+    shift
+    ;;
+  -v | --verbose) # verbose
+    verbose="true"
+    shift
     ;;
   *) # unknown option
     POSITIONAL+=("$1") # save it in an array for later
@@ -97,9 +128,14 @@ for arrFolder_i in "${arrFolders[@]}"; do
     fileToRun=${problem}${fileType} # Next file to be executed
 
     # Check if the file exists
-    if [ -f "${newFilePath}${fileToRun}" ] && [[ ! " ${notWorking[@]} " =~ " ${newFilePath}${fileToRun} " ]]; then
-      echo "> Running new_regex.py in ${newFilePath}${fileToRun}"
-      python "${pythonPath}" "${newFilePath}${fileToRun}" # Run the python file
+    if [ -f "${newFilePath}${fileToRun}" ] && [[ ! "${notWorking[@]}" =~ "${newFilePath}${fileToRun}" ]]; then
+      echo "> Running inst${problem}"
+      InslogPath=$logPath$(echo "${newFilePath}inst${problem}" | tr "/" -)"-log" # Create path to Log
+      if [ "${verbose}" == "true" ]; then
+        timeout "${timeout}" java -cp commons-lang3-3.10.jar:"${newFilePath}" "inst${problem}" "$InslogPath" "${DEPTH}" ${size} ${mut} >/dev/null >/dev/null
+      else
+        timeout "${timeout}" java -cp commons-lang3-3.10.jar:"${newFilePath}" "inst${problem}" "$InslogPath" "${DEPTH}" ${size} ${mut} 2>/dev/null >/dev/null
+      fi 
     fi
   done
   printf "\n\n"
