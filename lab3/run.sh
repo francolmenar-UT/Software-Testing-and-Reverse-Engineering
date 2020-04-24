@@ -14,7 +14,10 @@ folder3="SeqReachabilityRers2019/"
 folder4="TrainingSeqReachRers2019/"
 
 DEPTH="true" # True by default
-timeout="1m" # No timeout by default
+timeout="1m" # 1 minute of timeout by default
+
+size=5  # Size 5 by default
+mut=0.1 # Mutation of 0.1 as default
 
 ############## Reading inputs ##############
 POSITIONAL=()
@@ -22,21 +25,6 @@ while [[ $# -gt 0 ]]; do
   key="$1"
 
   case $key in
-  -f | --folder) # Folder lab to be executed
-    IFS=',' read -ra FOLDER <<<"$2" # Separate by ","
-    shift                           # past argument
-    shift                           # past value
-    ;;
-  -t | --timeout)                           # Timeout
-    if [ -z "$2" ] || ! [[ "$2" =~ ^[0-9]+[mh]$ ]]; then
-      echo "Wrong usage of -t [0-9]+[mh]"
-      exit 1
-    else
-      timeout="$2"
-    fi
-    shift
-    shift
-    ;;
   -d | --depth) # DEPTH_FIRST_SEARCH input
     if [ "${2}" != "true" ] && [ "${2}" != "false" ]; then
       echo "Wrong usage of -d [ true || false ]"
@@ -51,10 +39,47 @@ while [[ $# -gt 0 ]]; do
     echo "Usage: "
     echo "-d | --depth [ true || false ]"
     echo "-f | --folder [ 1,2,3,4 || 1,3,4 || 1,2 ...]"
-    echo "-t | --timeout [0-9]+[mh]"
+    echo "-m | --mutation <number>.<number>"
+    echo "-s | --size [0-9]+"
+    echo "-t | --timeout [0-9]+[smh]"
     shift
     shift
     exit 1
+    ;;
+  -f | --folder) # Folder lab to be executed
+    IFS=',' read -ra FOLDER <<<"$2" # Separate by ","
+    shift
+    shift
+    ;;
+  -m | --mutation) # Mutation rate
+    if [ -z "$2" ] || ! [[ "$2" =~ ^[0-9]*\.?[0-9]+$ ]]; then
+      echo "Wrong usage of -m <number>.<number>"
+      exit 1
+    else
+      mut="$2"
+    fi
+    shift
+    shift
+    ;;
+  -s | --size) # Size
+    if [ -z "$2" ] || ! [[ "$2" =~ ^[0-9]+$ ]]; then
+      echo "Wrong usage of -s [0-9]+"
+      exit 1
+    else
+      size="$2"
+    fi
+    shift
+    shift
+    ;;
+  -t | --timeout) # Timeout
+    if [ -z "$2" ] || ! [[ "$2" =~ ^[0-9]+[smh]$ ]]; then
+      echo "Wrong usage of -t [0-9]+[smh]"
+      exit 1
+    else
+      timeout="$2"
+    fi
+    shift
+    shift
     ;;
   *) # unknown option
     POSITIONAL+=("$1") # save it in an array for later
@@ -124,11 +149,11 @@ for arrFolder_i in "${arrFolders[@]}"; do
       python "${pythonPath}" "${newFilePath}${fileToRun}" # Run the python file
 
       echo "> Compiling inst${fileToRun}"
-      javac "${newFilePath}inst${fileToRun}"
+      javac -cp commons-lang3-3.10.jar:. "${newFilePath}inst${fileToRun}" 2>/dev/null >/dev/null
 
       echo "> Running inst${problem}"
-      InslogPath=$logPath$(echo "${newFilePath}inst${problem}" | tr "/" -)"-log" # Create path to Log 
-      timeout -k 20 -s KILL "${timeout}" java -classpath "${newFilePath}" "inst${problem}" "$InslogPath" "${DEPTH}" 2> /dev/null > /dev/null
+      InslogPath=$logPath$(echo "${newFilePath}inst${problem}" | tr "/" -)"-log" # Create path to Log
+      timeout -s KILL "${timeout}" java -cp commons-lang3-3.10.jar:"${newFilePath}" "inst${problem}" "$InslogPath" "${DEPTH}" ${size} ${mut} >/dev/null 2>/dev/null
     fi
   done
   printf "\n\n"

@@ -22,22 +22,7 @@ while [[ $# -gt 0 ]]; do
   key="$1"
 
   case $key in
-  -f | --folder) # Folder lab to be executed
-    IFS=',' read -ra FOLDER <<<"$2" # Separate by ","
-    shift                           # past argument
-    shift                           # past value
-    ;;
-  -t | --timeout)                           # Timeout
-    if [ -z "$2" ] || ! [[ "$2" =~ ^[0-9]+[mh]$ ]]; then
-      echo "Wrong usage of -t [0-9]+[mh]"
-      exit 1
-    else
-      timeout="$2"
-    fi
-    shift
-    shift
-    ;;
-  -d | --depth) # DEPTH_FIRST_SEARCH input
+    -d | --depth) # DEPTH_FIRST_SEARCH input
     if [ "${2}" != "true" ] && [ "${2}" != "false" ]; then
       echo "Wrong usage of -d [ true || false ]"
       exit 1
@@ -47,14 +32,29 @@ while [[ $# -gt 0 ]]; do
     shift
     shift
     ;;
-  -h | --help) # Help command
+    -h | --help) # Help command
     echo "Usage: "
     echo "-d | --depth [ true || false ]"
     echo "-f | --folder [ 1,2,3,4 || 1,3,4 || 1,2 ...]"
-    echo "-t | --timeout [0-9]+[mh]"
+    echo "-t | --timeout [0-9]+[smh]"
     shift
     shift
     exit 1
+    ;;
+  -f | --folder) # Folder lab to be executed
+    IFS=',' read -ra FOLDER <<<"$2" # Separate by ","
+    shift                           # past argument
+    shift                           # past value
+    ;;
+  -t | --timeout)                           # Timeout
+    if [ -z "$2" ] || ! [[ "$2" =~ ^[0-9]+[smh]$ ]]; then
+      echo "Wrong usage of -t [0-9]+[smh]"
+      exit 1
+    else
+      timeout="$2"
+    fi
+    shift
+    shift
     ;;
   *) # unknown option
     POSITIONAL+=("$1") # save it in an array for later
@@ -127,8 +127,8 @@ for arrFolder_i in "${arrFolders[@]}"; do
       javac "${newFilePath}inst${fileToRun}"
 
       echo "> Running inst${problem}"
-      InslogPath=$logPath$(echo "${newFilePath}inst${problem}" | tr "/" -)"-log" # Create path to Log 
-      timeout -k 20 -s KILL "${timeout}" java -classpath "${newFilePath}" "inst${problem}" "$InslogPath" "${DEPTH}" 2> /dev/null > /dev/null
+      InslogPath=$logPath$(echo "${newFilePath}inst${problem}" | tr "/" -)"-log" # Create path to Log
+      timeout -k 20 -s KILL "${timeout}" java -classpath "${newFilePath}" "inst${problem}" "$InslogPath" "${DEPTH}" 2>/dev/null >/dev/null
     fi
   done
   printf "\n\n"
