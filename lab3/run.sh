@@ -15,6 +15,7 @@ folder4="TrainingSeqReachRers2019/"
 
 DEPTH="true" # True by default
 timeout="1m" # 1 minute of timeout by default
+verbose="false" # Print output or not
 
 size=5  # Size 5 by default
 mut=0.1 # Mutation of 0.1 as default
@@ -42,6 +43,7 @@ while [[ $# -gt 0 ]]; do
     echo "-m | --mutation <number>.<number>"
     echo "-s | --size [0-9]+"
     echo "-t | --timeout [0-9]+[smh]"
+    echo "-v | --verbose"
     shift
     shift
     exit 1
@@ -79,6 +81,10 @@ while [[ $# -gt 0 ]]; do
       timeout="$2"
     fi
     shift
+    shift
+    ;;
+    -v | --verbose) # verbose
+    verbose="true"
     shift
     ;;
   *) # unknown option
@@ -149,11 +155,19 @@ for arrFolder_i in "${arrFolders[@]}"; do
       python "${pythonPath}" "${newFilePath}${fileToRun}" # Run the python file
 
       echo "> Compiling inst${fileToRun}"
-      javac -cp commons-lang3-3.10.jar:. "${newFilePath}inst${fileToRun}" 2>/dev/null >/dev/null
+      if [ "${verbose}" == "true" ]; then
+        javac -cp commons-lang3-3.10.jar:. "${newFilePath}inst${fileToRun}" >/dev/null >/dev/null
+      else
+        javac -cp commons-lang3-3.10.jar:. "${newFilePath}inst${fileToRun}" 2>/dev/null >/dev/null
+      fi
 
       echo "> Running inst${problem}"
       InslogPath=$logPath$(echo "${newFilePath}inst${problem}" | tr "/" -)"-log" # Create path to Log
-      timeout -s KILL "${timeout}" java -cp commons-lang3-3.10.jar:"${newFilePath}" "inst${problem}" "$InslogPath" "${DEPTH}" ${size} ${mut} >/dev/null 2>/dev/null
+      if [ "${verbose}" == "true" ]; then
+        timeout "${timeout}" java -cp commons-lang3-3.10.jar:"${newFilePath}" "inst${problem}" "$InslogPath" "${DEPTH}" ${size} ${mut} >/dev/null >/dev/null
+      else
+        timeout "${timeout}" java -cp commons-lang3-3.10.jar:"${newFilePath}" "inst${problem}" "$InslogPath" "${DEPTH}" ${size} ${mut} 2>/dev/null >/dev/null
+      fi 
     fi
   done
   printf "\n\n"
