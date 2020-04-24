@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
+# Addapt of run.sh to run just javac
 
-pythonPath="./new_regex.py" # Path to the Python file
-logPath="Logs/"             # Log folder
 seqPath="sequential/"       # First Path
 fileType=".java"            # File type
 # Files not to be executed
@@ -16,8 +15,6 @@ folder2="SeqLtlRers2019/"
 folder3="SeqReachabilityRers2019/"
 folder4="TrainingSeqReachRers2019/"
 
-DEPTH="true"    # True by default
-timeout="1m"    # No timeout by default
 verbose="false" # Print output or not
 
 ############## Reading inputs ##############
@@ -26,21 +23,9 @@ while [[ $# -gt 0 ]]; do
   key="$1"
 
   case $key in
-  -d | --depth) # DEPTH_FIRST_SEARCH input
-    if [ "${2}" != "true" ] && [ "${2}" != "false" ]; then
-      echo "Wrong usage of -d [ true || false ]"
-      exit 1
-    else
-      DEPTH="$2"
-    fi
-    shift
-    shift
-    ;;
   -h | --help) # Help command
     echo "Usage: "
-    echo "-d | --depth [ true || false ]"
     echo "-f | --folder [ 1,2,3,4 || 1,3,4 || 1,2 ...]"
-    echo "-t | --timeout [0-9]+[smh]"
     echo "-v | --verbose"
     shift
     shift
@@ -50,20 +35,6 @@ while [[ $# -gt 0 ]]; do
     IFS=',' read -ra FOLDER <<<"$2" # Separate by ","
     shift                           # past argument
     shift                           # past value
-    ;;
-  -t | --timeout)                           # Timeout
-    if [ -z "$2" ] || ! [[ "$2" =~ ^[0-9]+[smh]$ ]]; then
-      echo "Wrong usage of -t [0-9]+[smh]"
-      exit 1
-    else
-      timeout="$2"
-    fi
-    shift
-    shift
-    ;;
-  -v | --verbose) # verbose
-    verbose="true"
-    shift
     ;;
   *) # unknown option
     POSITIONAL+=("$1") # save it in an array for later
@@ -129,19 +100,8 @@ for arrFolder_i in "${arrFolders[@]}"; do
 
     # Check if the file exists
     if [ -f "${newFilePath}${fileToRun}" ] && [[ ! " ${notWorking[@]} " =~ " ${newFilePath}${fileToRun} " ]]; then
-      echo "> Running new_regex.py in ${newFilePath}${fileToRun}"
-      python "${pythonPath}" "${newFilePath}${fileToRun}" # Run the python file
-
       echo "> Compiling inst${fileToRun}"
       javac "${newFilePath}inst${fileToRun}"
-
-      echo "> Running inst${problem}"
-      InslogPath=$logPath$(echo "${newFilePath}inst${problem}" | tr "/" -)"-log" # Create path to Log
-      if [ "${verbose}" == "true" ]; then
-        timeout "${timeout}" java -classpath "${newFilePath}" "inst${problem}" "$InslogPath" "${DEPTH}" >/dev/null >/dev/null
-      else
-        timeout "${timeout}" java -classpath "${newFilePath}" "inst${problem}" "$InslogPath" "${DEPTH}" 2>/dev/null >/dev/null
-      fi
     fi
   done
   printf "\n\n"

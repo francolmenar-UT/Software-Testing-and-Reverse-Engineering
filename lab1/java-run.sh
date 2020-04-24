@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
+# Addapt of run.sh to run just java
 
-pythonPath="./new_regex.py" # Path to the Python file
 logPath="Logs/"             # Log folder
 seqPath="sequential/"       # First Path
 fileType=".java"            # File type
@@ -128,13 +128,7 @@ for arrFolder_i in "${arrFolders[@]}"; do
     fileToRun=${problem}${fileType} # Next file to be executed
 
     # Check if the file exists
-    if [ -f "${newFilePath}${fileToRun}" ] && [[ ! " ${notWorking[@]} " =~ " ${newFilePath}${fileToRun} " ]]; then
-      echo "> Running new_regex.py in ${newFilePath}${fileToRun}"
-      python "${pythonPath}" "${newFilePath}${fileToRun}" # Run the python file
-
-      echo "> Compiling inst${fileToRun}"
-      javac "${newFilePath}inst${fileToRun}"
-
+    if [ -f "${newFilePath}${fileToRun}" ] && [[ ! "${notWorking[@]}" =~ "${newFilePath}${fileToRun}" ]]; then
       echo "> Running inst${problem}"
       InslogPath=$logPath$(echo "${newFilePath}inst${problem}" | tr "/" -)"-log" # Create path to Log
       if [ "${verbose}" == "true" ]; then
