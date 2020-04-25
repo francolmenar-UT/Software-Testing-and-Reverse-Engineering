@@ -45,4 +45,4 @@ function_declarationRe = '^((\w+)(\s+)?){3,4}\([^!@#$+%^]+?\)\s+?{'
 function_callRe = '((\w)+)(\s+)?\((\w+)?(\s*,\s*\w+)*\s*\);'
 array_initializationRe = '{\s*("?\w+"?)\s*((,\s*("?\w+"?))+)?\s*}'
 
-debug_graph = True  # For printing the graph creation
+debug_graph = False  # For printing the graph creation
