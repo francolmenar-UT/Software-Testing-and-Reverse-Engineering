@@ -65,8 +65,10 @@ class Fuzzer {
 
         int node;
         // We visited every branch
-        if (visit_order_queue.isEmpty())
-            System.exit(25);
+        if (visit_order_queue.isEmpty()){
+            //System.exit(25);
+            System.exit(0);
+        }   
         do {
             node = visit_order_queue.removeFirst();
             List<Integer> children = rev_graph.get(node);
@@ -78,7 +80,7 @@ class Fuzzer {
                         visit_order_queue.addLast(child);
                 }
             }
-        } while (node == 0 || visited_branches.get(node));
+        } while (node == 0 || visited_branches.get(node) || !visit_order_queue.isEmpty() );
         System.err.println("\nNext target branch: " + node);
 
         // Save the current target and set attempt_for_target to 1
