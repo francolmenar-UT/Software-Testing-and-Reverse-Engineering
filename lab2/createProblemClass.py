@@ -408,7 +408,7 @@ def search_print_assign_if(line):
     Searches for printing, assigning and if statements
     :param line: The current text line found
     """
-    m = re.findall(r'(' + assignRe + '|' + printRe + '|' + ifRe + ')', line)  # find all matching sub-patterns
+    m = re.findall(r'('+assignRe+'|'+assignPlusRe+'|'+assignMinRe+'|'+printRe+'|'+ifRe+'|'+ifCompactRe+'|'+ifCompactReP+'|'+ifCompactReM+')', line)  # find all matching sub-patterns
 
     while len(m) > 0:  # if any matching items
         var, val, text = "", "", ""
@@ -421,12 +421,53 @@ def search_print_assign_if(line):
             if len(match[4]) > 0:  # if first kind of condition
                 text = match[4]
                 var = match[5]
-                line = line.replace(text, "I.myPrint", 1)
-            if len(match[6]) > 0:  # if first kind of condition
-                text = match[6]
-                var = match[7]
-                line = line.replace(text, "if(I.myIf(" + var + "))", 1)
-        m = re.findall(r'(' + assignRe + '|' + printRe + '|' + ifRe + ')', line)  # find all matching sub-patterns
+                val = match[6]
+                #out.write("I.myAdd(" + var + "," + var + "," + val + ");")
+                line = line.replace(text,var, 1)
+            if len(match[7]) > 0: # if first kind of condition
+                text = match[7]
+                var = match[8]
+                val = match[9]
+	            #out.write("I.myMin(" + var + "," + var + "," + val + ");")
+                line = line.replace(text, var, 1)
+            if len(match[10]) > 0: # if first kind of condition
+	            text = match[10]
+	            var = match[11]
+	            line = line.replace(text, "I.myPrint", 1)
+            if len(match[12]) > 0: # if first kind of condition
+	            text = match[12]
+	            var = match[13]
+	            line = line.replace(text, "if(I.myIf(" + var + "))", 1)
+            if len(match[14]) > 0: # if first kind of condition
+	            text = match[14]
+	            var1 = match[15]
+	            var2 = match[16]
+	            var3 = match[17]
+	            var4 = match[18]
+	            #out.write("if(I.myIf(" + var2 + ")){ I.openIf(); " + var1 + " = I.myAssign(" + var3 + "); I.closeIf(); }\n")
+	            #out.write("else { I.openIf(); " + var1 + " = I.myAssign(" + var4 + "); I.closeIf(); }\n")
+	            line = line.replace(text, "", 1)
+            if len(match[19]) > 0: # if first kind of condition
+	            text = match[19]
+	            var1 = match[20]
+	            var2 = match[21]
+	            var3 = match[22]
+	            var4 = match[23]
+	            #out.write("if(I.myIf(" + var2 + ")){ I.openIf(); I.myAdd(" + var1 + "," + var1 + "," + var3 + "); I.closeIf(); }\n")
+	            #out.write("else { I.openIf(); I.myAdd(" + var1 + "," + var1 + "," + var4 + "); I.closeIf(); }\n")
+	            line = line.replace(text, "", 1)
+            if len(match[24]) > 0: # if first kind of condition
+                text = match[24]
+                var1 = match[25]
+                var2 = match[26]
+                var3 = match[27]
+                var4 = match[28]
+	            #out.write("if(I.myIf(" + var2 + ")){ I.openIf(); I.myDel(" + var1 + "," + var1 + "," + var3 + "); I.closeIf(); }\n")
+                var4 = match[28]
+                #out.write("if(I.myIf(" + var2 + ")){ I.openIf(); I.myDel(" + var1 + "," + var1 + "," + var3 + "); I.closeIf(); }\n")
+                #out.write("else { I.openIf(); I.myDel(" + var1 + "," + var1 + "," + var4 + "); I.closeIf(); }\n")
+                line = line.replace(text, "", 1)
+        m = re.findall(r'('+assignRe+'|'+printRe+'|'+ifRe+')', line)  # find all matching sub-patterns
     return line
 
 

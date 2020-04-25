@@ -9,10 +9,18 @@ typeIntRe = '((int)(\[?\]?)\s([\w\d]+))'
 typeStringRe = '((String)(\[?\]?)\s([\w\d]+))'
 typeBoolRe = '((boolean)(\[?\]?)\s([\w\d]+))'
 
-booleanRe1 = '([\s\[\{\,](true)[\;\}\,])'  # for a354505667.equals("e"
-booleanRe2 = '([\s\[\{\,](false)[\;\}\,])'  # for a354505667.equals("e"
-stringRe = '([\s\[\{\,](\"\w*\")[\;\}\,])'  # for a354505667.equals("e"
-numberRe = '(([\s\[\{\,])(-?\d+)([\;\}\,]))'  # for a354505667.equals("e"
+booleanRe1 = '([\[\{\,\=]\s*(true)[\;\}\,])' # for a354505667.equals("e"
+booleanRe2 = '([\[\{\,\=]\s*(false)[\;\}\,])' # for a354505667.equals("e"
+stringRe = '([\[\{\,\=]\s*(\"\w*\")[\;\}\,])' # for a354505667.equals("e"
+numberRe = '(([\[\{\,\=]\s*)(-?\d+)([\;\}\,]))' # for a354505667.equals("e"
+
+assignPlusRe = '(([\.\w\d]+)\s*\+=\s*(\"?[-*\.\w\d]+\"?)\s*;)' # for a354505667.equals("e"
+assignMinRe = '(([\.\w\d]+)\s*\-=\s*(\"?[-*\.\w\d]+\"?)\s*;)' # for a354505667.equals("e"
+printRe = '((System.out.println))' # for a354505667.equals("e"
+ifRe = '(if\(([\.\w\d]+)\))' # for a354505667.equals("e"
+ifCompactRe = '(([\.\w\d]+)\s*\=\s*([\.\w\d]+)\s*\?\s*(\"?[-*\.\w\d]+\"?)\s*:\s*(\"?[-*\.\w\d]+\"?)\s*;)' # for a354505667.equals("e"
+ifCompactReP = '(([\.\w\d]+)\s*\+\=\s*([\.\w\d]+)\s*\?\s*(\"?[-*\.\w\d]+\"?)\s*:\s*(\"?[-*\.\w\d]+\"?)\s*;)' # for
+ifCompactReM = '(([\.\w\d]+)\s*\-\=\s*([\.\w\d]+)\s*\?\s*(\"?[-*\.\w\d]+\"?)\s*:\s*(\"?[-*\.\w\d]+\"?)\s*;)' # for
 
 addRe = '((-?[\.\w\d]+)\s*\+\s*(-?[\.\w\d]+))'
 delRe = '((-?[\.\w\d]+)\s*\-\s*(-?[\.\w\d]+))'
