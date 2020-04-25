@@ -15,8 +15,6 @@ folder2="SeqLtlRers2019/"
 folder3="SeqReachabilityRers2019/"
 folder4="TrainingSeqReachRers2019/"
 
-verbose="false" # Print output or not
-
 ############## Reading inputs ##############
 POSITIONAL=()
 while [[ $# -gt 0 ]]; do
@@ -26,7 +24,6 @@ while [[ $# -gt 0 ]]; do
   -h | --help) # Help command
     echo "Usage: "
     echo "-f | --folder [ 1,2,3,4 || 1,3,4 || 1,2 ...]"
-    echo "-v | --verbose"
     shift
     shift
     exit 1

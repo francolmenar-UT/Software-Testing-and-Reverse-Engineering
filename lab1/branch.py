@@ -1,4 +1,4 @@
-from constants import function_declarationRe, function_callRe, array_initializationRe
+from constants import function_declarationRe, function_callRe, array_initializationRe,  debug_graph
 import re
 
 
