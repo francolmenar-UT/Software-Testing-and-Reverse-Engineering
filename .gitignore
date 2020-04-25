@@ -2,7 +2,6 @@
 __pycache__/
 
 *.class
-*.java
 *.pyc
 *.DS_Store
 *.txt
