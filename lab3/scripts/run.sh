@@ -2,13 +2,39 @@
 
 pythonPath="./new_regex.py" # Path to the Python file
 logPath="Logs/"             # Log folder
-seqPath="sequential/"       # First Path
+seqPath="sequential2/"       # First Path
 fileType=".java"            # File type
 # Files not to be executed
-declare -a notWorking=("sequential/TrainingSeqLtlRers2019/Problem1/Problem1.java"
-  "sequential/SeqLtlRers2019/Problem4/Problem4.java" "sequential/SeqLtlRers2019/Problem5/Problem5.java" "sequential/SeqLtlRers2019/Problem6/Problem6.java" "sequential/SeqLtlRers2019/Problem7/Problem7.java" "sequential/SeqLtlRers2019/Problem8/Problem8.java" "sequential/SeqLtlRers2019/Problem9/Problem9.java"
-  "sequential/SeqReachabilityRers2019/Problem12/Problem12.java" "sequential/SeqReachabilityRers2019/Problem13/Problem13.java" "sequential/SeqReachabilityRers2019/Problem14/Problem14.java" "sequential/SeqReachabilityRers2019/Problem15/Problem15.java" "sequential/SeqReachabilityRers2019/Problem16/Problem16.java" "sequential/SeqReachabilityRers2019/Problem17/Problem17.java" "sequential/SeqReachabilityRers2019/Problem18/Problem18.java" "sequential/SeqReachabilityRers2019/Problem19/Problem19.java"
-  "sequential/TrainingSeqReachRers2019/Problem12/Problem12.java" "sequential/TrainingSeqReachRers2019/Problem13/Problem13.java")
+declare -a notWorking=(
+"sequential2/SeqLtlRers2019/Problem4/Problem4.java"
+"sequential2/SeqLtlRers2019/Problem5/Problem5.java" 
+"sequential2/SeqLtlRers2019/Problem6/Problem6.java" 
+"sequential2/SeqLtlRers2019/Problem7/Problem7.java" 
+"sequential2/SeqLtlRers2019/Problem8/Problem8.java" 
+"sequential2/SeqLtlRers2019/Problem9/Problem9.java"
+"sequential2/SeqReachabilityRers2019/Problem12/Problem12.java" 
+"sequential2/SeqReachabilityRers2019/Problem14/Problem14.java"  
+"sequential2/SeqReachabilityRers2019/Problem15/Problem15.java"  
+"sequential2/SeqReachabilityRers2019/Problem16/Problem16.java"   
+"sequential2/SeqReachabilityRers2019/Problem17/Problem17.java"    
+"sequential2/SeqReachabilityRers2019/Problem18/Problem18.java"    
+"sequential2/SeqReachabilityRers2019/Problem19/Problem19.java"
+"sequential2/TrainingSeqReachRers2019/Problem12/Problem12.java" 
+"sequential2/TrainingSeqReachRers2019/Problem13/Problem13.java")
+  
+  
+#working 
+#"sequential2/SeqLtlRers2019/Problem1/Problem1.java" 
+#"sequential2/SeqLtlRers2019/Problem2/Problem2.java" 
+#"sequential2/SeqLtlRers2019/Problem3/Problem3.java" 
+#"sequential2/TrainingSeqLtlRers2019/Problem1/Problem1.java" 
+#"sequential2/TrainingSeqLtlRers2019/Problem2/Problem2.java" 
+#"sequential2/TrainingSeqLtlRers2019/Problem3/Problem3.java"
+#"sequential2/SeqReachabilityRers2019/Problem11/Problem11.java" 
+#"sequential2/SeqReachabilityRers2019/Problem13/Problem13.java"  
+#"sequential2/TrainingSeqReachRers2019/Problem11/Problem11.java")
+
+
 
 declare -a arrFolders=() # Array for the folders to be executed
 folder1="TrainingSeqLtlRers2019/"
@@ -153,7 +179,7 @@ for arrFolder_i in "${arrFolders[@]}"; do
     fileToRun=${problem}${fileType} # Next file to be executed
 
     # Check if the file exists
-    if [ -f "${newFilePath}${fileToRun}" ] && [ "${newFilePath}${fileToRun}" != $notWorking ]; then
+    if [ -f "${newFilePath}${fileToRun}" ] && [[ ! " ${notWorking[@]} " =~ " ${newFilePath}${fileToRun} " ]]; then
       echo "> Running new_regex.py in ${newFilePath}${fileToRun}"
       python "${pythonPath}" "${newFilePath}${fileToRun}" # Run the python file
 
