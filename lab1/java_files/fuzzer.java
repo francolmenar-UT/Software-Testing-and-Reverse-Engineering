@@ -93,11 +93,10 @@ class Fuzzer {
 
     // Random Fuzz
     public static MyInput random_fuzz(MyString[] inputs) {
-        Random rand = new Random();
-        int length = rand.nextInt(iteration_number) + 10;
+        int length = I.random.nextInt(iteration_number) + 10;
         MyString[] fuzzStr = new MyString[length];
         for (int i = 0; i < length; i++) {
-            int index = rand.nextInt(inputs.length);
+            int index = I.random.nextInt(inputs.length);
             fuzzStr[i] = new MyString(inputs[index].val, true);
         }
         return new MyInput(fuzzStr);
@@ -200,10 +199,9 @@ class Fuzzer {
         MyString[] fuzzStr = new MyString[best_input.myStr.length];
         System.arraycopy(best_input.myStr, 0, fuzzStr, 0, best_input.myStr.length);
 
-        Random rand = new Random();
         for (int i = 0; i < fuzzStr.length; i++) {
-            if (rand.nextInt(100) < mutationRate) {
-                int index = rand.nextInt(inputs.length);
+            if (I.random.nextInt(100) < mutationRate) {
+                int index = I.random.nextInt(inputs.length);
                 fuzzStr[i] = new MyString(inputs[index].val, true);
             }
         }

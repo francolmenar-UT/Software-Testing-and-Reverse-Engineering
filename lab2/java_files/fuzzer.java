@@ -292,12 +292,11 @@ class Fuzzer {
      * @return new_input as a MyInput
      */
     public static MyInput slight_fuzz(MyString[] current_input, MyString[] valid_inputs) {
-        Random rand = new Random();
         int count = 0, new_input_char = 0, char_to_change = 0; // Counter for exiting the while loop
         MyString[] new_input = current_input; // The new input is the old one with one char changed
         while (count < 10) { // To avoid an infinite loop if the characters are reapted
-            new_input_char = rand.nextInt(valid_inputs.length); // The char which is going to be inserted
-            char_to_change = rand.nextInt(current_input.length); // The char wich is going to be erased
+            new_input_char = I.random.nextInt(valid_inputs.length); // The char which is going to be inserted
+            char_to_change = I.random.nextInt(current_input.length); // The char wich is going to be erased
 
             // Check that the chars are not the same
             if (current_input[char_to_change] != valid_inputs[new_input_char]) {
@@ -316,12 +315,11 @@ class Fuzzer {
      * @return MyInput which is randomly generated
      */
     public static MyInput random_fuzz(MyString[] inputs) {
-        Random rand = new Random();
-        int length = rand.nextInt(iteration_number) + 10;
+        int length = I.random.nextInt(iteration_number) + 10;
         MyString[] fuzzStr = new MyString[length];
 
         for (int i = 0; i < length; i++) {
-            int index = rand.nextInt(inputs.length);
+            int index = I.random.nextInt(inputs.length);
             fuzzStr[i] = new MyString(inputs[index].val, true);
         }
         System.err.println("AAAAAA");
@@ -410,10 +408,9 @@ class Fuzzer {
         MyString[] fuzzStr = new MyString[best_input.myStr.length];
         System.arraycopy(best_input.myStr, 0, fuzzStr, 0, best_input.myStr.length);
 
-        Random rand = new Random();
         for (int i = 0; i < fuzzStr.length; i++) {
-            if (rand.nextInt(100) < mutationRate) {
-                int index = rand.nextInt(inputs.length);
+            if (I.random.nextInt(100) < mutationRate) {
+                int index = I.random.nextInt(inputs.length);
                 fuzzStr[i] = new MyString(inputs[index].val, true);
             }
         }
