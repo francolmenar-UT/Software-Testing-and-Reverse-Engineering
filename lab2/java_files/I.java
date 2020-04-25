@@ -5,6 +5,8 @@ class I {
 
 <insert_var>
 
+    public static Random random = new Random(42);
+
     public static void update_comparison_expression(Expr expr) {
         if (last_comparison_expr != null) {
             I.z3f = ctx.mkAnd((BoolExpr) last_comparison_expr, z3f);
