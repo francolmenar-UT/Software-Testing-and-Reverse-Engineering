@@ -43,8 +43,7 @@ class Population {
     }
 
     private Dna getParent() {
-        Random rand = new Random();
-        Double fit = rand.nextDouble() * this.totalFitness;
+        Double fit = I.random.nextDouble() * this.totalFitness;
 
         int index = 0;
         while (index < this.size - 1 && fit >= this.fitness[index]) {
@@ -81,11 +80,10 @@ class Dna {
     }
 
     MyInput randomDna() {
-        Random rand = new Random();
         MyString[] myString = new MyString[this.length];
 
         for (int i = 0; i < this.length; i++) {
-            int index = rand.nextInt(Fuzzer.inputs.length);
+            int index = I.random.nextInt(Fuzzer.inputs.length);
             myString[i] = new MyString(Fuzzer.inputs[index].val, true);
         }
         return new MyInput(myString);
@@ -117,8 +115,7 @@ class Dna {
      * Generate a new Dna which is the crossover between this dna and the partner
      */
     public Dna crossover(Dna partner) {
-        Random rand = new Random();
-        int splitPosition = rand.nextInt(this.length);
+        int splitPosition = I.random.nextInt(this.length);
 
         // The final len is the segment from this [0..splitPosition] + what is added from partner
         // [splitPosition..partner.length] If partner.length < splitPosition then nothing is added and the final len =
@@ -139,19 +136,17 @@ class Dna {
     }
 
     public void mutate() {
-        Random rand = new Random();
-
         for (int i = 0; i < this.length; i++) {
-            if (rand.nextDouble() < Fuzzer.mutation_factor) {
+            if (I.random.nextDouble() < Fuzzer.mutation_factor) {
                 /* Decide which mutation to apply:
                  * 0 -> modify char
                  * 1 -> remove char
                  * 2 -> add char after this
                  */
-                int operation = rand.nextInt(3);
+                int operation = I.random.nextInt(3);
 
                 if (operation == 0) { //change
-                    int index = rand.nextInt(Fuzzer.inputs.length);
+                    int index = I.random.nextInt(Fuzzer.inputs.length);
                     this.dna.myStr[i] = new MyString(Fuzzer.inputs[index].val, true);
                 } else if (operation == 1 && this.length > 1) { //remove
                     int p = this.dna.myStr.length;
@@ -159,7 +154,7 @@ class Dna {
                     assert(p != this.dna.myStr.length) : "java sucks";
                     this.length--;
                 } else { // add
-                    int index = rand.nextInt(Fuzzer.inputs.length);
+                    int index = I.random.nextInt(Fuzzer.inputs.length);
                     int p = this.dna.myStr.length;
                     this.dna.myStr = ArrayUtils.insert(i+1, this.dna.myStr, new MyString(Fuzzer.inputs[index].val, true));
                     assert(p != this.dna.myStr.length) : "java sucks 2";

@@ -1,6 +1,7 @@
 class I {
 <insert_var>
 
+    public static Random random = new Random(42);
 
     public static void myAdd(MyInt a, MyInt b, MyInt c) {
         a.val = b.val + c.val;
