@@ -50,7 +50,7 @@ def createPlots(type,problem, data, numberlabs):
     #sample_rate = 1
     #data = data.iloc[::sample_rate, :] #reduces the number of datapoints
     fig, ax = plt.subplots()
-    labels = [" (rndm-gen)", " (conc/symb)", " (gener)"]
+    labels = [" (rndm-gen)", " (conc/symb)", " (genetic)"]
     #plot the data
     for i in range(0,numberlabs):
         for j in range(0,len(data[i])):
