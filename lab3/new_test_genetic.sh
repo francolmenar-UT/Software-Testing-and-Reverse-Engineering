@@ -20,9 +20,6 @@ declare -a pop_size=(5 10 20 50 100)
 declare -a mutation=(0.01 0.05 0.1 0.2 0.5)
 
 repetitions=3
-best=0
-best_pop=0
-best_mut=0
 
 ############## Reading inputs ##############
 POSITIONAL=()
@@ -134,6 +131,10 @@ for arrFolder_i in "${arrFolders[@]}"; do
       echo "> Compiling inst${fileToRun}"
       javac -cp commons-lang3-3.10.jar:. "${newFilePath}inst${fileToRun}" 2>/dev/null >/dev/null
 
+      best=0
+      best_pop=0
+      best_mut=0
+
       InslogPath=$logPath$(echo "${newFilePath}inst${problem}" | tr "/" -)"-log" # Create path to Log
       for size in "${pop_size[@]}"; do
         for mut in "${mutation[@]}"; do
@@ -146,7 +147,7 @@ for arrFolder_i in "${arrFolders[@]}"; do
           ((res = ${res} / ${repetitions}))
           echo "score: ${res}"
           echo ""
-          if [[ ${res} > ${best} ]]; then
+          if [[ ${res} -ge ${best} ]]; then
             best=${res}
             best_pop=${size}
             best_mut=${mut}
@@ -154,12 +155,13 @@ for arrFolder_i in "${arrFolders[@]}"; do
         done
       done
 
+      echo "Best values for file ${newFilePath}:"
+      echo "  Population size: ${best_pop}"
+      echo "  Best mutation: ${best_mut}"
+      echo "  Score: ${best}"
+
     fi
   done
   printf "\n\n"
 done
 
-echo "Best values"
-echo "  Population size: ${best_pop}"
-echo "  Best mutation: ${best_mut}"
-echo "  Score: ${best}"

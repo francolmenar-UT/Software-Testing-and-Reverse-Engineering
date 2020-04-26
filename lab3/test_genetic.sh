@@ -26,7 +26,7 @@ do
         ((res=${res}/${repetitions}))
         echo "score: ${res}"
         echo ""
-        if [[ ${res} > ${best} ]]
+        if [[ ${res} -ge ${best} ]]
         then
             best=${res}
             best_pop=${size}
