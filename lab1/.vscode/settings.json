@@ -1,9 +1,0 @@
-{
-    "files.exclude": {
-        "**/.classpath": true,
-        "**/.project": true,
-        "**/.settings": true,
-        "**/.factorypath": true
-    },
-    "python.pythonPath": "C:\\Users\\Raphael\\Anaconda3\\python.exe"
-}
