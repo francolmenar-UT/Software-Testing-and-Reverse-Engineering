@@ -33,9 +33,10 @@ If no `-f` flag is provided, all the folders are chosen.
 
 - `-h` : Prints a message explaining the usage of the script.
 
-    
-    Usage:
-    -f | --folder [ 1,2,3,4 || 1,3,4 || 1,2 ...] 
+```
+Usage:
+-f | --folder [ 1,2,3,4 || 1,3,4 || 1,2 ...] 
+```
 
 ### javac-run.sh
 
@@ -50,8 +51,10 @@ It runs the compiled code generated from `javac` command. The parameters accepte
 - `-d` : Set Depth or Breath search. It can take as value `true` or `false` being the first for Depth and the 
 last for Breath search. As default it is set to true. Its usage is as follows.
 
+```
+.\java-run.sh -d true
+```
 
-    .\java-run.sh -d true
 
 - `-f` : Indicates which RERS folders are going to be considered.
 
@@ -59,22 +62,29 @@ last for Breath search. As default it is set to true. Its usage is as follows.
 or hours, but it must be specified by `s`, `m` or `h`. As a default it is set to one minute.
 
 
-    .\java-run.sh -t 2m
+```
+.\java-run.sh -t 2m
+```
     
 - `-v` : Specifies if the full output is going to be displayed or not on the terminal. It does not take any parameter as input.
 As a default the output is not printed.
 
 
-    .\java-run.sh -v
+```
+.\java-run.sh -v
+```
 
 
 - `-h` : Prints a message explaining the usage of the script. The output is the following.
 
-
-    -d | --depth [ true || false ]
-    -f | --folder [ 1,2,3,4 || 1,3,4 || 1,2 ...]
-    -t | --timeout [0-9]+[smh]
-    -v | --verbose
+```
+-d | --depth [ true || false ]
+-f | --folder [ 1,2,3,4 || 1,3,4 || 1,2 ...]
+-t | --timeout [0-9]+[smh]
+-v | --verbose
+```
+    
+    
     
  ### run.sh
  
