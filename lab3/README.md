@@ -114,3 +114,20 @@ or hours, but it must be specified by `s`, `m` or `h`. As a default it is set to
 -t | --timeout [0-9]+[smh]
 -v | --verbose
 ```
+
+### createGraph.py
+It is specifically written for the final lab. It creates graphs of all provided RERS problems. Where one graph includes the results of alll the algorithms to one specific problem. The parameters accepted by it are:
+- `-src1`: the path of the test results of the first lab
+- `-src2`: the path of the test results of the second lab
+- `-src3`: the path of the test results of the third lab
+
+```
+ python createGraph.py -src1 \path-to-log-files\ -src2 \path-to-log-files\ -src3 \path-to-log-files\
+```
+
+- `-h` : Prints a message explaining the usage of the script. The output is the following:
+```
+-src1 SOURCE1 path of the logfiles of the first lab
+-src2 SOURCE2 path of the logfiles of the second lab
+-src3 SOURCE3 path of the logfiles of the third lab
+```
