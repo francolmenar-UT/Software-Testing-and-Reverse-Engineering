@@ -1,11 +1,10 @@
 #!/usr/bin/env bash
 # Addapt of run.sh to run just javac
 
-seqPath="sequential2/"       # First Path
-fileType=".java"            # File type
+seqPath="sequential2/"   # First Path
+fileType=".java"         # File type
 scripts_folder="scripts" # Scripts folder
-jar_folder="jar/" # Jar folder
-
+jar_folder="jar/"        # Jar folder
 
 # Files not to be executed
 declare -a notWorking=(

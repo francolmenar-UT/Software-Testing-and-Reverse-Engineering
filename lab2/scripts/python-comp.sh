@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# Addapt of run.sh to run just new_regex
 
 pythonPath="./new_regex.py" # Path to the Python file
 seqPath="sequential2/"      # First Path
