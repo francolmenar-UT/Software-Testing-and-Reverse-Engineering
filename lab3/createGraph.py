@@ -66,7 +66,6 @@ parser.add_argument('-src2', help="path of the logfiles of the second lab", requ
 parser.add_argument('-src3', help="path of the logfiles of the third lab", required=True, nargs=1, dest="source3")
 
 #parser.add_argument('-p', type=int, help="number of the problem", required=True, nargs=1, dest="problem")
-
 #parser.add_argument('-n',type=str, help="name of the RERS type, e.g. SeqLtlRers2019", required=True, nargs=1, dest="rersType")
 
 parser.parse_args(namespace=Arguments)
@@ -91,6 +90,7 @@ problems2Type1 = getProblemNameandRersType(fil2[0])
 problems2Type2 = getProblemNameandRersType(fil2[1])
 
 problems3Type1 = getProblemNameandRersType(fil3[0])
+problems3Type2 = getProblemNameandRersType(fil3[1])
 
 #read files 
 data11 = readfiles(fil1[0])
@@ -100,16 +100,8 @@ data21 = readfiles(fil2[0])
 data22 = readfiles(fil2[1])
 
 data31 = readfiles(fil3[0])
-
+data32 = readfiles(fil3[1])
 
 for i in range(0, len(fil1[0])):
-    tdata = [[data11[i],data12[i]],[data21[i],data22[i]], [data31[i]]]
+    tdata = [[data11[i], data12[i]],[data21[i], data22[i]], [data31[i], data32[i]]]
     createPlots([dir1,dir2,dir3],problems1Type1[i],tdata,3)
-
-#print(tdata[0][1].head())
-#print(tdata[0][0].head())
-#print(tdata[1][0].head())
-#print(tdata[1][1].head())
-#print(tdata[2][0].head())
-
-#print_data(read_data())
