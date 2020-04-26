@@ -33,6 +33,9 @@ DEPTH="true"    # True by default
 timeout="1m"    # No timeout by default
 verbose="false" # Print output or not
 
+size=5  # Size 5 by default
+mut=0.1 # Mutation of 0.1 as default
+
 ############## Reading inputs ##############
 POSITIONAL=()
 while [[ $# -gt 0 ]]; do
