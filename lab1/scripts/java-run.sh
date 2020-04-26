@@ -5,12 +5,24 @@ logPath="Logs/"          # Log folder
 seqPath="sequential2/"    # First Path
 fileType=".java"         # File type
 scripts_folder="scripts" # Scripts folder
+
 # Files not to be executed
-declare -a notWorking=("sequential/TrainingSeqLtlRers2019/Problem1/Problem1.java"
-  "sequential/SeqLtlRers2019/Problem4/Problem4.java" "sequential/SeqLtlRers2019/Problem5/Problem5.java" "sequential/SeqLtlRers2019/Problem6/Problem6.java" "sequential/SeqLtlRers2019/Problem7/Problem7.java" "sequential/SeqLtlRers2019/Problem8/Problem8.java" "sequential/SeqLtlRers2019/Problem9/Problem9.java"
-  "sequential/SeqReachabilityRers2019/Problem12/Problem12.java" "sequential/SeqReachabilityRers2019/Problem13/Problem13.java" "sequential/SeqReachabilityRers2019/Problem14/Problem14.java" "sequential/SeqReachabilityRers2019/Problem15/Problem15.java" "sequential/SeqReachabilityRers2019/Problem16/Problem16.java" "sequential/SeqReachabilityRers2019/Problem17/Problem17.java" "sequential/SeqReachabilityRers2019/Problem18/Problem18.java" "sequential/SeqReachabilityRers2019/Problem19/Problem19.java"
-  "sequential/TrainingSeqReachRers2019/Problem12/Problem12.java" "sequential/TrainingSeqReachRers2019/Problem13/Problem13.java"
-)
+declare -a notWorking=(
+  "sequential2/SeqLtlRers2019/Problem4/Problem4.java"
+  "sequential2/SeqLtlRers2019/Problem5/Problem5.java"
+  "sequential2/SeqLtlRers2019/Problem6/Problem6.java"
+  "sequential2/SeqLtlRers2019/Problem7/Problem7.java"
+  "sequential2/SeqLtlRers2019/Problem8/Problem8.java"
+  "sequential2/SeqLtlRers2019/Problem9/Problem9.java"
+  "sequential2/SeqReachabilityRers2019/Problem12/Problem12.java"
+  "sequential2/SeqReachabilityRers2019/Problem14/Problem14.java"
+  "sequential2/SeqReachabilityRers2019/Problem15/Problem15.java"
+  "sequential2/SeqReachabilityRers2019/Problem16/Problem16.java"
+  "sequential2/SeqReachabilityRers2019/Problem17/Problem17.java"
+  "sequential2/SeqReachabilityRers2019/Problem18/Problem18.java"
+  "sequential2/SeqReachabilityRers2019/Problem19/Problem19.java"
+  "sequential2/TrainingSeqReachRers2019/Problem12/Problem12.java"
+  "sequential2/TrainingSeqReachRers2019/Problem13/Problem13.java")
 
 declare -a arrFolders=() # Array for the folders to be executed
 folder1="TrainingSeqLtlRers2019/"
