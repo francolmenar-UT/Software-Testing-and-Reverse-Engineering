@@ -7,6 +7,7 @@ import glob
 import os
 import re
 
+#class for parsing input arguments
 class Arguments:
     pass
 
