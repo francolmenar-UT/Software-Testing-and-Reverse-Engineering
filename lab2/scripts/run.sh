@@ -4,8 +4,7 @@ pythonPath="./new_regex.py"   # Path to the Python file
 logPath="Logs/"               # Log folder
 seqPath="sequential2/"        # First Path
 fileType=".java"              # File type
-scripts_folder="scripts"    # Scripts folder
-
+scripts_folder="scripts"      # Scripts folder
 
 export_folder="Test_results/" # Folder used when exporting Logs to python
 dFalse="dFalse/"

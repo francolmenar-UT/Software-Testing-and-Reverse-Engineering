@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# Addapt of run.sh to run just javac
 
 seqPath="sequential2/"   # First Path
 fileType=".java"         # File type

@@ -1,10 +1,8 @@
 #!/usr/bin/env bash
-# Addapt of run.sh to run just javac
 
 seqPath="sequential2/"   # First Path
 fileType=".java"         # File type
 scripts_folder="scripts" # Scripts folder
-jar_folder="jar/"        # Jar folder
 
 # Files not to be executed
 declare -a notWorking=(
@@ -118,7 +116,7 @@ for arrFolder_i in "${arrFolders[@]}"; do
     # Check if the file exists
     if [ -f "${newFilePath}${fileToRun}" ] && [[ ! " ${notWorking[@]} " =~ " ${newFilePath}${fileToRun} " ]]; then
       echo "> Compiling inst${fileToRun}"
-      javac -cp "${jar_folder}"com.microsoft.z3.jar:. "${newFilePath}inst${fileToRun}"
+      javac -cp com.microsoft.z3.jar:. "${newFilePath}inst${fileToRun}"
     fi
   done
   printf "\n\n"

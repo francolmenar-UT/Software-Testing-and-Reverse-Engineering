@@ -4,6 +4,7 @@ pythonPath="./new_regex.py"   # Path to the Python file
 logPath="Logs/"               # Log folder
 seqPath="sequential2/"        # First Path
 fileType=".java"              # File type
+scripts_folder="scripts"      # Scripts folder
 
 export_folder="Test_results/" # Folder used when exporting Logs to python
 dFalse="dFalse/"
@@ -26,17 +27,6 @@ declare -a notWorking=(
   "sequential2/SeqReachabilityRers2019/Problem19/Problem19.java"
   "sequential2/TrainingSeqReachRers2019/Problem12/Problem12.java"
   "sequential2/TrainingSeqReachRers2019/Problem13/Problem13.java")
-
-#working
-#"sequential2/SeqLtlRers2019/Problem1/Problem1.java"
-#"sequential2/SeqLtlRers2019/Problem2/Problem2.java"
-#"sequential2/SeqLtlRers2019/Problem3/Problem3.java"
-#"sequential2/TrainingSeqLtlRers2019/Problem1/Problem1.java"
-#"sequential2/TrainingSeqLtlRers2019/Problem2/Problem2.java"
-#"sequential2/TrainingSeqLtlRers2019/Problem3/Problem3.java"
-#"sequential2/SeqReachabilityRers2019/Problem11/Problem11.java"
-#"sequential2/SeqReachabilityRers2019/Problem13/Problem13.java"
-#"sequential2/TrainingSeqReachRers2019/Problem11/Problem11.java")
 
 declare -a arrFolders=() # Array for the folders to be executed
 folder1="TrainingSeqLtlRers2019/"
@@ -166,6 +156,15 @@ if [ ${#FOLDER[@]} -ge 1 ]; then
   done
 else # By default all of the folders are executed
   arrFolders+=("${folder1}" "${folder2}" "${folder3}" "${folder4}")
+fi
+
+############## Checking in what folder we are ##############
+IFS='/' read -ra current_path <<<"$(pwd)"               # Separate by "/" the whole path
+
+current_folder=${current_path[${#current_path[@]} - 1]} # Get the last folder of the path
+
+if [ "${current_folder}" == "${scripts_folder}" ]; then # If we are in "scripts/" go one dir back
+  cd ..
 fi
 
 ############## Creating folders for Exporting ##############

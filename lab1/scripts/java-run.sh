@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
-# run.sh adapted to run just java
 
 logPath="Logs/"          # Log folder
-seqPath="sequential2/"    # First Path
+seqPath="sequential2/"   # First Path
 fileType=".java"         # File type
 scripts_folder="scripts" # Scripts folder
 
