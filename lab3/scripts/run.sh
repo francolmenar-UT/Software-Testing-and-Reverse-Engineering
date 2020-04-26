@@ -1,40 +1,42 @@
 #!/usr/bin/env bash
 
-pythonPath="./new_regex.py" # Path to the Python file
-logPath="Logs/"             # Log folder
-seqPath="sequential2/"       # First Path
-fileType=".java"            # File type
+pythonPath="./new_regex.py"   # Path to the Python file
+logPath="Logs/"               # Log folder
+seqPath="sequential2/"        # First Path
+fileType=".java"              # File type
+
+export_folder="Test_results/" # Folder used when exporting Logs to python
+dFalse="dFalse/"
+dTrue="dTrue/"
+
 # Files not to be executed
 declare -a notWorking=(
-"sequential2/SeqLtlRers2019/Problem4/Problem4.java"
-"sequential2/SeqLtlRers2019/Problem5/Problem5.java" 
-"sequential2/SeqLtlRers2019/Problem6/Problem6.java" 
-"sequential2/SeqLtlRers2019/Problem7/Problem7.java" 
-"sequential2/SeqLtlRers2019/Problem8/Problem8.java" 
-"sequential2/SeqLtlRers2019/Problem9/Problem9.java"
-"sequential2/SeqReachabilityRers2019/Problem12/Problem12.java" 
-"sequential2/SeqReachabilityRers2019/Problem14/Problem14.java"  
-"sequential2/SeqReachabilityRers2019/Problem15/Problem15.java"  
-"sequential2/SeqReachabilityRers2019/Problem16/Problem16.java"   
-"sequential2/SeqReachabilityRers2019/Problem17/Problem17.java"    
-"sequential2/SeqReachabilityRers2019/Problem18/Problem18.java"    
-"sequential2/SeqReachabilityRers2019/Problem19/Problem19.java"
-"sequential2/TrainingSeqReachRers2019/Problem12/Problem12.java" 
-"sequential2/TrainingSeqReachRers2019/Problem13/Problem13.java")
-  
-  
-#working 
-#"sequential2/SeqLtlRers2019/Problem1/Problem1.java" 
-#"sequential2/SeqLtlRers2019/Problem2/Problem2.java" 
-#"sequential2/SeqLtlRers2019/Problem3/Problem3.java" 
-#"sequential2/TrainingSeqLtlRers2019/Problem1/Problem1.java" 
-#"sequential2/TrainingSeqLtlRers2019/Problem2/Problem2.java" 
+  "sequential2/SeqLtlRers2019/Problem4/Problem4.java"
+  "sequential2/SeqLtlRers2019/Problem5/Problem5.java"
+  "sequential2/SeqLtlRers2019/Problem6/Problem6.java"
+  "sequential2/SeqLtlRers2019/Problem7/Problem7.java"
+  "sequential2/SeqLtlRers2019/Problem8/Problem8.java"
+  "sequential2/SeqLtlRers2019/Problem9/Problem9.java"
+  "sequential2/SeqReachabilityRers2019/Problem12/Problem12.java"
+  "sequential2/SeqReachabilityRers2019/Problem14/Problem14.java"
+  "sequential2/SeqReachabilityRers2019/Problem15/Problem15.java"
+  "sequential2/SeqReachabilityRers2019/Problem16/Problem16.java"
+  "sequential2/SeqReachabilityRers2019/Problem17/Problem17.java"
+  "sequential2/SeqReachabilityRers2019/Problem18/Problem18.java"
+  "sequential2/SeqReachabilityRers2019/Problem19/Problem19.java"
+  "sequential2/TrainingSeqReachRers2019/Problem12/Problem12.java"
+  "sequential2/TrainingSeqReachRers2019/Problem13/Problem13.java")
+
+#working
+#"sequential2/SeqLtlRers2019/Problem1/Problem1.java"
+#"sequential2/SeqLtlRers2019/Problem2/Problem2.java"
+#"sequential2/SeqLtlRers2019/Problem3/Problem3.java"
+#"sequential2/TrainingSeqLtlRers2019/Problem1/Problem1.java"
+#"sequential2/TrainingSeqLtlRers2019/Problem2/Problem2.java"
 #"sequential2/TrainingSeqLtlRers2019/Problem3/Problem3.java"
-#"sequential2/SeqReachabilityRers2019/Problem11/Problem11.java" 
-#"sequential2/SeqReachabilityRers2019/Problem13/Problem13.java"  
+#"sequential2/SeqReachabilityRers2019/Problem11/Problem11.java"
+#"sequential2/SeqReachabilityRers2019/Problem13/Problem13.java"
 #"sequential2/TrainingSeqReachRers2019/Problem11/Problem11.java")
-
-
 
 declare -a arrFolders=() # Array for the folders to be executed
 folder1="TrainingSeqLtlRers2019/"
@@ -45,6 +47,7 @@ folder4="TrainingSeqReachRers2019/"
 DEPTH="true"    # True by default
 timeout="1m"    # 1 minute of timeout by default
 verbose="false" # Print output or not
+export="false"  # Export for python graphs to false
 
 size=5  # Size 5 by default
 mut=0.1 # Mutation of 0.1 as default
@@ -53,7 +56,6 @@ mut=0.1 # Mutation of 0.1 as default
 POSITIONAL=()
 while [[ $# -gt 0 ]]; do
   key="$1"
-
   case $key in
   -d | --depth) # DEPTH_FIRST_SEARCH input
     if [ "${2}" != "true" ] && [ "${2}" != "false" ]; then
@@ -65,16 +67,19 @@ while [[ $# -gt 0 ]]; do
     shift
     shift
     ;;
+  -e | --export) # Loggers with the form of exporting to python
+    export="true"
+    shift
+    ;;
   -h | --help) # Help command
     echo "Usage: "
     echo "-d | --depth [ true || false ]"
+    echo "-e | --export"
     echo "-f | --folder [ 1,2,3,4 || 1,3,4 || 1,2 ...]"
     echo "-m | --mutation <number>.<number>"
     echo "-s | --size [0-9]+"
     echo "-t | --timeout [0-9]+[smh]"
     echo "-v | --verbose"
-    shift
-    shift
     exit 1
     ;;
   -f | --folder) # Folder lab to be executed
@@ -123,7 +128,6 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 set -- "${POSITIONAL[@]}" # restore positional parameters
-
 if [[ -n $1 ]]; then
   echo "Last line of file specified as non-opt/last argument:"
   exit 1
@@ -164,6 +168,13 @@ else # By default all of the folders are executed
   arrFolders+=("${folder1}" "${folder2}" "${folder3}" "${folder4}")
 fi
 
+############## Creating folders for Exporting ##############
+if [ "${export}" == "true" ]; then
+  mkdir "${export_folder}"
+  mkdir "${export_folder}${dTrue}"
+  mkdir "${export_folder}${dFalse}"
+fi
+
 ############## Runing the RERS programs ##############
 for arrFolder_i in "${arrFolders[@]}"; do
   # Construct the path
@@ -184,6 +195,7 @@ for arrFolder_i in "${arrFolders[@]}"; do
       python "${pythonPath}" "${newFilePath}${fileToRun}" # Run the python file
 
       echo "> Compiling inst${fileToRun}"
+
       if [ "${verbose}" == "true" ]; then
         javac -cp commons-lang3-3.10.jar:. "${newFilePath}inst${fileToRun}" >/dev/null >/dev/null
       else
@@ -191,12 +203,32 @@ for arrFolder_i in "${arrFolders[@]}"; do
       fi
 
       echo "> Running inst${problem}"
-      InslogPath=$logPath$(echo "${newFilePath}inst${problem}" | tr "/" -)"-log" # Create path to Log
-      if [ "${verbose}" == "true" ]; then
-        timeout "${timeout}" java -cp commons-lang3-3.10.jar:"${newFilePath}" "inst${problem}" "$InslogPath" "${DEPTH}" ${size} ${mut} >/dev/null >/dev/null
-      else
-        timeout "${timeout}" java -cp commons-lang3-3.10.jar:"${newFilePath}" "inst${problem}" "$InslogPath" "${DEPTH}" ${size} ${mut} 2>/dev/null >/dev/null
+
+      # Normal execution - No exporting of Logs
+      if [ "${export}" == "false" ]; then
+        # Create path to Log
+        InslogPath=$logPath$(echo "${newFilePath}inst${problem}" | tr "/" -)"-log"
+
+        if [ "${verbose}" == "true" ]; then
+          timeout "${timeout}" java -cp commons-lang3-3.10.jar:"${newFilePath}" "inst${problem}" "$InslogPath" "${DEPTH}" ${size} ${mut} >/dev/null >/dev/null
+        else
+          timeout "${timeout}" java -cp commons-lang3-3.10.jar:"${newFilePath}" "inst${problem}" "$InslogPath" "${DEPTH}" ${size} ${mut} 2>/dev/null >/dev/null
+        fi
+
+      # Export execution - Changing the Logs' output and executing both deeps
+      elif [ "${export}" == "true" ]; then
+        # Create path to Log - dTrue
+        InslogPath=${export_folder}${dTrue}$(echo "${newFilePath}inst${problem}" | tr "/" -)"-log"
+
+        timeout "${timeout}" java -cp commons-lang3-3.10.jar:"${newFilePath}" "inst${problem}" "$InslogPath" "true" ${size} ${mut} 2>/dev/null >/dev/null
+
+        # Create path to Log - dFalse
+        InslogPath=${export_folder}${dFalse}$(echo "${newFilePath}inst${problem}" | tr "/" -)"-log"
+
+        timeout "${timeout}" java -cp commons-lang3-3.10.jar:"${newFilePath}" "inst${problem}" "$InslogPath" "false" ${size} ${mut} 2>/dev/null >/dev/null
+
       fi
+
     fi
   done
   printf "\n\n"
